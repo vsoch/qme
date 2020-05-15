@@ -75,7 +75,8 @@ class Queue:
         self.db.list_tasks(executor)
 
     def get(self, taskid):
-        """A wrapper to get a task id from the database.
+        """A wrapper to get a task id from the database. If an id is not provided,
+           will return the last run task based on timestamp of file or database.
         """
         return self.db.get_task(taskid)
 
@@ -112,4 +113,18 @@ class Queue:
         # Execute and store result (this will need to be generalized)
         executor.execute(command)
         self.db.update_task(executor)
+        bot.info(f"{task.summary()}")
+
+    def rerun(self, taskid):
+        """Given a command, get the executor for it (also creating an entry
+           in the task database) and run the command.
+        """
+        task = self.db.get_task(taskid)
+        params = task.load()
+        command = params.get("command")
+        pwd = params.get("pwd")
+        if pwd:
+            os.chdir(pwd)
+        task.executor.execute(command)
+        self.db.update_task(task.executor)
         bot.info(f"{task.summary()}")

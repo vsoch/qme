@@ -9,11 +9,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 import fnmatch
+import glob
 import json
 import os
 import pickle
 import tempfile
 import yaml
+
+
+def get_latest_modified(base, pattern="*.json"):
+    """Given a folder, get the latest modified file
+    """
+    files = recursive_find(base, pattern)
+    return max(files, key=os.path.getctime)
 
 
 def recursive_find(base, pattern="*.py"):

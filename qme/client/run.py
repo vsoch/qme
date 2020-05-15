@@ -13,8 +13,15 @@ import sys
 import os
 
 
-def main(args, extra):
+def run(args, extra):
 
     # Create a queue object, run the command to match to an executor
     queue = Queue()
     queue.run(args.cmd)
+
+
+def rerun(args, extra):
+
+    # Create a queue object, run the command to match to an executor
+    queue = Queue()
+    queue.rerun(args.taskid)

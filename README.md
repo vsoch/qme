@@ -128,6 +128,14 @@ DATABASE: filesystem
 }
 ```
 
+Actually, we can get the last task run (the same as above) just with qme get.
+
+```bash
+$ qme get
+```
+
+It will retrieve the last updated entry in the database across executors.
+
 #### List
 
 For the command line, you can easily list tasks. For the filesystem database,
@@ -172,6 +180,99 @@ DATABASE: filesystem
 
 This library is heavily under development, not all code is in verison control,
 and nowhere near ready for use!
+
+### Clear
+
+If you want to delete a task, just use clear with it's unique id:
+
+```bash
+$ qme clear shell-84f90411-a53e-4d40-92b0-706e5ddfa3b9
+DATABASE: filesystem
+This will delete task shell-84f90411-a53e-4d40-92b0-706e5ddfa3b9, are you sure? [n]|y: y
+shell-84f90411-a53e-4d40-92b0-706e5ddfa3b9 has been removed.
+```
+
+You can also remove an entire executor:
+
+```bash
+$ qme clear shell
+DATABASE: filesystem
+This will delete all executor shell tasks, are you sure? [n]|y: n
+```
+
+or all tasks in the database:
+
+```bash
+$ qme clear
+DATABASE: filesystem
+This will delete all tasks, are you sure? [n]|y: n
+```
+
+Each time you'll be asked for a confirmation first, in case the command was 
+run in error.
+
+### Rerun
+
+You can re-run any task, also based on it's taskid. A re-run will load the 
+previous command, change to a different directory (if set) and then
+re-run the command. The result will be stored under the  (updated) taskid.
+Here is a quick example of showing an older task (run before some of the library
+was developed) and then using re-run, and showing that the task is updated.
+First, here is the original task:
+
+```bash
+$ qme get shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a
+DATABASE: filesystem
+{
+    "executor": "shell",
+    "command": [
+        "ls"
+    ],
+    "uid": "shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a"
+}
+```
+
+Now we re-run it:
+
+```bash
+$ qme rerun shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a
+DATABASE: filesystem
+[shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a][returncode: 0]
+```
+
+And finally, we see that the task is updated.
+
+```bash
+$ qme get shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a
+DATABASE: filesystem
+{
+    "executor": "shell",
+    "command": [
+        "ls"
+    ],
+    "uid": "shell-5c61ce2b-988e-44fa-8678-a9704ca11b1a",
+    "data": {
+        "pwd": "/home/vanessa/Desktop/Code/qme",
+        "output": [
+            "build\n",
+            "CHANGELOG.md\n",
+            "dist\n",
+            "docs\n",
+            "LICENSE\n",
+            "MANIFEST.in\n",
+            "paper\n",
+            "qme\n",
+            "qme.egg-info\n",
+            "README.md\n",
+            "setup.cfg\n",
+            "setup.py\n",
+            "tests\n"
+        ],
+        "error": [],
+        "returncode": 0
+    }
+}
+```
 
 ### Environment
 

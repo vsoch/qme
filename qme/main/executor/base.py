@@ -91,6 +91,12 @@ class ExecutorBase:
             _, uid = taskid.split("-", 1)
         self.taskid = "%s-%s" % (self.name, uid)
 
+    def _export_common(self):
+        """export common task variables such as present working directory.
+           This might include envars at some point, but we'd need to be careful.
+        """
+        return {"pwd": os.getcwd()}
+
     def summary(self):
         return "[%s]" % self.name
 

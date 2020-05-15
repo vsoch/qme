@@ -57,6 +57,10 @@ def get_parser():
     run = subparsers.add_parser("run", help="Run a command to add to the queue.")
     run.add_argument("cmd", nargs="*")
 
+    # Rerun a task
+    rerun = subparsers.add_parser("rerun", help="Re-run a particular task.")
+    rerun.add_argument("taskid", nargs="?")
+
     # List tasks and print to terminal
     ls = subparsers.add_parser("ls", help="List tasks")
     ls.add_argument(
@@ -65,10 +69,7 @@ def get_parser():
 
     # Print complete metadata for a specific task
     get = subparsers.add_parser("get", help="Get task")
-    get.add_argument(
-        "taskid", help="list taskid to return",
-    )
-
+    get.add_argument("taskid", help="list taskid to return", nargs="?")
     return parser
 
 
@@ -110,7 +111,9 @@ def main():
     if args.command == "ls":
         from .listing import main
     if args.command == "run":
-        from .run import main
+        from .run import run as main
+    if args.command == "rerun":
+        from .run import rerun as main
 
     # Pass on to the correct parser
     return_code = 0

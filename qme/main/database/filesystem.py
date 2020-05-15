@@ -8,7 +8,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from qme.utils.file import write_json, mkdir_p, read_json, recursive_find
+from qme.utils.file import (
+    write_json,
+    mkdir_p,
+    read_json,
+    recursive_find,
+    get_latest_modified,
+)
 from qme.main.database.base import Database
 from qme.main.executor import get_named_executor
 from qme.logger import bot
@@ -68,9 +74,14 @@ class FileSystemDatabase(Database):
 
     # Get, delete, etc. only require taskid
 
-    def get_task(self, taskid):
-        """Get a filesystem task based on a taskid
+    def get_task(self, taskid=None):
+        """Get a task based on a taskid. Exits on error if doesn't exist. If
+           a task id is not provided, get the last run task.
         """
+        if not taskid:
+            taskid = os.path.basename(
+                get_latest_modified(self.data_base, pattern="*.json")
+            ).replace(".json", "")
         executor = taskid.split("-", 1)[0]
         executor = get_named_executor(executor, taskid)
         return FileSystemTask(executor, exists=True, data_base=self.data_base)

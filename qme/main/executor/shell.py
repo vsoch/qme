@@ -56,6 +56,12 @@ class ShellExecutor(ExecutorBase):
             cmd = shlex.split(cmd)
         self.cmd = cmd
 
+    def rerun(self):
+        """rerun will reproduce the working directory, environment for the
+           task at hand and reissue the command.
+        """
+        self.reset()
+
     def execute(self, cmd):
         """Execute a system command and return output and error.
         """
@@ -102,7 +108,12 @@ class ShellExecutor(ExecutorBase):
     def export(self):
         """return data as json. This is intended to save to the task database
         """
-        return {"output": self.out, "error": self.err, "returncode": self.returncode}
+        # Get common context (e.g., pwd)
+        common = self._export_common()
+        common.update(
+            {"output": self.out, "error": self.err, "returncode": self.returncode}
+        )
+        return common
 
     def decode(self, line):
         """Given a line of output (error or regular) decode using the
