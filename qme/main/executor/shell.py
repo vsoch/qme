@@ -111,7 +111,12 @@ class ShellExecutor(ExecutorBase):
         # Get common context (e.g., pwd)
         common = self._export_common()
         common.update(
-            {"output": self.out, "error": self.err, "returncode": self.returncode}
+            {
+                "output": self.out,
+                "error": self.err,
+                "returncode": self.returncode,
+                "command": self.cmd,
+            }
         )
         return common
 

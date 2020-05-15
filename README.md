@@ -274,6 +274,12 @@ DATABASE: filesystem
 }
 ```
 
+You can also rerun the last touched task without needing to specify the identifier.
+
+```bash
+$ qme rerun
+```
+
 ### Environment
 
  * Free software: MPL 2.0 License

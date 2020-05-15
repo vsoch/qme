@@ -111,8 +111,8 @@ class Queue:
         task = self.db.add_task(executor)
 
         # Execute and store result (this will need to be generalized)
-        executor.execute(command)
-        self.db.update_task(executor)
+        task.executor.execute(command)
+        self.db.update_task(task.executor)
         bot.info(f"{task.summary()}")
 
     def rerun(self, taskid):
@@ -120,11 +120,14 @@ class Queue:
            in the task database) and run the command.
         """
         task = self.db.get_task(taskid)
-        params = task.load()
+        params = task.load().get("data", {})
         command = params.get("command")
         pwd = params.get("pwd")
         if pwd:
             os.chdir(pwd)
-        task.executor.execute(command)
-        self.db.update_task(task.executor)
-        bot.info(f"{task.summary()}")
+        if command:
+            task.executor.execute(command)
+            self.db.update_task(task.executor)
+            bot.info(f"{task.summary()}")
+        else:
+            bot.warning(f"{task.executor.taskid} does not have an associated command.")
