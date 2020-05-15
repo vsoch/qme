@@ -11,10 +11,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from qme.defaults import QME_DATABASE
 from qme.main.config import Config
 from qme.main.database import init_db
-from qme.main.executor import get_executor, get_named_executor
+from qme.main.executor import get_executor
+from qme.utils.regex import uuid_regex
+from qme.utils.prompt import confirm
 from qme.logger import bot
 
 import os
+import re
 import sys
 
 
@@ -74,9 +77,28 @@ class Queue:
     def get(self, taskid):
         """A wrapper to get a task id from the database.
         """
-        executor = taskid.split("-", 1)[0]
-        executor = get_named_executor(executor, taskid)
-        return self.db.get_task(executor)
+        return self.db.get_task(taskid)
+
+    def clear(self, target):
+        """clear takes a target, and that can be a taskid, executor, or none
+           We ask the user for confirmation.
+        """
+        # Case 1: no target indicates clearing all
+        if not target:
+            if confirm(f"This will delete all tasks, are you sure?"):
+                self.db.clear()
+
+        # Case 2, it's a specific taskid
+        elif re.search(uuid_regex, target):
+            if confirm(f"This will delete task {target}, are you sure?"):
+                self.db.delete_task(target)
+
+        # Case 2: it's an executor
+        elif target in list(self.db.iter_executors()):
+            if confirm(f"This will delete all executor {target} tasks, are you sure?"):
+                self.db.delete_executor(target)
+        else:
+            sys.exit(f"Unrecognized target to clear {target}")
 
     def run(self, command):
         """Given a command, get the executor for it (also creating an entry

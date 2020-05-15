@@ -49,6 +49,10 @@ def get_parser():
         default="filesystem",
     )
 
+    # Clear an entire executor family, one task, or all tasks
+    clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
+    clear.add_argument("target", nargs="?")
+
     # Run a command (gets passed to executor via template)
     run = subparsers.add_parser("run", help="Run a command to add to the queue.")
     run.add_argument("cmd", nargs="*")
@@ -97,6 +101,8 @@ def main():
         sys.exit(0)
 
     # Does the user want a shell?
+    if args.command == "clear":
+        from .clear import main
     if args.command == "config":
         from .config import main
     if args.command == "get":

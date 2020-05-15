@@ -32,7 +32,7 @@ class ShellExecutor(ExecutorBase):
 
     def summary(self):
         if self.returncode is not None:
-            return "[%s][returncode: %s]" % (self.taskid, self.returncode,)
+            return "[%s][returncode: %s]" % (self.taskid, self.returncode)
         return "[%s][%s]" % (self.name, self.command)
 
     def reset(self):

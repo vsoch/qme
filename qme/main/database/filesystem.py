@@ -10,8 +10,10 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from qme.utils.file import write_json, mkdir_p, read_json, recursive_find
 from qme.main.database.base import Database
+from qme.main.executor import get_named_executor
 from qme.logger import bot
 from glob import glob
+import shutil
 import uuid
 import os
 import sys
@@ -40,6 +42,18 @@ class FileSystemDatabase(Database):
         if not os.path.exists(self.data_base):
             mkdir_p(self.data_base)
 
+    # Global
+
+    def clear(self):
+        """clear (delete) all tasks.
+        """
+        for executor_dir in self.iter_executors(fullpath=True):
+            if os.path.exists(executor_dir):
+                bot.info(f"Removing {executor_dir}")
+                shutil.rmtree(executor_dir)
+
+    # Add or Update requires executor
+
     def add_task(self, executor):
         """Create a filesystem task based on an executor type. The executor controls
            what data is exported and the uid, the task object just handles saving it.
@@ -52,9 +66,13 @@ class FileSystemDatabase(Database):
         task = FileSystemTask(executor, exists=True, data_base=self.data_base)
         task.update({"data": executor.export()})
 
-    def get_task(self, executor):
+    # Get, delete, etc. only require taskid
+
+    def get_task(self, taskid):
         """Get a filesystem task based on a taskid
         """
+        executor = taskid.split("-", 1)[0]
+        executor = get_named_executor(executor, taskid)
         return FileSystemTask(executor, exists=True, data_base=self.data_base)
 
     def delete_task(self, taskid):
@@ -62,27 +80,38 @@ class FileSystemDatabase(Database):
            in the format of <taskid>-<uid> without extra dashes so we can
            reliably split based on the first dash.
         """
-        task = FileSystemTask(taskid=taskid, exists=True, data_base=self.data_base)
+        task = self.get_task(taskid)
         if not task:
             bot.exit(f"{taskid} does not exist in the database.")
         os.remove(task.filename)
         bot.info(f"{taskid} has been removed.")
 
-    def clear_tasks(self, executor):
-        """delete all tasks for an executor.
+    def delete_executor(self, name):
+        """delete all tasks for an executor, based on executor's name (str).
         """
-        executor_dir = os.path.join(self.data_base, executor)
+        executor_dir = os.path.join(self.data_base, name)
         if not os.path.exists(executor_dir):
             bot.exit(f"Executor {executor} does not exist.")
         shutil.rmtree(executor_dir)
 
-    def list_tasks(self, executor=None):
-        """list tasks, either under a particular executor type (if provided)
+    def iter_executors(self, fullpath=False):
+        """list executors based on the subfolders in the base database folder.
+        """
+        for contender in os.listdir(self.data_base):
+            contender = os.path.join(self.data_base, contender)
+            if os.path.isdir(contender):
+                if not fullpath:
+                    yield os.path.basename(contender)
+                else:
+                    yield contender
+
+    def list_tasks(self, name=None):
+        """list tasks, either under a particular executor name (if provided)
            or just the executors.
         """
         listpath = self.data_base
-        if executor:
-            listpath = os.path.join(listpath, executor)
+        if name:
+            listpath = os.path.join(listpath, name)
         rows = []
         for filename in recursive_find(listpath, pattern="*.json"):
             rows.append([os.path.basename(filename).replace(".json", "")])
