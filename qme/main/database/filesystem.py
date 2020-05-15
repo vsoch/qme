@@ -118,7 +118,8 @@ class FileSystemDatabase(Database):
 
     def list_tasks(self, name=None):
         """list tasks, either under a particular executor name (if provided)
-           or just the executors.
+           or just the executors. This returns tasks in rows to be printed
+           (or otherwise parsed).
         """
         listpath = self.data_base
         if name:
@@ -126,7 +127,7 @@ class FileSystemDatabase(Database):
         rows = []
         for filename in recursive_find(listpath, pattern="*.json"):
             rows.append([os.path.basename(filename).replace(".json", "")])
-        bot.table(rows)
+        return rows
 
 
 class FileSystemTask:
@@ -147,6 +148,7 @@ class FileSystemTask:
              data_base (str) : the path where the database exists.
              exists (bool) : if True, must already exists (default is False)
         """
+        self.taskid = executor.taskid
         self.executor = executor
         self.data_base = data_base
         self.create(exists)
@@ -188,6 +190,11 @@ class FileSystemTask:
                     "data": self.executor.export(),
                 }
             )
+
+    def export(self):
+        """wrapper to expose the executor.export function
+        """
+        return self.executor.export()
 
     def save(self, data):
         """Save a json object to the task.

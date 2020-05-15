@@ -72,31 +72,33 @@ class Queue:
            a whole executor name (e.g., shell) or just a specific task. No
            executor indicates that we list everything.
         """
-        self.db.list_tasks(executor)
+        return self.db.list_tasks(executor)
 
-    def get(self, taskid):
+    def get(self, taskid=None):
         """A wrapper to get a task id from the database. If an id is not provided,
            will return the last run task based on timestamp of file or database.
         """
         return self.db.get_task(taskid)
 
-    def clear(self, target):
+    def clear(self, target=None, noprompt=False):
         """clear takes a target, and that can be a taskid, executor, or none
            We ask the user for confirmation.
         """
         # Case 1: no target indicates clearing all
         if not target:
-            if confirm(f"This will delete all tasks, are you sure?"):
+            if noprompt or confirm(f"This will delete all tasks, are you sure?"):
                 self.db.clear()
 
         # Case 2, it's a specific taskid
         elif re.search(uuid_regex, target):
-            if confirm(f"This will delete task {target}, are you sure?"):
+            if noprompt or confirm(f"This will delete task {target}, are you sure?"):
                 self.db.delete_task(target)
 
         # Case 2: it's an executor
         elif target in list(self.db.iter_executors()):
-            if confirm(f"This will delete all executor {target} tasks, are you sure?"):
+            if noprompt or confirm(
+                f"This will delete all executor {target} tasks, are you sure?"
+            ):
                 self.db.delete_executor(target)
         else:
             sys.exit(f"Unrecognized target to clear {target}")
@@ -105,7 +107,7 @@ class Queue:
         """Given a command, get the executor for it (also creating an entry
            in the task database) and run the command.
         """
-        executor = get_executor()
+        executor = get_executor(command)
 
         # add executor unique id and command to the database, returns a task object
         task = self.db.add_task(executor)
@@ -114,8 +116,9 @@ class Queue:
         task.executor.execute(command)
         self.db.update_task(task.executor)
         bot.info(f"{task.summary()}")
+        return task
 
-    def rerun(self, taskid):
+    def rerun(self, taskid=None):
         """Given a command, get the executor for it (also creating an entry
            in the task database) and run the command.
         """
@@ -129,5 +132,6 @@ class Queue:
             task.executor.execute(command)
             self.db.update_task(task.executor)
             bot.info(f"{task.summary()}")
+            return task
         else:
             bot.warning(f"{task.executor.taskid} does not have an associated command.")

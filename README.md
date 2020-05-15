@@ -280,6 +280,13 @@ You can also rerun the last touched task without needing to specify the identifi
 $ qme rerun
 ```
 
+## Executors
+
+All executors should be derived from the [ExecutorBase](https://github.com/vsoch/qme/blob/master/qme/main/executor/base.py#L74) class that will ensure that each one exposes the needed functions.
+You should reference the class to see the functions that are required and
+conditions for each.
+
+
 ### Environment
 
  * Free software: MPL 2.0 License

@@ -97,6 +97,15 @@ class ExecutorBase:
         """
         return {"pwd": os.getcwd()}
 
+    def export(self):
+        """return data as json. This is intended to save to the task database.
+           Any important output, returncode, etc. from the execute() function
+           should be provided here. Required strings are "command" and suggested
+           are output, error, and returncode. self._export_common() should
+           be called first.
+        """
+        raise NotImplementedError
+
     def summary(self):
         return "[%s]" % self.name
 

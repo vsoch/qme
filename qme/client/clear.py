@@ -16,5 +16,5 @@ import os
 def main(args, extra):
 
     # Clear an executor, taskid, or target
-    queue = Queue()
-    queue.clear(args.target)
+    queue = Queue(config_dir=args.config_dir)
+    queue.clear(args.target, noprompt=args.force)

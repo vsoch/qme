@@ -37,7 +37,7 @@ class Config:
         # If the config file doesn't exist, generate it
         if not os.path.exists(self.configfile):
             default_config = os.path.join(here, "config.ini")
-            shutil.copyfile(default_config, configfile)
+            shutil.copyfile(default_config, self.configfile)
 
         # Load the config file if wanted
         if load and self.configfile:

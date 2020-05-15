@@ -27,6 +27,12 @@ def get_parser():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--config_dir",
+        dest="config_dir",
+        help="select database and configuration directory (defaults to $HOME/.qme).",
+    )
+
     description = "actions for qme"
     subparsers = parser.add_subparsers(
         help="qme actions", title="actions", description=description, dest="command",
@@ -52,6 +58,13 @@ def get_parser():
     # Clear an entire executor family, one task, or all tasks
     clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
     clear.add_argument("target", nargs="?")
+    clear.add_argument(
+        "--force",
+        dest="force",
+        help="Don't ask for confirmation for delete (for headless).",
+        default=False,
+        action="store_true",
+    )
 
     # Run a command (gets passed to executor via template)
     run = subparsers.add_parser("run", help="Run a command to add to the queue.")

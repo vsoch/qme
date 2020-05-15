@@ -56,14 +56,11 @@ class ShellExecutor(ExecutorBase):
             cmd = shlex.split(cmd)
         self.cmd = cmd
 
-    def rerun(self):
-        """rerun will reproduce the working directory, environment for the
-           task at hand and reissue the command.
-        """
-        self.reset()
-
     def execute(self, cmd):
-        """Execute a system command and return output and error.
+        """Execute a system command and return output and error. Execute
+           should take a cmd (a string or list) and execute it according to
+           the executor. Attributes should be set on the class that are
+           added to self.export
         """
         # Reset the output and error records
         self.reset()
@@ -106,7 +103,11 @@ class ShellExecutor(ExecutorBase):
         return (self.out, self.err)
 
     def export(self):
-        """return data as json. This is intended to save to the task database
+        """return data as json. This is intended to save to the task database.
+           Any important output, returncode, etc. from the execute() function
+           should be provided here. Required strings are "command" and suggested
+           are output, error, and returncode. self._export_common() should
+           be called first.
         """
         # Get common context (e.g., pwd)
         common = self._export_common()

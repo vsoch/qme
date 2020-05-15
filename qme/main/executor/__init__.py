@@ -12,13 +12,13 @@ from .shell import ShellExecutor
 import sys
 
 
-def get_executor(taskid=None):
+def get_executor(command=None):
     """get executor will return the correct executor depending on a command (or
        other string) matching a regular expression. Currently we just have a 
        ShellExecutor.
     """
     # TODO: each executor should have a regular expression to match command.
-    return ShellExecutor(taskid)
+    return ShellExecutor()
 
 
 def get_named_executor(name, taskid=None):

@@ -17,6 +17,6 @@ import sys
 def main(args, extra):
 
     # Create a queue object
-    queue = Queue()
+    queue = Queue(config_dir=args.config_dir)
     task = queue.get(args.taskid)
     print(json.dumps(task.load(), indent=4))

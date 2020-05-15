@@ -16,12 +16,12 @@ import os
 def run(args, extra):
 
     # Create a queue object, run the command to match to an executor
-    queue = Queue()
+    queue = Queue(config_dir=args.config_dir)
     queue.run(args.cmd)
 
 
 def rerun(args, extra):
 
     # Create a queue object, run the command to match to an executor
-    queue = Queue()
+    queue = Queue(config_dir=args.config_dir)
     queue.rerun(args.taskid)
