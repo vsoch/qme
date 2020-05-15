@@ -14,7 +14,6 @@ import json
 import os
 import pickle
 import tempfile
-import yaml
 
 
 def get_latest_modified(base, pattern="*.json"):
