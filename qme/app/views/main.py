@@ -15,26 +15,12 @@ from flask_socketio import emit
 from qme.app.server import app, socketio
 from qme.defaults import QME_SOCKET_UPDATE_SECONDS
 
-from random import random
 from time import sleep
 from threading import Thread, Event
 
-# random number Generator Thread
+# thread for updates
 thread = Thread()
 thread_stop_event = Event()
-
-
-def randomNumberGenerator():
-    """
-    Generate a random number every 1 second and emit to a socketio instance (broadcast)
-    Ideally to be run in a separate thread?
-    """
-    # infinite loop of magical random numbers
-    print("Making random numbers")
-    while not thread_stop_event.isSet():
-        number = round(random() * 10, 3)
-        socketio.emit("newnumber", {"number": number}, namespace="/test")
-        socketio.sleep(5)
 
 
 ## Main Index View
@@ -52,13 +38,20 @@ def index():
 def update_database():
     """A function to be run at some interval to update the qme database listing
     """
+
+    # TODO stopped here - need to expose listing of types, commands, actions with uid.
+    # then update the rows in the javascript to parse it. Then work on UI branding
+    # TODO: init (when we create config) should generate value for secret?
+    # TODO: add config command to refresh secret
     while not thread_stop_event.isSet():
 
         # The data sent to the table depends on the database
         if app.queue.database == "filesystem":
             app.logger.debug("Detected filesystem database")
-            rows = app.queue.list()
-            print(rows)
+
+            # Break into executor types and taskids
+            message = "use a relational or sqlite database to see more metadata."
+            rows = [(x[0].split("-")[0], x[0], message) for x in app.queue.list()]
             socketio.emit(
                 "FSdatabase",
                 {"rows": rows, "database": app.queue.database},

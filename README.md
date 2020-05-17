@@ -345,8 +345,12 @@ QueueMe!
  * Debugger PIN: 210-139-092
 ```
 
-By default, it will deploy the dashboard to [localhost:5000](http://localhost:5000)
-however you can customize the port with `--port`:
+By default, it will deploy the dashboard to [localhost:5000](http://localhost:5000).
+The prototype is shown below (hugely subject to change!)
+
+![docs/assets/img/prototype.png](docs/assets/img/prototype.png)
+
+You can customize the port with `--port`:
 
 ```bash
 $ qme start --port 8000

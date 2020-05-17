@@ -28,7 +28,7 @@
       <div class='panel panel-default'>
         <div class='table-responsive' id="app">
 
-  <h1>Queue<b>Me</b> 📄</h1>
+  <h1 style="margin-left:5px">Queue<b>Me</b> ⭐️</h1>
   <hr>
   
   <label>Rows per page</label>
@@ -45,16 +45,21 @@
         <th :class="{ sorted: sort === 'id' }" @click="sortBy('id')">
           Id
         </th>
+        <th :class="{ sorted: sort === 'executor' }" @click="sortBy('executor')" >
+          Executor
+        </th>
         <th :class="{ sorted: sort === 'name' }" @click="sortBy('name')">
-          Name</th>
+          Name
+        </th>
         <th :class="{ sorted: sort === 'command' }" @click="sortBy('command')" >
-          Surname
+          Command
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="row in sortedRows">
         <td>{% raw %}{{ row.id }}{% endraw %}</td>
+        <td>{% raw %}{{ row.executor }}{% endraw %}</td>
         <td>{% raw %}{{ row.name | capitalize }}{% endraw %}</td>
         <td>{% raw %}{{ row.command }}{% endraw %}</td>
         <td>
@@ -87,7 +92,6 @@
     <button type="submit" class="btn">Add row</button>
   </form>
 </div>
-
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
   <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>

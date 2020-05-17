@@ -142,8 +142,9 @@ const app = new Vue({
         $.each(msg.rows, function(i, row){
           self.rows.push({
             id:      i,
-            name:    row,
-            command: row
+            executor: row[0],
+            name:    row[1],
+            command: row[2],
           });
         })
       });
