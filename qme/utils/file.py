@@ -102,6 +102,18 @@ def get_userhome():
         return os.environ.get("HOME")
 
 
+def get_user():
+    """Get the name of the user. We first try to import pwd, but fallback to 
+       extraction from the environment.
+    """
+    try:
+        import pwd
+
+        return pwd.getpwuid(os.getuid())[0]
+    except:
+        return os.environ.get("USER")
+
+
 def mkdir_p(path):
     """mkdir_p attempts to get the same functionality as mkdir -p
 

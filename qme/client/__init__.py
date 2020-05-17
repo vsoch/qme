@@ -66,6 +66,12 @@ def get_parser():
         action="store_true",
     )
 
+    # List tasks and print to terminal
+    ls = subparsers.add_parser("ls", help="List tasks")
+    ls.add_argument(
+        "executor", help="list one or more executors or taskids.", nargs="*"
+    )
+
     # Run a command (gets passed to executor via template)
     run = subparsers.add_parser("run", help="Run a command to add to the queue.")
     run.add_argument("cmd", nargs="*")
@@ -74,10 +80,23 @@ def get_parser():
     rerun = subparsers.add_parser("rerun", help="Re-run a particular task.")
     rerun.add_argument("taskid", nargs="?")
 
-    # List tasks and print to terminal
-    ls = subparsers.add_parser("ls", help="List tasks")
-    ls.add_argument(
-        "executor", help="list one or more executors or taskids.", nargs="*"
+    # Start the queueMe dashboard
+    start = subparsers.add_parser(
+        "start", help="View the queue web interface (requires Flask)"
+    )
+    start.add_argument(
+        "--port",
+        dest="port",
+        default=5000,
+        type=int,
+        help="select port to run qme dashboard on (defaults to 5000)",
+    )
+    start.add_argument(
+        "--debug",
+        dest="debug",
+        help="run server in debug mode (defaults to False)",
+        default=False,
+        action="store_true",
     )
 
     # Print complete metadata for a specific task
@@ -127,6 +146,8 @@ def main():
         from .run import run as main
     if args.command == "rerun":
         from .run import rerun as main
+    if args.command == "start":
+        from .start import main
 
     # Pass on to the correct parser
     return_code = 0

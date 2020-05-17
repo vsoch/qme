@@ -57,6 +57,7 @@ class FileSystemDatabase(Database):
             if os.path.exists(executor_dir):
                 bot.info(f"Removing {executor_dir}")
                 shutil.rmtree(executor_dir)
+        return True
 
     # Add or Update requires executor
 
@@ -93,17 +94,21 @@ class FileSystemDatabase(Database):
         """
         task = self.get_task(taskid)
         if not task:
-            bot.exit(f"{taskid} does not exist in the database.")
+            bot.error(f"{taskid} does not exist in the database.")
+            return False
         os.remove(task.filename)
         bot.info(f"{taskid} has been removed.")
+        return True
 
     def delete_executor(self, name):
         """delete all tasks for an executor, based on executor's name (str).
         """
         executor_dir = os.path.join(self.data_base, name)
         if not os.path.exists(executor_dir):
-            bot.exit(f"Executor {executor} does not exist.")
+            bot.error(f"Executor {executor} does not exist.")
+            return False
         shutil.rmtree(executor_dir)
+        return True
 
     def iter_executors(self, fullpath=False):
         """list executors based on the subfolders in the base database folder.
@@ -174,10 +179,11 @@ class FileSystemTask:
         """create the filename if it doesn't exist, otherwise if it should (and
            does not) exit on error.
         """
-        if should_exist and not os.path.exists(self.filename):
-            bot.exit(
-                f"{self.executor.taskid} does not exist in the filesystem database"
-            )
+        if should_exist:
+            if not os.path.exists(self.filename):
+                bot.exit(
+                    f"{self.executor.taskid} does not exist in the filesystem database"
+                )
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
 

@@ -43,7 +43,7 @@ def test_executors_filesystem(tmp_path):
 
         # Task.export includes the executor specific data
         data = task.export()
-        for key in ["command", "pwd"]:
+        for key in ["command", "pwd", "user"]:
             assert key in data
 
 

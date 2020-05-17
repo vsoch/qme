@@ -1,7 +1,9 @@
 # QMe
 
 "Queue-me" is a jobs queue and dashboard generation tool that can be used
-to specify executors (entities that run jobs) and actions for them.
+to specify executors (entities that run jobs) and actions for them. You can
+use qme only on the command line, or if desired, via an interactive web dashboard.
+The dashboard (and it's dependencies) are not required for using the base library.
 
 [![PyPI version](https://badge.fury.io/py/qme.svg)](https://badge.fury.io/py/qme)
 
@@ -16,6 +18,30 @@ is developed, or @vsoch gets tired of writing things here!
 
 (template in docs)
 
+If you want to use a sqlite, mysql, or postgre database (and not the filesystem,
+recommended) then do:
+
+```bash
+pip install qme[database]
+pip install -e .[database]
+```
+
+
+If you want to install the web interface, you'll need flask and some extras.
+These can be installed with "app":
+
+```bash
+pip install qme[app]
+pip install -e .[app]
+```
+
+or just install all dependencies:
+
+```bash
+pip install qme[all]
+pip install -e .[all]
+```
+
 ## Configuration
 
 Configuration is optional, and will (if desired) allow you to define a custom
@@ -25,30 +51,30 @@ files stored here. For many settings, you can either set or update them via
 the command line client with `qme config`, or set environment variables 
 at runtime (or in your bash profile) for one off changes to default configurations.
 
-### Environment
+## Environment
 
 The following environment variables can be set to determine runtime behavior.
 
-#### QME_WORKERS
+### QME_WORKERS
 the number of multiprocessing workers to use (for executors that can use it). Set to be 2*2nproc + 1 if not set.
 
-#### QME_SHELL
+### QME_SHELL
 
 the default shell for an interactive manager (defaults to ipython, then checks python, and bpython)
 
-#### QME_DATABASE
+### QME_DATABASE
 
 the database to use. For example, you can specify just `filesystem` or `sqlite`, or `postgres` or `mysql`.
 For the last three, you can optionally specify `QME_DATABASE_STRING` to include a particular
 set of credentials needed for access. This will be saved in your `QME_HOME` secrets.
 
-#### QME_DATABASE_STRING
+### QME_DATABASE_STRING
 
 If you have a custom string for a database or file, you can specify it with `QME_DATABASE_STRING`.
 (todo add expfactory examples here)
 See [database setup](#database-setup) for more details.
 
-#### QME_HOME
+### QME_HOME
 
 The "home" directory for QueueMe is by default placed in your $HOME in a directory called .qme.
 Within that directory, you will see the following structure:
@@ -61,6 +87,12 @@ Within that directory, you will see the following structure:
 
 If you want to change this location, then you'll need to (more permanently) export
 `QME_HOME` in your bash profile, or perhaps in a container install.
+
+### QME_SOCKET_UPDATE_SECONDS
+
+If you are using the dashboard (which uses web sockets) this is the number of
+seconds to update it. This basically will update the dashboard table
+with the content of your Qme Database.
 
 ### Database Setup
 
@@ -108,22 +140,29 @@ we likely want to get a summary of it. We can do that with `qme get`, which
 expects a task id.
 
 ```bash
-$ qme get shell-452e61bd-ee9a-4a0c-8e85-f35f2b4b54a5
+$ qme get shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7
 DATABASE: filesystem
 {
     "executor": "shell",
-    "uid": "shell-452e61bd-ee9a-4a0c-8e85-f35f2b4b54a5",
+    "uid": "shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7",
     "data": {
+        "pwd": "/home/vanessa/Desktop/Code/qme/tests",
+        "user": "vanessa",
         "output": [
-            "config.py\n",
-            "get.py\n",
+            "helpers.sh\n",
             "__init__.py\n",
-            "listing.py\n",
             "__pycache__\n",
-            "run.py\n"
+            "test_client.sh\n",
+            "test_executor_shell.py\n",
+            "test_filesystem.py\n"
         ],
         "error": [],
-        "returncode": 0
+        "returncode": 0,
+        "command": [
+            "ls"
+        ],
+        "status": "complete",
+        "pid": 15183
     }
 }
 ```
@@ -282,10 +321,143 @@ $ qme rerun
 
 ## Executors
 
-All executors should be derived from the [ExecutorBase](https://github.com/vsoch/qme/blob/master/qme/main/executor/base.py#L74) class that will ensure that each one exposes the needed functions.
-You should reference the class to see the functions that are required and
-conditions for each.
+All executors should be derived from the [ExecutorBase](https://github.com/vsoch/qme/blob/master/qme/main/executor/base.py#L74) class that will ensure that each one exposes the needed functions. Each executor also has it's own view under [app/templates](qme/app/templates) that renders a page specific to it for the dashboard (under development).
+You should reference the class to see the functions that are required and conditions for each.
 
+### Metadata
+
+#### Base
+
+Each executor exposes the following metadata:
+
+ - **pwd**: the present working directory where the command was run
+ - **command**: the command that was run
+ - **user**: the user that ran the command
+ - **status**: the status of the operation. Since most basic commands save the first time upon completion, the status is usually complete, however this is subject to change. This must be one of "complete" "cancelled" or "running" or None.
+
+The only metadata shown on the table (front) page of the dashboard is these common attributes.
+For the filesystem database, since we'd need to read many separate files, we just show
+the executor type and unique id. The user must click on any particular execution to see
+the full details.
+
+#### Shell
+
+ - **output**: the output stream of running the command
+ - **error**: the error stream of running the command
+ - **returncode**: the returncode from running the command
+ - **pid**: the pid of the child process.
+
+
+## Dashboard
+
+The dashboard can be started with `qme start`
+
+```bash
+$ qme start
+DATABASE: filesystem
+Server initialized for gevent.
+QueueMe!
+```
+
+If you add `--debug` it will run in debug mode:
+
+```bash
+$ qme start --debug
+DATABASE: filesystem
+Server initialized for gevent.
+QueueMe!
+ * Restarting with stat
+DATABASE: filesystem
+Server initialized for gevent.
+QueueMe!
+ * Debugger is active!
+ * Debugger PIN: 210-139-092
+```
+
+By default, it will deploy the dashboard to [localhost:5000](http://localhost:5000).
+The prototype is shown below (hugely subject to change!)
+
+![docs/assets/img/dashboard/prototype.png](docs/assets/img/dashboard/prototype.png)
+
+You can customize the port with `--port`:
+
+```bash
+$ qme start --port 8000
+```
+
+For development, it is starting with `--debug` set to True. When qme is out of
+development, you will need to explicitly set this:
+
+```bash
+$ qme start --debug
+```
+
+When it starts, it will initialize the queue and database as it would do with
+any other command, so if you need to set this variable (and haven't done
+so in your global config) you should do that here:
+
+```bash
+$ qme start --config_dir /tmp/custom_home
+```
+
+The server can also be run by calling the start function directly, and providing
+a queue:
+
+```python
+from qme.app.server import start
+from qme.main import Queue
+
+queue = Queue(config_dir="/tmp/custom_home")
+start(debug=True, queue=queue, port=5000)
+```
+
+or you can use the Queue defaults (config directory in $HOME/.qme with your database
+specified in your `$HOME/.qme/config.ini` if you execute the script
+directly:
+
+```bash
+$ python qme/app/server.py
+```
+
+This would be equivalent to calling the start command with defaults.
+
+### Table
+
+The "home" table includes a list of tasks executed, and actions that are
+applicable to all of them. For example,  the actions in the right of the table include, 
+for each task, the ability to delete, re-run, or view. If you re-run or delete, you'll see a status
+notification in the top of the screen:
+
+![docs/assets/img/dashboard/status.png](docs/assets/img/dashboard/status.png)
+
+
+### Executors
+
+If you click on the "view" function, you can inspect a particular executor.
+Each executor type (e.g., shell) has a specific template that will render in
+the web interface. For example, the shell executor is optimized to show
+you a command executed front and center, basic metadata in a left column, and output and error (if present)
+in a right column.
+
+![docs/assets/img/executors/shell.png](docs/assets/img/executors/shell.png)
+
+To make it easy to search output, a search box at the top will highlight results
+in yellow that match the user search:
+
+![docs/assets/img/executors/shell-search.png](docs/assets/img/executors/shell-search.png)
+
+### Logging
+
+If you want to look at server logs for the dashboard, they will be printed
+by defualt to your Qme Home (`$HOME/.qme`) in a file called `dashboard.log`:
+
+```bash
+$ cat /home/vanessa/.qme/dashboard.log 
+Starting Thread
+2020-05-16 16:13:29,555 - qme.app.server - DEBUG - Client connected
+2020-05-16 16:13:29,555 - qme.app.server - DEBUG - Starting Thread
+2020-05-16 16:13:33,644 - qme.app.server - DEBUG - Client connected
+```
 
 ### Environment
 
@@ -293,10 +465,10 @@ conditions for each.
 
 ## TODO
 
+ - add time stamp to metadata
+ - filesystem task that exists should also be loaded
+ - init (when we create config) should generate value for secret?
+ - add config command to refresh secret
  - each executor should have unique id that is used for logger, database, etc.
  - design models for filesystem or relational database
- - create GitHub workflows for tests and black formatting.
- - init should create structures in home, akin to sregistry (but with config file?)
  - base should be able to use a user defined database for jobs (define on onset)
- - client should work like a wrapped (e.g., qme run `command`)
- - basic interface should be command line, extra interface should not be required.

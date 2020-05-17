@@ -1,0 +1,42 @@
+{% extends "home/index.html" %}
+{% block table %}
+  <table class="table table-sortable">
+    <thead>
+      <tr>
+        <th :class="{ sorted: sort === 'id' }" @click="sortBy('id')">
+          Id
+        </th>
+        <th :class="{ sorted: sort === 'executor' }" @click="sortBy('executor')" >
+          Executor
+        </th>
+        <th :class="{ sorted: sort === 'name' }" @click="sortBy('name')">
+          Name
+        </th>
+        <th :class="{ sorted: sort === 'command' }" @click="sortBy('command')" >
+          Command
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="row in sortedRows">
+        <td>{% raw %}{{ row.id }}{% endraw %}</td>
+        <td>{% raw %}{{ row.executor }}{% endraw %}</td>
+        <td>{% raw %}{{ row.name | capitalize }}{% endraw %}</td>
+        <td>{% raw %}{{ row.command }}{% endraw %}</td>
+        <td data-id="{% raw %}{{ row.id }}{% endraw %}">
+          <div class='btn-group btn-group-xs'>
+            <button v-on:click="viewRow" class="btn btn-default" title="View">
+              <span class="glyphicon glyphicon-eye-open"></span>
+            </button>
+            <button v-on:click="rerunRow" class="btn btn-default" title="Re-run">
+              <span class="glyphicon glyphicon-repeat"></span>
+            </button>
+            <button v-on:click="deleteRow" class="btn btn-default" title="Delete">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

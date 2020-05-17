@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from qme.utils.file import read_file
+from qme.utils.file import read_file, get_user
 
 import os
 import tempfile
@@ -92,16 +92,17 @@ class ExecutorBase:
         self.taskid = "%s-%s" % (self.name, uid)
 
     def _export_common(self):
-        """export common task variables such as present working directory.
+        """export common task variables such as present working directory, user,
            This might include envars at some point, but we'd need to be careful.
         """
-        return {"pwd": os.getcwd()}
+        return {"pwd": os.getcwd(), "user": get_user()}
 
     def export(self):
         """return data as json. This is intended to save to the task database.
            Any important output, returncode, etc. from the execute() function
-           should be provided here. Required strings are "command" and suggested
-           are output, error, and returncode. self._export_common() should
+           should be provided here. Required strings are "command" and "status"
+           that must be one of "running" or "complete" or "cancelled." Suggested
+           fields are output, error, and returncode. self._export_common() should
            be called first.
         """
         raise NotImplementedError

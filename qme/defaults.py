@@ -49,3 +49,6 @@ QME_HOME = os.path.join(USERHOME, ".qme")
 # Database folder for filesystem or sqlite database
 QME_DATABASE = os.path.join(QME_HOME, "database")
 QME_DATABASE_STRING = os.environ.get("QME_DATABASE")
+
+# Dashboard settings
+QME_SOCKET_UPDATE_SECONDS = int(getenv("QME_SOCKET_UPDATE_SECONDS", 5))
