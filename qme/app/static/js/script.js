@@ -149,20 +149,33 @@ const app = new Vue({
         })
       });
 
+      // Button events: delete, re-run
+      this.actionSocket = io.connect('http://' + document.domain + ':' + location.port + '/table/action');
+      this.actionSocket.on('deleterowcomplete', function(msg) {
+          if (msg.wasdeleted == true){
+            toastr.info(msg.taskid + ' has been deleted.').css("width","500px")
+          }
+      });
+      this.actionSocket.on('reruncomplete', function(msg) {
+          if (msg.wasrerun == true){
+            toastr.info(msg.taskid + ' has been submit to re-run.').css("width","600px");
+          } else {
+            toastr.error("There was a problem requesting re-run of " + msg.taskid).css("width","600px");
+          }
+      });
+
   },
   methods: {
-    addRow: function() {
-      let name    = this.newRow.name.trim().toLowerCase();
-      let surname = this.newRow.command.trim().toLowerCase();
-      if (name && surname) {  
-        this.rows.push({
-          id:      this.rows.length,
-          name:    name,
-          surname: surname
-        });
-        this.sortDir = 'desc'; this.sortBy('id'); // Default sorting
-      }
-      this.newRow.name = this.newRow.command = '';
+
+    // Main methods to delete an entry
+    deleteRow: function(event) {
+        var rowId = $(event.target).closest('tr').find('td:first').text()
+        this.actionSocket.emit('deleterow', {taskid : this.rows[rowId].name})
+    },
+
+    rerunRow: function(event) {
+        var rowId = $(event.target).closest('tr').find('td:first').text()
+        this.actionSocket.emit('rerunrow', {taskid : this.rows[rowId].name})
     },
     sortBy: function(s) {
       if (s === this.sort) {

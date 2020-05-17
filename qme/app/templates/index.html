@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>QueueMe Dashboard</title>
-  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
-  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
-  <link rel="stylesheet" href="static/css/style.css">
-  <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-
-</head>
-<body>
-
+{% extends "base.html" %}
+{% block title %}QueueMe Dashboard{% endblock %}
+{% block content %}
 <div class='container-fluid'>
   <div class='row'>
     <div class='col-sm-12'>
@@ -62,16 +51,16 @@
         <td>{% raw %}{{ row.executor }}{% endraw %}</td>
         <td>{% raw %}{{ row.name | capitalize }}{% endraw %}</td>
         <td>{% raw %}{{ row.command }}{% endraw %}</td>
-        <td>
+        <td data-id="{% raw %}{{ row.id }}{% endraw %}">
           <div class='btn-group btn-group-xs'>
-            <button class='btn btn-default'>
-              <span class='glyphicon glyphicon-eye-open'></span>
+            <button class="btn btn-default" title="View">
+              <span class="glyphicon glyphicon-eye-open"></span>
             </button>
-            <button class='btn btn-default'>
-              <span class='glyphicon glyphicon-pencil'></span>
+            <button class="btn btn-default" title="Re-run">
+              <span v-on:click="rerunRow" class="glyphicon glyphicon-repeat"></span>
             </button>
-            <button class='btn btn-default'>
-              <span class='glyphicon glyphicon-remove'></span>
+            <button v-on:click="deleteRow" class="btn btn-default" title="Delete">
+              <span class="glyphicon glyphicon-remove"></span>
             </button>
           </div>
         </td>
@@ -83,20 +72,6 @@
     <button class="btn btn-sm" :disabled="!hasPage(-1)" @click="prevPage">←</button> 
     <button class="btn btn-sm" :disabled="!hasPage(1)"  @click="nextPage">→</button>
   </div>
-  
   <hr>
-  <h2>New Row 😊</h2>
-  <form v-on:submit.prevent="addUser">
-    <input type="text" v-model="newRow.name" placeholder="Name" required>
-    <input type="text" v-model="newRow.command" placeholder="Command" required>
-    <button type="submit" class="btn">Add row</button>
-  </form>
 </div>
-
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js'></script>
-  <script src="static/js/script.js"></script>
-
-</body>
-</html>
+{% endblock %}

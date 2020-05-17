@@ -47,8 +47,6 @@ def update_database():
 
         # The data sent to the table depends on the database
         if app.queue.database == "filesystem":
-            app.logger.debug("Detected filesystem database")
-
             # Break into executor types and taskids
             message = "use a relational or sqlite database to see more metadata."
             rows = [(x[0].split("-")[0], x[0], message) for x in app.queue.list()]
@@ -58,6 +56,32 @@ def update_database():
                 namespace="/update",
             )
         socketio.sleep(QME_SOCKET_UPDATE_SECONDS)
+
+
+@socketio.on("deleterow", namespace="/table/action")
+def delete_row(json):
+    """a request to delete a particular row"""
+    app.logger.debug("Received deletion request for %s" % json.get("taskid"))
+    taskid = json.get("taskid", "doesnotexist")
+    was_deleted = app.queue.clear(target=taskid, noprompt=True)
+    socketio.emit(
+        "deleterowcomplete",
+        {"wasdeleted": was_deleted, "taskid": taskid},
+        namespace="/table/action",
+    )
+
+
+@socketio.on("rerunrow", namespace="/table/action")
+def rerun_row(json):
+    """a request to re-run a particular task"""
+    app.logger.debug("Received re-run request for %s" % json.get("taskid"))
+    taskid = json.get("taskid", "doesnotexist")
+    was_rerun = app.queue.rerun(taskid) is not None
+    socketio.emit(
+        "reruncomplete",
+        {"wasrerun": was_rerun, "taskid": taskid},
+        namespace="/table/action",
+    )
 
 
 @socketio.on("connect", namespace="/update")

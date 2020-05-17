@@ -87,19 +87,19 @@ class Queue:
         # Case 1: no target indicates clearing all
         if not target:
             if noprompt or confirm(f"This will delete all tasks, are you sure?"):
-                self.db.clear()
+                return self.db.clear()
 
         # Case 2, it's a specific taskid
         elif re.search(uuid_regex, target):
             if noprompt or confirm(f"This will delete task {target}, are you sure?"):
-                self.db.delete_task(target)
+                return self.db.delete_task(target)
 
         # Case 2: it's an executor
         elif target in list(self.db.iter_executors()):
             if noprompt or confirm(
                 f"This will delete all executor {target} tasks, are you sure?"
             ):
-                self.db.delete_executor(target)
+                return self.db.delete_executor(target)
         else:
             sys.exit(f"Unrecognized target to clear {target}")
 
@@ -120,7 +120,8 @@ class Queue:
 
     def rerun(self, taskid=None):
         """Given a command, get the executor for it (also creating an entry
-           in the task database) and run the command.
+           in the task database) and run the command. If the task is found and
+           rerun, it is returned. Otherwise None is returned.
         """
         task = self.db.get_task(taskid)
         params = task.load().get("data", {})

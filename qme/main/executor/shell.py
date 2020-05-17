@@ -41,7 +41,9 @@ class ShellExecutor(ExecutorBase):
         self.out = []
         self.err = []
         self.returncode = None
+        self.pid = None
         self.cmd = []
+        self.status = None
 
     @property
     def command(self):
@@ -75,6 +77,7 @@ class ShellExecutor(ExecutorBase):
 
         # remove the original executable
         args = self.cmd[1:]
+        self.status = "running"
 
         # Use updated command with executable and remainder (list)
         cmd = [executable] + args
@@ -87,6 +90,7 @@ class ShellExecutor(ExecutorBase):
                 stderr=capture.stderr,
                 universal_newlines=True,
             )
+            self.pid = process.pid
             returncode = process.poll()
 
             # Iterate through the output
@@ -100,13 +104,15 @@ class ShellExecutor(ExecutorBase):
         # Cleanup capture files and save final return code
         capture.cleanup()
         self.returncode = returncode
+        self.status = "complete"
         return (self.out, self.err)
 
     def export(self):
         """return data as json. This is intended to save to the task database.
            Any important output, returncode, etc. from the execute() function
-           should be provided here. Required strings are "command" and suggested
-           are output, error, and returncode. self._export_common() should
+           should be provided here. Required strings are "command" and "status"
+           that must be one of "running" or "complete" or "cancelled." Suggested
+           fields are output, error, and returncode. self._export_common() should
            be called first.
         """
         # Get common context (e.g., pwd)
@@ -117,6 +123,8 @@ class ShellExecutor(ExecutorBase):
                 "error": self.err,
                 "returncode": self.returncode,
                 "command": self.cmd,
+                "status": self.status,
+                "pid": self.pid,
             }
         )
         return common

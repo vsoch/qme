@@ -140,22 +140,29 @@ we likely want to get a summary of it. We can do that with `qme get`, which
 expects a task id.
 
 ```bash
-$ qme get shell-452e61bd-ee9a-4a0c-8e85-f35f2b4b54a5
+$ qme get shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7
 DATABASE: filesystem
 {
     "executor": "shell",
-    "uid": "shell-452e61bd-ee9a-4a0c-8e85-f35f2b4b54a5",
+    "uid": "shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7",
     "data": {
+        "pwd": "/home/vanessa/Desktop/Code/qme/tests",
+        "user": "vanessa",
         "output": [
-            "config.py\n",
-            "get.py\n",
+            "helpers.sh\n",
             "__init__.py\n",
-            "listing.py\n",
             "__pycache__\n",
-            "run.py\n"
+            "test_client.sh\n",
+            "test_executor_shell.py\n",
+            "test_filesystem.py\n"
         ],
         "error": [],
-        "returncode": 0
+        "returncode": 0,
+        "command": [
+            "ls"
+        ],
+        "status": "complete",
+        "pid": 15183
     }
 }
 ```
@@ -314,10 +321,32 @@ $ qme rerun
 
 ## Executors
 
-All executors should be derived from the [ExecutorBase](https://github.com/vsoch/qme/blob/master/qme/main/executor/base.py#L74) class that will ensure that each one exposes the needed functions. Each executor also has it's own view under [app/templates](qme/app/templates)
-that renders a page specific to it for the dashboard (under development).
-You should reference the class to see the functions that are required and
-conditions for each.
+All executors should be derived from the [ExecutorBase](https://github.com/vsoch/qme/blob/master/qme/main/executor/base.py#L74) class that will ensure that each one exposes the needed functions. Each executor also has it's own view under [app/templates](qme/app/templates) that renders a page specific to it for the dashboard (under development).
+You should reference the class to see the functions that are required and conditions for each.
+
+### Metadata
+
+#### Base
+
+Each executor exposes the following metadata:
+
+ - **pwd**: the present working directory where the command was run
+ - **command**: the command that was run
+ - **user**: the user that ran the command
+ - **status**: the status of the operation. Since most basic commands save the first time upon completion, the status is usually complete, however this is subject to change. This must be one of "complete" "cancelled" or "running" or None.
+
+The only metadata shown on the table (front) page of the dashboard is these common attributes.
+For the filesystem database, since we'd need to read many separate files, we just show
+the executor type and unique id. The user must click on any particular execution to see
+the full details.
+
+#### Shell
+
+ - **output**: the output stream of running the command
+ - **error**: the error stream of running the command
+ - **returncode**: the returncode from running the command
+ - **pid**: the pid of the child process.
+
 
 ## Dashboard
 
