@@ -1,3 +1,17 @@
+/* Colors for badges */
+
+.badge-red {
+  background-color: #d54625;
+}
+
+.badge-green {
+  background-color: #35bd4a;
+}
+
+.badge-blue {
+  background-color: #357ebd;
+}
+
 .table-sortable > thead > tr > th {
   cursor: pointer;
 }

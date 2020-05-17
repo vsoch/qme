@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}QueueMe Dashboard{% endblock %}
+{% block head %}
+{{ super() }}
+<style>
+.search-found {
+  background-color: yellow;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class='container-fluid'>
+  <div class='row'>
+    <div class='col-sm-12'>
+      <br>
+      <div class="form-horizontal">
+        <div class="form-group has-feedback">
+          <div class='col-sm-12'>
+            <input class='form-control table-sortable-search' placeholder="Press Enter to Search..." type='search'>
+            <span class='glyphicon glyphicon-remove form-control-feedback search-cancel-button'></span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class='panel panel-default'>
+        <div class='table-responsive' id="app">
+          <h2 style="margin-left:5px">> {{ task.data.command|join(' ') }}</h2>
+          <hr> 
+          <div class="row">
+            <div class="col-md-3">
+              <div class="panel panel-default panel-with-sidebar">
+                <section>
+                  <div class="panel-heading"><span class="badge badge-blue">Data</span></div>
+                  <div class="panel-body">
+			  <table class="table table-sortable">
+			    <thead>
+			      <tr>
+				<th>Key</th>
+				<th>Value</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr>
+				<td>Executor</td>
+				<td>{{ task.executor }}</td>
+			      </tr>
+			      <tr>
+				<td>Return Code</td>
+				<td>{{ task.data.returncode }}</td>
+			      </tr>
+			      <tr>
+				<td>Status</td>
+				<td>{{ task.data.status }}</td>
+			      </tr>
+			      <tr>
+				<td>User</td>
+				<td>{{ task.data.user }}</td>
+			      </tr>
+			      <tr>
+				<td>Taskid</td>
+				<td>{{ task.uid }}</td>
+			      </tr>
+			      <tr>
+				<td>Executied directory</td>
+				<td>{{ task.data.pwd }}</td>
+			      </tr>
+			      <tr>
+				<td>Process id (pid)</td>
+				<td>{{ task.data.pid }}</td>
+			      </tr>
+			    </tbody>
+			  </table>
+                  </div>
+                </section>
+              </div>
+            </div>
+            <div class="col-md-9">
+            <div class="panel panel-default panel-with-sidebar">
+              <section>
+                <div class="panel-heading"><span class="badge badge-green">Output</span></div>
+                  <div style="display: none" id="hidden-output">{{ task.data.output|join('<br>')|safe }}</div>
+                  <div class="panel-body" id="output">{{ task.data.output|join('<br>')|safe }}
+                 </div>{% if task.data.error %}
+                <div class="panel-heading"><span class="badge badge-red">Error</span></div>
+                  <div class="panel-body" id="error">{{ task.data.error|join('<br>')|safe }}
+                 </div>{% endif %}
+              </section>
+            </div>
+            </div>
+	</div>
+
+  <div class="controls">
+    <span style="float:right; margin-right:30px" class="badge badge-primary">database: {{ database }}</span>
+  </div>
+  <hr>
+</div>
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<script>
+
+$(document).on('keypress',function(e) {
+});
+
+$('input[type="search"]').on('keypress',function(e) {
+  // Do search on pressing enter
+  if(e.which == 13) {
+    var t = $(this);
+    var value = t.val();
+    var content = $("#hidden-output").html();
+    content = content.replace(value, '<span style="background-color:yellow">' + value + '</span>');
+    $("#output").html(content);
+  }  
+});
+
+$('input[type="search"] + .search-cancel-button').hide($(this).prev('input').val()).click(function () {
+  $(this).prev('input').val('').focus();
+  $(this).hide();
+});
+
+</script>
+{% endblock %}

@@ -28,8 +28,13 @@ thread_stop_event = Event()
 
 @app.route("/")
 def index():
-    # only by sending this page first will the client be connected to the socketio instance
-    return render_template("index.html")
+
+    # Return view based on database type
+    if app.queue.database == "filesystem":
+        return render_template(
+            "home/filesystem-index.html", database=app.queue.database
+        )
+    return render_template("home/relational-index.html", database=app.queue.database)
 
 
 ## Updating database rows
@@ -38,11 +43,6 @@ def index():
 def update_database():
     """A function to be run at some interval to update the qme database listing
     """
-
-    # TODO stopped here - need to expose listing of types, commands, actions with uid.
-    # then update the rows in the javascript to parse it. Then work on UI branding
-    # TODO: init (when we create config) should generate value for secret?
-    # TODO: add config command to refresh secret
     while not thread_stop_event.isSet():
 
         # The data sent to the table depends on the database
@@ -73,7 +73,8 @@ def delete_row(json):
 
 @socketio.on("rerunrow", namespace="/table/action")
 def rerun_row(json):
-    """a request to re-run a particular task"""
+    """a request to re-run a particular task.
+    """
     app.logger.debug("Received re-run request for %s" % json.get("taskid"))
     taskid = json.get("taskid", "doesnotexist")
     was_rerun = app.queue.rerun(taskid) is not None

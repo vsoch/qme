@@ -19,9 +19,11 @@ function preg_quote( str ) {
   return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
 }
 
-function highlight( data, search ){
+function highlight(data, search){
   return data.replace(new RegExp( "(" + preg_quote( search ) + ")" , 'gi' ), "<mark>$1</mark>" );
 }
+
+// Table
     
 function Table($table,$input){
 
@@ -33,7 +35,7 @@ function Table($table,$input){
         if ($(this).find("span.fa").attr("class")=="fa"||$(this).find("span.fa").attr("class")=="fa fa-caret-up fa-fw"){
             $table.find("th[data-sorting!=disabled] span.fa").attr("class","fa");
             $(this).find("span.fa").attr("class","fa fa-caret-down fa-fw");
-        asc=true;
+            asc=true;
         }
         else if ($(this).find("span.fa").attr("class")=="fa fa-caret-down fa-fw"){
             $table.find("th[data-sorting!=disabled] span.fa").attr("class","fa");
@@ -97,8 +99,6 @@ function Table($table,$input){
     });
     
 }
-
-// Table
 
 $(function(){
     Table($(".table-sortable"),$(".table-sortable-search"));
@@ -167,16 +167,24 @@ const app = new Vue({
   },
   methods: {
 
-    // Main methods to delete an entry
+    // Main methods to delete, re-run, view an entry
     deleteRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
         this.actionSocket.emit('deleterow', {taskid : this.rows[rowId].name})
+    },
+
+    viewRow: function(event) {
+        var rowId = $(event.target).closest('tr').find('td:first').text()
+        var taskid = this.rows[rowId].name
+        document.location = "/executor/" + taskid
     },
 
     rerunRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
         this.actionSocket.emit('rerunrow', {taskid : this.rows[rowId].name})
     },
+
+
     sortBy: function(s) {
       if (s === this.sort) {
         this.sortDir = (this.sortDir === 'asc') ? 'desc' : 'asc';

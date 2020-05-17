@@ -179,10 +179,11 @@ class FileSystemTask:
         """create the filename if it doesn't exist, otherwise if it should (and
            does not) exit on error.
         """
-        if should_exist and not os.path.exists(self.filename):
-            bot.exit(
-                f"{self.executor.taskid} does not exist in the filesystem database"
-            )
+        if should_exist:
+            if not os.path.exists(self.filename):
+                bot.exit(
+                    f"{self.executor.taskid} does not exist in the filesystem database"
+                )
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
 

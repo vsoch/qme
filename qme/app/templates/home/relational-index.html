@@ -1,33 +1,5 @@
-{% extends "base.html" %}
-{% block title %}QueueMe Dashboard{% endblock %}
-{% block content %}
-<div class='container-fluid'>
-  <div class='row'>
-    <div class='col-sm-12'>
-      <br>
-      <div class='form-horizontal'>
-        <div class='form-group has-feedback'>
-          <div class='col-sm-12'>
-            <input class='form-control table-sortable-search' placeholder='Search...' type='search'>
-            <span class='glyphicon glyphicon-remove form-control-feedback search-cancel-button'></span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class='panel panel-default'>
-        <div class='table-responsive' id="app">
-
-  <h1 style="margin-left:5px">Queue<b>Me</b> ⭐️</h1>
-  <hr>
-  
-  <label>Rows per page</label>
-  <select v-model="pageSizeModel">
-    <option value="3">3</option>
-    <option value="5">5</option>
-    <option value="10">10</option>
-    <option value="25">25</option>
-  </select>
-  
+{% extends "home/index.html" %}
+{% block table %}
   <table class='table table-sortable'>
     <thead>
       <tr>
@@ -67,11 +39,4 @@
       </tr>
     </tbody>
   </table>
-
-  <div class="controls">
-    <button class="btn btn-sm" :disabled="!hasPage(-1)" @click="prevPage">←</button> 
-    <button class="btn btn-sm" :disabled="!hasPage(1)"  @click="nextPage">→</button>
-  </div>
-  <hr>
-</div>
 {% endblock %}

@@ -21,18 +21,14 @@ class QueueMeServer(Flask):
         super(QueueMeServer, self).__init__(*args, **kwargs)
 
 
-# TODO add functions to interact with queue here.
-
 app = QueueMeServer(__name__)
 app.config.from_object("qme.app.config")
 
 # turn the flask app into a socketio app
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 
-# TODO import views and api here
+# TODO import api here
 from qme.app.views import *
-
-# import .api
 
 
 def start(port=5000, debug=True, queue=None):

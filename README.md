@@ -377,12 +377,19 @@ QueueMe!
 By default, it will deploy the dashboard to [localhost:5000](http://localhost:5000).
 The prototype is shown below (hugely subject to change!)
 
-![docs/assets/img/prototype.png](docs/assets/img/prototype.png)
+![docs/assets/img/dashboard/prototype.png](docs/assets/img/dashboard/prototype.png)
 
 You can customize the port with `--port`:
 
 ```bash
 $ qme start --port 8000
+```
+
+For development, it is starting with `--debug` set to True. When qme is out of
+development, you will need to explicitly set this:
+
+```bash
+$ qme start --debug
 ```
 
 When it starts, it will initialize the queue and database as it would do with
@@ -414,9 +421,30 @@ $ python qme/app/server.py
 
 This would be equivalent to calling the start command with defaults.
 
-The interface is **under development** - there is currently a main table
-page with commands run, and each will reveal it's type that can be clicked
-on to see an executor-specific page.
+### Table
+
+The "home" table includes a list of tasks executed, and actions that are
+applicable to all of them. For example,  the actions in the right of the table include, 
+for each task, the ability to delete, re-run, or view. If you re-run or delete, you'll see a status
+notification in the top of the screen:
+
+![docs/assets/img/dashboard/status.png](docs/assets/img/dashboard/status.png)
+
+
+### Executors
+
+If you click on the "view" function, you can inspect a particular executor.
+Each executor type (e.g., shell) has a specific template that will render in
+the web interface. For example, the shell executor is optimized to show
+you a command executed front and center, basic metadata in a left column, and output and error (if present)
+in a right column.
+
+![docs/assets/img/executors/shell.png](docs/assets/img/executors/shell.png)
+
+To make it easy to search output, a search box at the top will highlight results
+in yellow that match the user search:
+
+![docs/assets/img/executors/shell-search.png](docs/assets/img/executors/shell-search.png)
 
 ### Logging
 
@@ -437,6 +465,10 @@ Starting Thread
 
 ## TODO
 
+ - add time stamp to metadata
+ - filesystem task that exists should also be loaded
+ - init (when we create config) should generate value for secret?
+ - add config command to refresh secret
  - each executor should have unique id that is used for logger, database, etc.
  - design models for filesystem or relational database
  - base should be able to use a user defined database for jobs (define on onset)
