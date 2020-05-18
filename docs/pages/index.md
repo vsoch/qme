@@ -25,6 +25,24 @@ you can then get the task via the command line:
 
 ```bash
 $ qme get
+```
+
+or list all tasks for a particular executor (e.g., shell):
+
+```bash
+$ qme ls shell
+```
+
+or just list all tasks
+
+```bash
+$ qme ls
+```
+
+and then get a specific task id (output shown this time):
+
+```bash
+$ qme get shell-a561702d-404e-4fb2-be27-57496b32ac46
 DATABASE: filesystem
 {
     "executor": "shell",
@@ -44,24 +62,6 @@ DATABASE: filesystem
         "pid": 3110
     }
 }
-```
-
-or list all tasks for a particular executor (e.g., shell):
-
-```bash
-$ qme ls shell
-```
-
-or just list all tasks
-
-```bash
-$ qme ls
-```
-
-and then get a specific task id:
-
-```bash
-$ qme get shell-a561702d-404e-4fb2-be27-57496b32ac46
 ```
 
 You can also clear:
