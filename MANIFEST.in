@@ -4,4 +4,5 @@ recursive-include qme *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 recursive-exclude * IGNORE *
+recursive-include qme/app *.html *.css *.png *.js
 #recursive-include docs *.rst conf.py *.jpg *.png *.gif

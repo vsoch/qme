@@ -62,7 +62,15 @@ class ShellExecutor(ExecutorBase):
         """Execute a system command and return output and error. Execute
            should take a cmd (a string or list) and execute it according to
            the executor. Attributes should be set on the class that are
-           added to self.export
+           added to self.export. Since the functions here are likely needed
+           by most executors, we create a self._execute() class that is called
+           instead, and can be used by the other executors.
+        """
+        return self._execute(cmd)
+
+    def _execute(self, cmd):
+        """The actual class to do the execution - can be used if ShellExecutor
+           is used as a super and the class using it defines a custom execute
         """
         # Reset the output and error records
         self.reset()

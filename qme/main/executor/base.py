@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from qme.utils.file import read_file, get_user
 
+from datetime import datetime
 import os
 import tempfile
 import uuid
@@ -93,9 +94,14 @@ class ExecutorBase:
 
     def _export_common(self):
         """export common task variables such as present working directory, user,
-           This might include envars at some point, but we'd need to be careful.
+           and timestamp for when it was run. This might include envars at some
+           point, but we'd need to be careful.
         """
-        return {"pwd": os.getcwd(), "user": get_user()}
+        return {
+            "pwd": os.getcwd(),
+            "user": get_user(),
+            "timestamp": str(datetime.now()),
+        }
 
     def export(self):
         """return data as json. This is intended to save to the task database.

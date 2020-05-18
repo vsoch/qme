@@ -17,6 +17,10 @@ def run(args, extra):
 
     # Create a queue object, run the command to match to an executor
     queue = Queue(config_dir=args.config_dir)
+
+    # Don't allow an empty command!
+    if not args.cmd:
+        sys.exit("Please provide a command for QueueMe to execute.")
     queue.run(args.cmd)
 
 

@@ -31,11 +31,8 @@ For current documentation, see [https://vsoch.github.io/qme](https://vsoch.githu
 
 ## TODO
 
- - add confirm prompt to delete task in interface
- - add time stamp to metadata
  - filesystem task that exists should also be loaded
  - init (when we create config) should generate value for secret?
  - add config command to refresh secret
- - each executor should have unique id that is used for logger, database, etc.
+ - add executor-specific logging? 
  - design models for filesystem or relational database
- - base should be able to use a user defined database for jobs (define on onset)

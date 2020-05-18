@@ -170,7 +170,9 @@ const app = new Vue({
     // Main methods to delete, re-run, view an entry
     deleteRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
-        this.actionSocket.emit('deleterow', {taskid : this.rows[rowId].name})
+        if (confirm("Are you sure you want to delete this task? This cannot be undone.")) {
+            this.actionSocket.emit('deleterow', {taskid : this.rows[rowId].name})
+        }
     },
 
     viewRow: function(event) {
