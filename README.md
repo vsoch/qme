@@ -1,13 +1,13 @@
 # QMe
 
+[![PyPI version](https://badge.fury.io/py/qme.svg)](https://badge.fury.io/py/qme)
+
 ![docs/assets/img/logo/logo-small.png](docs/assets/img/logo/logo-small.png)
 
 "Queue-me" is a jobs queue and dashboard generation tool that can be used
 to specify executors (entities that run jobs) and actions for them. You can
 use qme only on the command line, or if desired, via an interactive web dashboard.
 The dashboard (and it's dependencies) are not required for using the base library.
-
-[![PyPI version](https://badge.fury.io/py/qme.svg)](https://badge.fury.io/py/qme)
 
 You can run a task on the command line with `qme run` and then execute other `qme`
 commands to manage or inspect it, or start a web interface that will update
