@@ -11,12 +11,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 import os
 import sys
 
-# Common shared functions
-# generate_taskid
-# list_tasks
-# generate_task
-# save_task
-
 
 class Database:
     """A qme database holds common functions to represent tasks, and results.
@@ -26,16 +20,14 @@ class Database:
        connection or creation of folders is possible.
     """
 
-    def generate_taskid(self, token=None):
-        """assumes a flat (file system) database, organized by experiment id, and
-           subject id, with data (json) organized by subject identifier
+    database = "notimplemented"
+
+    def clear(self):
+        """clear (delete) all tasks.
         """
-        print("generate_taskid")
+        raise NotImplementedError
 
-        # Headless doesn't use any folder_id, just generated token folder
-        return "%s/%s" % (self.study_id, token)
-
-    def list_tasks(self, executor=None):
+    def list_tasks(self, name=None):
         """list tasks associated with an executor, or all tasks.
 
            Arguments:
@@ -43,19 +35,36 @@ class Database:
         """
         raise NotImplementedError
 
-    def generate_task(self, taskid=None):
-        """generate a new task.
-
-           Arguments:
-            - taskid (str) : the identifier for the task
+    def add_task(self, executor):
+        """Create a filesystem task based on an executor type. The executor controls
+           what data is exported and the uid, the task object just handles saving it.
         """
         raise NotImplementedError
 
-    def save_task(self, taskid, content):
-        """save task will take the current taskid and save it to the database.
+    def update_task(self, executor, updates=None):
+        """update a task with a json dictionary.
+        """
+        raise NotImplementedError
 
-           Arguments:
-            - taskid (str) : the identifier for the task
-            - content (dict) : dictionary of content expected for the task
+    def get_task(self, taskid=None):
+        """Get a task based on a taskid. Exits on error if doesn't exist. If
+           a task id is not provided, get the last run task.
+        """
+        raise NotImplementedError
+
+    def delete_task(self, taskid):
+        """delete a task based on a specific task id. All task ids must be
+           in the format of <taskid>-<uid> without extra dashes so we can
+           reliably split based on the first dash.
+        """
+        raise NotImplementedError
+
+    def delete_executor(self, name):
+        """delete all tasks for an executor, based on executor's name (str).
+        """
+        raise NotImplementedError
+
+    def iter_executors(self, fullpath=False):
+        """list executors based on the subfolders in the base database folder.
         """
         raise NotImplementedError

@@ -62,7 +62,8 @@ DATABASE: filesystem
         ],
         "status": "complete",
         "pid": 15183
-    }
+    },
+    "command": "ls"
 }
 ```
 
@@ -116,9 +117,17 @@ DATABASE: filesystem
 11 shell-ad239488-2a27-47b9-8225-da227625e913
 ```
 
+If you use a more robust relational database (so we wouldn't need to load
+many json files to list) you can get the commands along with the executor
+and id:
 
-This library is heavily under development, not all code is in verison control,
-and nowhere near ready for use!
+```bash
+$ qme ls
+Database: sqlite
+1  shell-04b40eac-03bc-4074-9e8e-f2d3eb3806f5	ls
+2  shell-2c789017-5828-44ca-a49d-c5912800c044	ls
+3  shell-c51898a8-884b-445c-86d5-e3811605584b	whoami
+```
 
 <a id="clear">
 ## Clear
@@ -211,7 +220,8 @@ DATABASE: filesystem
         ],
         "error": [],
         "returncode": 0
-    }
+    },
+    "command": "ls"
 }
 ```
 

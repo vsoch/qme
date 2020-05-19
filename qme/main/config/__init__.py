@@ -19,7 +19,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 
 
 class Config:
-    def __init__(self, config_dir, load=True):
+    def __init__(self, config_dir=None, load=True):
         """Make sure the config file exists, along with the QueueMe Home. 
            If it doesn't exist, create it. Return the full path to the config
            file to store with the Queue and load the config.
@@ -59,8 +59,13 @@ class Config:
 
         # If save is true (to persist settings)
         if save:
-            with open(self.configfile, "w") as configfile:
-                self.config.write(configfile)
+            self.save()
+
+    def save(self):
+        """save configuration back to it's original file
+        """
+        with open(self.configfile, "w") as configfile:
+            self.config.write(configfile)
 
     def read(self, configfile=None):
         """read in configuration file. By default use self.configfile.

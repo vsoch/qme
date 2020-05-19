@@ -136,8 +136,21 @@ const app = new Vue({
         console.log('Websocket connected!');
       });
 
-      // receive new rows from the server, update table
+      // receive new rows from the server, filesystem database
       this.socket.on('FSdatabase', function(msg) {
+        self.rows = []
+        $.each(msg.rows, function(i, row){
+          self.rows.push({
+            id:      i,
+            executor: row[0],
+            name:    row[1],
+            command: row[2],
+          });
+        })
+      });
+
+      // receive new rows for relational database
+      this.socket.on('RELdatabase', function(msg) {
         self.rows = []
         $.each(msg.rows, function(i, row){
           self.rows.push({

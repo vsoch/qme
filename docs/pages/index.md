@@ -3,7 +3,7 @@ title: Queue Me
 permalink: /
 ---
 
-> What is QMe (Queue Me)?
+> What is QueueMe (qme)?
 
 QueueMe (on the command line, qme) is a jobs queue and dashboard generation tool that can be used
 to specify executors (entities that run jobs) and actions for them. You can
@@ -60,7 +60,8 @@ DATABASE: filesystem
         ],
         "status": "complete",
         "pid": 3110
-    }
+    },
+    "command": "ls"
 }
 ```
 

@@ -33,7 +33,7 @@ class FileSystemDatabase(Database):
 
     database = "filesystem"
 
-    def __init__(self, config_dir):
+    def __init__(self, config_dir, **kwargs):
         """init for the filesystem ensures that the base folder (named 
            according to the studyid) exists.
         """
@@ -71,7 +71,7 @@ class FileSystemDatabase(Database):
         """update a task with a json dictionary.
         """
         task = FileSystemTask(executor, exists=True, data_base=self.data_base)
-        task.update({"data": executor.export()})
+        task.update({"data": executor.export(), "command": executor.command})
 
     # Get, delete, etc. only require taskid
 
@@ -139,7 +139,7 @@ class FileSystemTask:
     """A Filesystem Task can take a task id, determine if the task exists,
        and then interact with the data. If the task is instantiated without
        a taskid it is assumed to not exist yet, otherwise it must already
-       exist
+       exist.
     """
 
     def __init__(self, executor, data_base, exists=False):
@@ -193,6 +193,7 @@ class FileSystemTask:
                 {
                     "executor": self.executor.name,
                     "uid": self.executor.taskid,
+                    "command": self.executor.command,
                     "data": self.executor.export(),
                 }
             )

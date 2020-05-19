@@ -15,15 +15,37 @@ the default shell for an interactive manager (defaults to ipython, then checks p
 
 ### QME_DATABASE
 
-the database to use. For example, you can specify just `filesystem` or `sqlite`, or `postgres` or `mysql`.
-For the last three, you can optionally specify `QME_DATABASE_STRING` to include a particular
-set of credentials needed for access. This will be saved in your `QME_HOME` secrets.
+the database to use. For example, you can specify just `filesystem` or `sqlite`, or `postgresql` or `mysql+pymysql` 
+for mysql. For the last three, you can optionally specify `QME_DATABASE_STRING` to include a particular
+set of credentials needed for access, and this is recommended over providing the values into the config,
+which would save credentials in your `QME_HOME` secrets (not recommended). To export a particular
+database type, here are examples:
+
+```bash
+export QME_DATABASE=mysql+pymysql
+export QME_DATABASE=postgresql
+export QME_DATABASE=filesystem
+export QME_DATABASE=sqlite
+```
+
+For more permanent settings, you should use the [configure client](../configure/) instead.
 
 ### QME_DATABASE_STRING
 
 If you have a custom string for a database or file, you can specify it with `QME_DATABASE_STRING`.
-(todo add expfactory examples here)
-See [database setup](#database-setup) for more details.
+For example, sqlite might look like this:
+
+```bash
+export QME_DATABASE_STRING=mydatabase.db
+```
+and would create `mydatabase.db` in your `QME_HOME`. For a relational database with
+username, password, and tables, you would export a full string:
+
+```bash
+export QME_DATABASE_STRING=username:password@host/dbname
+```
+
+See [database setup](../configure/index.html#databases) for more details.
 
 ### QME_HOME
 
