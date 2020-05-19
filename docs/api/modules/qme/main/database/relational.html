@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>qme.main.database.relational &mdash; QueueMe (qme) Python 11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../assets/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../assets/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../assets/jquery.js"></script>
+        <script type="text/javascript" src="../../../../assets/underscore.js"></script>
+        <script type="text/javascript" src="../../../../assets/doctools.js"></script>
+        <script type="text/javascript" src="../../../../assets/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../assets/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../assets/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../assets/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> QueueMe (qme) Python
+          
+
+          
+            
+            <img src="../../../../assets/logo-light-transparent-small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/qme.html">qme package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">CHANGELOG</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">QueueMe (qme) Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../main.html">qme.main</a> &raquo;</li>
+        
+          <li><a href="../database.html">qme.main.database</a> &raquo;</li>
+        
+      <li>qme.main.database.relational</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for qme.main.database.relational</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Copyright (C) 2020 Vanessa Sochat.</span>
+
+<span class="sd">This Source Code Form is subject to the terms of the</span>
+<span class="sd">Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed</span>
+<span class="sd">with this file, You can obtain one at http://mozilla.org/MPL/2.0/.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">qme.main.database.base</span> <span class="k">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">qme.main.executor</span> <span class="k">import</span> <span class="n">get_named_executor</span>
+<span class="kn">from</span> <span class="nn">qme.logger</span> <span class="k">import</span> <span class="n">bot</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">desc</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">scoped_session</span><span class="p">,</span> <span class="n">sessionmaker</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<div class="viewcode-block" id="RelationalDatabase"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase">[docs]</a><span class="k">class</span> <span class="nc">RelationalDatabase</span><span class="p">(</span><span class="n">Database</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A RelationalDatabase is a more robust relational datbase (to sqlite).</span>
+<span class="sd">       Since the global database property can be any of postgresql, mysql+pysq;,</span>
+<span class="sd">       it is defined on init. The sqlite database also uses this class, but defines</span>
+<span class="sd">       a custom init function to handle the $HOME/.qme/qme.db file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;init for the filesystem ensures that the base folder (named </span>
+<span class="sd">           according to the studyid) exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database&quot;</span><span class="p">)</span>
+        <span class="n">database_string</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database_string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">database_string</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
+                <span class="s2">&quot;A database url must be defined to use a relational database. Set with qme config --database&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># The database url includes the type and string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">database_string</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_database</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RelationalDatabase.create_database"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create the databsae based on the string, whether it&#39;s relational or</span>
+<span class="sd">           sqlite. self.db must be defined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Base</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">scoped_session</span><span class="p">(</span>
+            <span class="n">sessionmaker</span><span class="p">(</span><span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">autoflush</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">Base</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query_property</span><span class="p">()</span>
+        <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">Base</span></div>
+
+    <span class="c1"># Global</span>
+
+<div class="viewcode-block" id="RelationalDatabase.clear"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;clear (delete) all tasks. This could be improved to cascade instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskData</span>
+
+        <span class="n">TaskData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="c1"># Add or Update requires executor</span>
+
+<div class="viewcode-block" id="RelationalDatabase.add_task"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.add_task">[docs]</a>    <span class="k">def</span> <span class="nf">add_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new task based on an executor type. The executor controls</span>
+<span class="sd">           what data is exported and the uid, the task object just handles saving it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span>
+
+        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">taskid</span><span class="o">=</span><span class="n">executor</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span> <span class="n">executor</span><span class="o">=</span><span class="n">executor</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">executor</span>
+        <span class="k">return</span> <span class="n">task</span></div>
+
+<div class="viewcode-block" id="RelationalDatabase.update_task"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.update_task">[docs]</a>    <span class="k">def</span> <span class="nf">update_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">updates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;update a task with a json dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskData</span>
+
+        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">taskid</span> <span class="o">==</span> <span class="n">executor</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="n">updates</span> <span class="ow">or</span> <span class="n">executor</span><span class="o">.</span><span class="n">export</span><span class="p">()</span>
+
+        <span class="c1"># If we find a matching task</span>
+        <span class="k">if</span> <span class="n">task</span><span class="p">:</span>
+
+            <span class="c1"># If a command is defined</span>
+            <span class="k">if</span> <span class="n">executor</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
+                <span class="n">task</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">command</span>
+
+            <span class="c1"># Look for previous data</span>
+            <span class="n">taskdata</span> <span class="o">=</span> <span class="n">TaskData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">taskid</span> <span class="o">==</span> <span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">taskdata</span><span class="p">:</span>
+                <span class="n">taskdata</span> <span class="o">=</span> <span class="n">TaskData</span><span class="p">(</span><span class="n">taskid</span><span class="o">=</span><span class="n">executor</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span>
+
+            <span class="c1"># Load the previous data to update</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">taskdata</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">taskdata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span>
+
+            <span class="n">taskdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">taskdata</span><span class="p">)</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">taskdata</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">task</span></div>
+
+    <span class="c1"># Get, delete, etc. only require taskid</span>
+
+<div class="viewcode-block" id="RelationalDatabase.get_task"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.get_task">[docs]</a>    <span class="k">def</span> <span class="nf">get_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a task based on a taskid. Exits on error if doesn&#39;t exist. If</span>
+<span class="sd">           a task id is not provided, get the last run task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span>
+
+        <span class="c1"># Retrieve either the last task, or the one with a specific taskid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">taskid</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Task</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;There are no tasks in the database.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">taskid</span> <span class="o">==</span> <span class="n">taskid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Cannot find task </span><span class="si">{taskid}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">get_named_executor</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">task</span></div>
+
+<div class="viewcode-block" id="RelationalDatabase.delete_task"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.delete_task">[docs]</a>    <span class="k">def</span> <span class="nf">delete_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;delete a task based on a specific task id. All task ids must be</span>
+<span class="sd">           in the format of &lt;taskid&gt;-&lt;uid&gt; without extra dashes so we can</span>
+<span class="sd">           reliably split based on the first dash.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskData</span>
+
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="p">:</span>
+            <span class="n">bot</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{taskid}</span><span class="s2"> does not exist in the database.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">TaskData</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">TaskData</span><span class="o">.</span><span class="n">taskid</span> <span class="o">==</span> <span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">taskid</span> <span class="o">==</span> <span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{taskid}</span><span class="s2"> has been removed.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="RelationalDatabase.delete_executor"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.delete_executor">[docs]</a>    <span class="k">def</span> <span class="nf">delete_executor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;delete all tasks for an executor, based on executor&#39;s name (str).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskData</span>
+
+        <span class="n">deleted_items</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">executor_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">):</span>
+            <span class="n">deleted_items</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">deleted_items</span></div>
+
+<div class="viewcode-block" id="RelationalDatabase.iter_executors"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.iter_executors">[docs]</a>    <span class="k">def</span> <span class="nf">iter_executors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fullpath</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;list executors based on the subfolders in the base database folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span>
+
+        <span class="k">for</span> <span class="n">executor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">executor_name</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">executor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="RelationalDatabase.list_tasks"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.relational.RelationalDatabase.list_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">list_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;list tasks, either under a particular executor name (if provided)</span>
+<span class="sd">           or just the executors. This returns tasks in rows to be printed</span>
+<span class="sd">           (or otherwise parsed).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">qme.main.database.models</span> <span class="k">import</span> <span class="n">Task</span>
+
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">executor_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">task</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">command</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rows</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vanessa Sochat
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

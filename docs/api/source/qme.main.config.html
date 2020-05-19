@@ -97,13 +97,14 @@
 <li class="toctree-l4 current"><a class="reference internal" href="qme.main.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="qme.main.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="qme.main.html#qme-main-gui-module">qme.main.gui module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="qme.main.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="qme.main.html#module-qme.main">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="qme.utils.html">qme.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qme.html#qme-defaults-module">qme.defaults module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme.defaults">qme.defaults module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme.version">qme.version module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme">Module contents</a></li>
 </ul>
@@ -179,8 +180,44 @@
             
   <div class="section" id="qme-main-config-package">
 <h1>qme.main.config package<a class="headerlink" href="#qme-main-config-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-qme.main.config">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qme.main.config" title="Permalink to this headline">¶</a></h2>
+<p>Copyright (C) 2020 Vanessa Sochat.</p>
+<p>This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
+<dl class="class">
+<dt id="qme.main.config.Config">
+<em class="property">class </em><code class="sig-prename descclassname">qme.main.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param">config_dir=None</em>, <em class="sig-param">load=True</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="qme.main.config.Config.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">section</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/config.html#Config.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.config.Config.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper to config.get to directly interact with the self.config</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.config.Config.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">configfile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/config.html#Config.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.config.Config.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>read in configuration file. By default use self.configfile.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.config.Config.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/config.html#Config.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.config.Config.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>save configuration back to it’s original file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.config.Config.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">section</em>, <em class="sig-param">key</em>, <em class="sig-param">value</em>, <em class="sig-param">save=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/config.html#Config.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.config.Config.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>update client secrets will update the data structure for a particular
+authentication. This should only be used for a (quasi permanent) token
+or similar. The secrets file, if found, is updated and saved by default.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

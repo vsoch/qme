@@ -95,17 +95,18 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#qme-app-api-module">qme.app.api module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-qme.app.config">qme.app.config module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#qme-app-server-module">qme.app.server module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qme.app.server">qme.app.server module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-qme.app">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="qme.client.html">qme.client package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qme.logger.html">qme.logger package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qme.main.html">qme.main package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qme.utils.html">qme.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qme.html#qme-defaults-module">qme.defaults module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme.defaults">qme.defaults module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme.version">qme.version module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qme.html#module-qme">Module contents</a></li>
 </ul>
@@ -185,9 +186,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="qme.app.views.html">qme.app.views package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#qme-app-views-executors-module">qme.app.views.executors module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#qme-app-views-main-module">qme.app.views.main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#module-qme.app.views.executors">qme.app.views.executors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#module-qme.app.views.main">qme.app.views.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qme.app.views.html#module-qme.app.views">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -206,8 +207,26 @@
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
 </div>
-<div class="section" id="qme-app-server-module">
-<h2>qme.app.server module<a class="headerlink" href="#qme-app-server-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-qme.app.server">
+<span id="qme-app-server-module"></span><h2>qme.app.server module<a class="headerlink" href="#module-qme.app.server" title="Permalink to this headline">¶</a></h2>
+<p>Copyright (C) 2020 Vanessa Sochat.</p>
+<p>This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
+<dl class="class">
+<dt id="qme.app.server.QueueMeServer">
+<em class="property">class </em><code class="sig-prename descclassname">qme.app.server.</code><code class="sig-name descname">QueueMeServer</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/app/server.html#QueueMeServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.app.server.QueueMeServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask.app.Flask</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qme.app.server.start">
+<code class="sig-prename descclassname">qme.app.server.</code><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">port=5000</em>, <em class="sig-param">debug=True</em>, <em class="sig-param">queue=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/app/server.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.app.server.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start can be invoked when this file is executed (see __main__ below)
+or used as a function to programmatically start a server. If started
+via qme view, we can add the queue to the server.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-qme.app">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qme.app" title="Permalink to this headline">¶</a></h2>

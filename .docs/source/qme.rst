@@ -10,6 +10,7 @@ Subpackages
    qme.client
    qme.logger
    qme.main
+   qme.utils
 
 Submodules
 ----------
