@@ -34,5 +34,4 @@ For current documentation, see [https://vsoch.github.io/qme](https://vsoch.githu
  - filesystem task that exists should also be loaded
  - init (when we create config) should generate value for secret?
  - add config command to refresh secret
- - add executor-specific logging? 
- - design models for filesystem or relational database
+ - add executor-specific logging?

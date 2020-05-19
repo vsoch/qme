@@ -29,8 +29,20 @@ that can better be queried. As a reminder, to [install]({{ site.baseurl }}/insta
 the sqlalchemy dependencies for this, you need to do:
 
 ```bash
-pip install qme[database]
+$ pip install qme[database]
 ```
+
+and then to set the database to be sqlite, just run:
+
+```bash
+$ qme config --database sqlite
+```
+
+Using some kind of relational database, or at least sqlite, will give
+you a much more rich listing of your tasks because we don't need to stress
+the filesystem to read each one from a json file.
+More details on database types are included below.
+
 
 ### Filesystem
 
