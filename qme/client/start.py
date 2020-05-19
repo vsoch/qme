@@ -19,11 +19,11 @@ def main(args, extra):
     queue = Queue(config_dir=args.config_dir)
 
     # Pass the queue object to start a server
-    #    try:
-    from qme.app.server import start
+    try:
+        from qme.app.server import start
 
-    start(port=args.port, queue=queue)  # debug=args.debug)
-
-
-#    except:
-#        sys.exit("You must 'pip install qme[app]' 'pip install qme[all]' to use the dashboard.")
+        start(port=args.port, queue=queue, debug=args.debug)
+    except:
+        sys.exit(
+            "You must 'pip install qme[app]' 'pip install qme[all]' to use the dashboard."
+        )
