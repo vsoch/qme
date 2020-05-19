@@ -47,14 +47,25 @@ def update_database():
 
         # The data sent to the table depends on the database
         if app.queue.database == "filesystem":
+
             # Break into executor types and taskids
             message = "use a relational or sqlite database to see more metadata."
-            rows = [(x[0].split("-")[0], x[0], message) for x in app.queue.list()]
+            rows = [(x[0].split("-")[0], x[0], x[1]) for x in app.queue.list()]
             socketio.emit(
                 "FSdatabase",
                 {"rows": rows, "database": app.queue.database},
                 namespace="/update",
             )
+
+        # sqlite or other relational
+        else:
+            rows = [(x[0].split("-")[0], x[0], x[1]) for x in app.queue.list()]
+            socketio.emit(
+                "RELdatabase",
+                {"rows": rows, "database": app.queue.database},
+                namespace="/update",
+            )
+
         socketio.sleep(QME_SOCKET_UPDATE_SECONDS)
 
 

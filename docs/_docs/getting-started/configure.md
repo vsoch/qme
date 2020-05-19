@@ -65,7 +65,74 @@ $ tree $HOME/.qme
         └── shell-d62d1dee-d21d-4e0d-9f95-75e139d9c4d2.json
 ```
 
-We will be added documentation for sqlite, postgres, and mysql databases (and customizing
-them) when they are implemented.
+If you've changed your database and want to update it back to be the filesystem,
+just run:
+
+```bash
+$ qme config --database filesystem
+```
+
+### Sqlite
+
+Sqlite is a reasonable choice for most use cases, as it appropriately scales enough for
+the general user, and allows for relational database-like functionality without
+needing anything other than permission to write a file. If you want to set a sqlite
+database as default from the command line, just run:
+
+```bash
+$ qme config --database sqlite
+Configuration saved with database sqlite
+```
+
+And the default sqlite database will be at a location in your QME_HOME ($HOME/.qme)
+in a file `QME_DATABASE_STRING`, which defaults to `qme.db` and can be set in 
+the [environment](../environment/). You can set this to be more permanent by setting
+it in your config file like this:
+
+```bash
+$ qme config --database sqlite://mydatabase.db
+Configuration saved with database sqlite://mydatabase.db
+```
+
+would then create `$HOME/.qme/mydatabase.db` as the default sqlite database. Again,
+if you need to "one off" this setting for a particular environment or command,
+you can export `QME_DATABASE` and `QME_DATABASE_STRING`:
+
+```bash
+export QME_DATABASE=sqlite
+export QME_DATABASE_STRING=mydatabase.db
+```
+
+to achieve the same result.
+
+
+### Postgres and MySql
+
+Both postgres and mysql have the same format for the database string, albeit
+they interact with different databases, and have different prefixes. Here is
+how you can set either:
+
+```bash
+$ qme config --database mysql+pymysql://username:password@host/dbname
+# or
+$ qme config --database postgresql://username:password@host/dbname
+```
+
+This is **strongly** recommended to be set as an environment variable so that you don't
+write credentials to a text file. So you instead might do this:
+
+```bash
+$ qme config --database mysql+pymysql
+# or
+$ qme config --database postgresql
+```
+
+and then export the rest via an environment variable:
+
+```bash
+export QME_DATABASE_STRING=username:password@host/dbname
+```
+
+which would work for both types.
 
 If you want some help with your configuration, please don't be afraid to [reach out](https://github.com/{{ site.repo }}/issues). You might next want to see how [environment variables]({{ site.baseurl }}/getting-started/environment/) can further customize your usage of qme.

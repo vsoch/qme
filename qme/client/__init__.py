@@ -44,15 +44,13 @@ def get_parser():
     # Configure qme (not written yet, will be written when databases added)
     config = subparsers.add_parser("config", help="configure qme.")
 
-    # TODO how to get password / credenitals? Setting here should BEGIN with these
-    # and not be exposed as choices
+    # Specify a database, if not sqlite must include a complete string
     config.add_argument(
         "--db",
         "--database",
         dest="database",
-        help="select database backend for qme.",
-        choices=["filesystem", "sqlite", "mysql", "postgres"],
-        default="filesystem",
+        default=None,
+        help="select database backend for qme. [filesystem|sqlite] or [sqlite|mysql|postgresql]:///",
     )
 
     # Clear an entire executor family, one task, or all tasks

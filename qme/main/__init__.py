@@ -47,17 +47,12 @@ class Queue:
             - config_dir (str) : the configuration directory (home for qme)
             - database (str) : a string to specify the database setup
         """
-        # update database settings
-        self.config.update(
-            section="DEFAULT",
-            key="database",
-            value=database or self.config.get("DEFAULT", "database"),
-        )
-        self.database = self.config.get("DEFAULT", "database")
-        bot.info("DATABASE: %s" % self.database)
+        self.database = database or self.config.get("DEFAULT", "database")
+        database_string = self.config.get("DEFAULT", "databaseconnect")
+        bot.info("Database: %s" % self.database)
 
         # Supported database options
-        valid = ("sqlite", "postgres", "mysql", "filesystem")
+        valid = ("sqlite", "postgresql", "mysql+pymysql", "filesystem")
         if not self.database.startswith(valid):
             bot.warning(
                 "%s is not yet a supported type, saving to filesystem." % self.database
@@ -65,7 +60,9 @@ class Queue:
             self.database = "filesystem"
 
         # Create database client with functions for database type
-        self.db = init_db(self.database, config_dir=self.config_dir)
+        self.db = init_db(
+            self.database, config_dir=self.config_dir, database_string=database_string
+        )
 
     def list(self, executor=None):
         """A wrapper to the database list_tasks function. Optionally take

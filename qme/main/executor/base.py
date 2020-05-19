@@ -103,6 +103,10 @@ class ExecutorBase:
             "timestamp": str(datetime.now()),
         }
 
+    @property
+    def command(self):
+        raise NotImplementedError
+
     def export(self):
         """return data as json. This is intended to save to the task database.
            Any important output, returncode, etc. from the execute() function

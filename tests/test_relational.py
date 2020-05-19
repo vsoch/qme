@@ -14,13 +14,13 @@ import sys
 import pytest
 
 
-def test_executors_filesystem(tmp_path):
-    """test each executor type with the filesystem
+def test_executors_sqlite(tmp_path):
+    """test each executor type with an sqlite database
     """
     from qme.main import Queue
 
     config_dir = os.path.join(str(tmp_path), ".qme")
-    queue = Queue(config_dir=config_dir)
+    queue = Queue(config_dir=config_dir, database="sqlite")
 
     # The following commands should map to the following executors
     commands = ["ls"]
@@ -31,14 +31,11 @@ def test_executors_filesystem(tmp_path):
         name = executors[i]
         task = queue.run("ls")
         assert task.executor.name == name
-        assert task.filename == os.path.join(
-            queue.config_dir, "database", name, "%s.json" % task.taskid
-        )
         assert task.summary()
 
         # Task.load includes the file dump, the upper level keys should be same
         content = task.load()
-        for key in ["executor", "uid", "data", "command"]:
+        for key in ["executor", "uid", "data"]:
             assert key in content
 
         # Task.export includes the executor specific data
@@ -53,14 +50,13 @@ def test_filesystem(tmp_path):
     from qme.main import Queue
 
     config_dir = os.path.join(str(tmp_path), ".qme")
-    queue = Queue(config_dir=config_dir)
+    queue = Queue(config_dir=config_dir, database="sqlite")
 
     assert os.path.exists(config_dir)
     assert queue.config_dir == config_dir
     assert queue.config.configfile == os.path.join(queue.config_dir, "config.ini")
-    assert queue.database == "filesystem"
-    assert queue.db.database == "filesystem"
-    assert queue.db.data_base == os.path.join(config_dir, "database")
+    assert queue.database == "sqlite"
+    assert queue.db.database == "sqlite"
 
     # Test list, empty without anything
     assert not queue.list()
