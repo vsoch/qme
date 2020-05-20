@@ -91,14 +91,14 @@ class SlurmExecutor(ShellExecutor):
                 values[varname] = output[i]
             return values
 
-    def action_get_error(self):
+    def action_get_output(self):
         """Get error stream, if the file exists.
         """
         if os.path.exists(self.outputfile):
             return read_file(self.outputfile)
         return ["%s does not exist.\n" % self.outputfile]
 
-    def action_get_output(self):
+    def action_get_error(self):
         """Get just output stream, if the file exists.
         """
         if os.path.exists(self.errorfile):

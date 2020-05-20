@@ -72,6 +72,11 @@ def get_parser():
         action="store_true",
     )
 
+    execute = subparsers.add_parser(
+        "exec", help="Execute an action for the last task, or a taskid"
+    )
+    execute.add_argument("actions", nargs="*")
+
     # List tasks and print to terminal
     ls = subparsers.add_parser("ls", help="List tasks")
     ls.add_argument(
@@ -148,6 +153,8 @@ def main():
         from .clear import main
     if args.command == "config":
         from .config import main
+    if args.command == "exec":
+        from .actions import main
     if args.command == "get":
         from .get import main
     if args.command == "ls":
