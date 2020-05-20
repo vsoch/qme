@@ -13,6 +13,7 @@ For this tutorial we will discuss creation of the Slurm Executor. You will need 
  4. [Actions](#define-actions): Add any custom actions that you executor exposes
  5. [Write tests](#write-tests) for your executor
  6. [Write documentation]((#write-documentation) for your executor
+ 7. [Create a Dashboard](#create-dashboard): for your executor, meaning a template to render it.
 
 The following sections will discuss these points.
 
@@ -352,12 +353,55 @@ to capture the complete output and error for a shell command, along with
 other metdata like the pid, and returncode. You might find this helpful
 to use in your actions. Here is an example:
 
+```python
+capture = self.capture(["scancel", self.jobid])
+# capture.output
+# caputre.error
+# capture.returncode
+# capture.pid
+return capture.output
 ```
-```
+
 <a id="write-tests">
 ## 5. Write Tests
 
+Each executor should have it's own file under tests, e.g., tests/test_executor_shell.py.
+If an executor requires dependencies that aren't available (e.g., slurm) and you can't
+mock it, then write tests elsewhere that can be run in the correct environment to
+test it, and then share these tests in your pull request or contribution.
+
 <a id="write-documentation">
 ## 6. Write Documentation
+
+Each executor has it's own documentation page, a section under `docs/_docs/getting-started/executors.md`
+that renders to [here]({{ site.baseurl }}/docs/getting-started/executors). Be sure to include:
+
+ - the name of your executor
+ - the matchstring that it uses to match commands to it
+ - general usage examples
+ - any environment variables needed
+ - actions that are exposed
+
+
+<a id="create-dashboard">
+## 7. Create a Dashboard
+
+Each executor will render based on it's custom dashboard. This means that you need
+to add a view for it to `qme/app/views/executors.py`. For example, clicking a link
+to a url that ends in `/executor/shell-<taskid>` will hit this backend view:
+
+```python
+@app.route("/executor/<taskid>")
+def shell_executor(taskid):
+
+    task = app.queue.get(taskid)
+    return render_template(
+        "executors/shell.html", task=task.load(), database=app.queue.database
+    )
+```
+
+And then render the template in `qme/app/templates/executors/shell.html`. You should
+add one, named according to your executor, and be sure to export any variables
+that are needed by the template (as we do above).
 
 If you want some help with your executor, please don't be afraid to [reach out](https://github.com/{{ site.repo }}/issues).

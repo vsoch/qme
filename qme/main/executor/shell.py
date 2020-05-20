@@ -97,7 +97,6 @@ class ShellExecutor(ExecutorBase):
         self.out = capture.output
         self.err = capture.error
         self.status = "complete"
-        self.get_setting("key", "default")
         return (self.out, self.err)
 
     def export(self):

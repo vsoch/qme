@@ -12,6 +12,7 @@ import os
 import sys
 import re
 
+from qme.utils.file import read_file
 from qme.logger import bot
 from .shell import ShellExecutor
 
@@ -31,7 +32,6 @@ class SlurmExecutor(ShellExecutor):
             "status": self.action_get_status,
             "output": self.action_get_output,
             "error": self.action_get_error,
-            "outputs": self.action_get_outputs,
             "cancel": self.action_cancel,
         }
 
@@ -45,10 +45,6 @@ class SlurmExecutor(ShellExecutor):
         """
         self._execute(cmd)
         if self.returncode == 0:
-
-            import IPython
-
-            IPython.embed()
 
             # Find the job id, and any --out or --error files
             match = re.search("[0-9]+", self.out[0])
@@ -71,37 +67,47 @@ class SlurmExecutor(ShellExecutor):
     # Actions
 
     def action_get_status(self):
-        """Get the status with squeue, given a jobid
+        """Get the status with squeue, given a jobid. This returns information
+           for the job that is based on a format string, default looks like:
+
+		{'jobid': '904366',
+		 'jobname': 'run_job.sh',
+		 'partition': 'owners',
+		 'alloccpus': '1',
+		 'elapsed': '00:00:00',
+		 'state': 'PENDING',
+		 'exitcode': '0:0'}
         """
         fmt = self.get_setting(
             "sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode"
         )
         if self.jobid:
-            capture = self.capture(["sacct", "--job", self.jobid, "--fmt=%s" % fmt])
-
-        self.pid = capture.pid
-        self.returncode = capture.returncode
-        self.out = capture.output
-        self.err = capture.error
-        self.status = "complete"
-        return (self.out, self.err)
+            capture = self.capture(
+                ["sacct", "--job", self.jobid, "--format=%s" % fmt, "--noheader"]
+            )
+            values = {}
+            output = [x for x in capture.output[0].strip().split(" ") if x]
+            for i, varname in enumerate(fmt.split(",")):
+                values[varname] = output[i]
+            return values
 
     def action_get_error(self):
         """Get error stream, if the file exists.
         """
-        pass
+        if os.path.exists(self.outputfile):
+            return read_file(self.outputfile)
+        return ["%s does not exist.\n" % self.outputfile]
 
     def action_get_output(self):
         """Get just output stream, if the file exists.
         """
-        pass
-
-    def action_get_outputs(self):
-        """Get *both* output and error streams, if files exist.
-        """
-        pass
+        if os.path.exists(self.errorfile):
+            return read_file(self.errorfile)
+        return ["%s does not exist.\n" % self.errorfile]
 
     def action_cancel(self):
         """Cancel a job if there is a jobid
         """
-        pass
+        if self.jobid:
+            capture = self.capture(["scancel", self.jobid])
+            return capture.output
