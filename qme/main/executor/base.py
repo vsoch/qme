@@ -14,6 +14,7 @@ from datetime import datetime
 import os
 import re
 import tempfile
+import subprocess
 import uuid
 
 
@@ -39,6 +40,8 @@ class Capturing:
     def __enter__(self):
         self.set_stdout()
         self.set_stderr()
+        self.output = []
+        self.error = []
         return self
 
     def set_stdout(self):
@@ -92,6 +95,8 @@ class ExecutorBase:
         if taskid:
             _, uid = taskid.split("-", 1)
         self.taskid = "%s-%s" % (self.name, uid)
+        self.pwd = os.getcwd()
+        self.actions = {}
 
     def _export_common(self):
         """export common task variables such as present working directory, user,
@@ -99,7 +104,7 @@ class ExecutorBase:
            point, but we'd need to be careful.
         """
         return {
-            "pwd": os.getcwd(),
+            "pwd": self.pwd,
             "user": get_user(),
             "timestamp": str(datetime.now()),
         }
@@ -107,6 +112,53 @@ class ExecutorBase:
     @property
     def command(self):
         raise NotImplementedError
+
+    def run_action(self, name, **kwargs):
+        """Check for a named action in the executors list.
+           The user should be able to run an action by name, e.g.,
+           executor.action('status') and take key word arguments.
+        """
+        if name in self.actions:
+            return self.actions[name](**kwargs)
+
+    def get_actions(self):
+        """return list of actions to expose"""
+        return list(self.actions)
+
+    def capture(self, cmd):
+        """capture is a helper function to capture a shell command. We
+           use Capturing and then save attributes like the pid, output, error
+           to it, and return to the calling function. For example:
+
+           capture = self.capture_command(cmd)
+           self.pid = capture.pid
+           self.returncode = capture.returncode
+           self.out = capture.output
+           self.err = capture.error
+        """
+        # Capturing provides temporary output and error files
+        with Capturing() as capture:
+            process = subprocess.Popen(
+                cmd,
+                stdout=capture.stdout,
+                stderr=capture.stderr,
+                universal_newlines=True,
+            )
+            capture.pid = process.pid
+            returncode = process.poll()
+
+            # Iterate through the output
+            while returncode is None:
+                returncode = process.poll()
+
+        # Get the remainder of lines, add return code
+        capture.output += [x for x in self.decode(capture.out) if x]
+        capture.error += [x for x in self.decode(capture.err) if x]
+
+        # Cleanup capture files and save final return code
+        capture.cleanup()
+        capture.returncode = returncode
+        return capture
 
     def export(self):
         """return data as json. This is intended to save to the task database.

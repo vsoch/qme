@@ -25,9 +25,6 @@ Configuration saved with database sqlite
 This command creates our QME_HOME at $HOME/.qme:
 
 ```bash
-```
-
-```bash
 $ tree $HOME/.qme
 /home/users/vsochat/.qme
 └── config.ini
@@ -50,6 +47,12 @@ We would normally submit this to run with something like:
 
 ```bash
 $ sbatch --partition owners --time 00:00:10 run_job.sh
+```
+
+With qme, however, we add a `qme run` prefix to that:
+
+```bash
+$ qme run sbatch --partition owners --time 00:00:10 run_job.sh
 ```
 
 **under development**

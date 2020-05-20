@@ -12,10 +12,9 @@ import locale
 import os
 import shlex
 import shutil
-import subprocess
 import sys
 
-from .base import ExecutorBase, Capturing
+from .base import ExecutorBase
 
 
 class ShellExecutor(ExecutorBase):
@@ -92,27 +91,11 @@ class ShellExecutor(ExecutorBase):
         cmd = [executable] + args
 
         # Capturing provides temporary output and error files
-        with Capturing() as capture:
-            process = subprocess.Popen(
-                cmd,
-                stdout=capture.stdout,
-                stderr=capture.stderr,
-                universal_newlines=True,
-            )
-            self.pid = process.pid
-            returncode = process.poll()
-
-            # Iterate through the output
-            while returncode is None:
-                returncode = process.poll()
-
-        # Get the remainder of lines, add return code
-        self.out += [x for x in self.decode(capture.out) if x]
-        self.err += [x for x in self.decode(capture.err) if x]
-
-        # Cleanup capture files and save final return code
-        capture.cleanup()
-        self.returncode = returncode
+        capture = self.capture(cmd)
+        self.pid = capture.pid
+        self.returncode = capture.returncode
+        self.out = capture.output
+        self.err = capture.error
         self.status = "complete"
         return (self.out, self.err)
 

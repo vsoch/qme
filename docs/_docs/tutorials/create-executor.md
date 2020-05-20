@@ -78,8 +78,12 @@ most terminal commands, a ShellExecutor base would be most appropriate, as it
 already handles parsing the command, and collecting output, error, and a return
 code. For example, below we see importing the `ShellExecutor` into a new file,
 `slurm.py`, and instantiating the `execute` function that will call the
-already existing shell's _execute that will run the command. Also notice
-that we have chosen a `matchstring`, a class variable, that will determine
+already existing shell's _execute that will run the command. 
+
+## 2. Define it's Functionality
+
+Great! We have a new file. We now need to make sure that we give it a `name`
+(slurm) and have chosen a `matchstring`, a class variable, that will determine
 that we have an sbatch command.
 
 ```python
@@ -106,6 +110,55 @@ class SlurmExecutor(ShellExecutor):
         # Do custom parsing of self.out, self.err, self.returncode here
 ```
 
+We might also want to add some custom class variables, and instead of using
+the init class verbatim, create our own init that uses super and adds some extra
+metadata items like a jobid.
+
+```python
+    def __init__(self, taskid=None, command=None):
+        super().__init__(taskid, command)
+        self.jobid = None
+```
+
+Finally, what about slurm output and error? If there is no file defined with
+`--out` and `--err` the output and error will go to output and error flies
+named according to the jobid, and likely prefixed with slurm:
+
+```bsah
+slurm-889035.out  slurm-889036.out  slurm-889074.out
+```
+
+But perhaps we should have a little more control of that, or minimally
+parse if the user has provided one, and default to something else if not?
+We have two choices here - we either do away with the default files produced
+and define our own (giving us certainty they will exist) or we try to honor the
+defaults and user choices. I decided on an intermediate:
+
+ - if an output or error file is defined in the command, honor it.
+ - if no output or error file is defined in the command, default to the job's present working directory (where it was submit) plus the job id.
+ - in all cases, always check that the file exists first before trying to read it.
+
+The above steps make the assumption that either the user is lazy and doesn't 
+directly define output and error (and we figure it out) or they do, and do
+so on the command line. The case that we can't well handle is when there is an SBATCH directive in the
+job file to detect the output and error. Parsing SBATCH directives from
+a job file might be interesting functionality to add at some point, but
+not for this first step.
+
+## 3. Add to the Executors init file
+
+As we showed earlier, you next need to add your executor to the get_executor
+function, and check if it matches based on the matchstring. Here is
+that snippet again in `get_executor`:
+
+```python
+    # Slurm Executor
+    if matches(SlurmExecutor, command):
+        return SlurmExecutor(command=command)
+```
+
+### Development Tips
+
 At this point you might bring it onto a cluster, add an `IPython.embed()` in the
 execute function, and interactively develop and write the code. You would
 clone your feature branch, install qme from it, and then run a command
@@ -116,6 +169,151 @@ $ git clone -b add/slurm-executor git@github.com:vsoch/qme.git
 $ pip install -e .[all]
 $ which qme
 $ qme run sbatch --partition normal --time 00:00:10 run_job.sh
+```
+
+When I tested this with `IPython.embed()` I was able to see that the self.out
+and self.err was set to `(['Submitted batch job 889074\n'], [])`, and
+then I could check the return code, and extract the job id from the output
+string.
+
+```python
+    def execute(self, cmd=None):
+        """Execute a system command and return output and error. Execute
+           should take a cmd (a string or list) and execute it according to
+           the executor. Attributes should be set on the class that are
+           added to self.export. Since the functions here are likely needed
+           by most executors, we create a self._execute() class that is called
+           instead, and can be used by the other executors.
+        """
+        self._execute(cmd)
+        if self.returncode == 0:
+             match = re.search('[0-9]+', self.out[0])
+             if not match:
+                bot.exit(f"Unable to derive job id from {self.out}")
+             self.jobid = match.group()
+``` 
+
+This is also where I could add logic for parsing output and error files.
+
+
+### Logging
+
+You might find the bot logger useful for writing messages to the user:
+
+```bash
+from qme.logger import bot
+
+bot.info("This is an information message in purple")
+bot.warning("This is a warning in yellow")
+bot.error("This is an error in red")
+bot.exit("This is also an error, with return code 1")
+bot.exit("This is also an error, with return code 255", return_code=255)
+bot.debug("This is a debug message in aqua.")
+bot.log("This is a log level message in purple.")
+```
+
+We don't currently have executor-specific logging files, but this can be added
+if it's needed and requested.
+
+## 4. Define Actions
+
+Great! We have an executor that runs a command, and then grabs a jobid and
+does it's best to guess where an output and error file will be generated.
+We now need to think about actions. What actions might a user want to do
+for a slurm job?
+
+ - **status**: get the status of a job
+ - **cancel**: cancel a running job
+ - **outputs**: view the output or error files, if we got them right.
+
+Re-running a job is already is provided by qme, so we can nix this one. Let's focus on
+these three actions. The first thing to know is that the base class already provides
+us with a `run_action` function, which takes a named action, and then any keyword
+arguments, and runs it if it is defined for the executor:
+
+```python
+    def run_action(self, name, **kwargs):
+        """Check for a named action in the executors list.
+           The user should be able to run an action by name, e.g.,
+           executor.action('status')
+        """
+        if name in self.actions:
+            return self.actions[name](**kwargs)
+```
+
+This also tells us that each executor has a self.actions variable, a dictionary
+that serves as a lookup by name. By default, an executor doesn't have any actions
+(the base class):
+
+```python
+self.actions = {}
+```
+
+so in our case, we want to add actions to our init, and make sure to map to
+functions that our class exposes. Here is an example for the listing above:
+
+```python
+    def __init__(self, taskid=None, command=None):
+        super().__init__(taskid, command)
+        self.jobid = None
+        self.actions = {
+            "status": self.action_get_status,
+            "output": self.action_get_output,
+            "error": self.action_get_error,
+            "outputs": self.action_get_outputs,
+            "cancel": self.action_cancel,
+        }
+```
+
+Note that we define them _after_ the super call, since the super call will
+do an essentially empty definition. Note that the base class also has a function
+to easily get the names of actions, so we don't need to implement that:
+
+```python
+    def get_actions(self):
+        return list(self.actions)
+```
+
+We might then create the empty functions for each action:
+
+```python
+    def action_get_status(self):
+        """Get the status with squeue, given a jobid
+        """
+        pass
+
+    def action_get_error(self):
+        """Get error stream, if the file exists.
+        """
+        pass
+
+    def action_get_output(self):
+        """Get just output stream, if the file exists.
+        """
+        pass
+
+    def action_get_outputs(self):
+        """Get *both* output and error streams, if files exist.
+        """
+        pass
+
+    def action_cancel(self):
+        """Cancel a job if there is a jobid
+        """
+        pass
+```
+
+At this point I like to add another IPython.embed() in the excute command
+so I can develop each action, to be run after the original execution is done.
+
+### Shell Capture
+
+The base class provides a helpful function, capture, which is intended
+to capture the complete output and error for a shell command, along with
+other metdata like the pid, and returncode. You might find this helpful
+to use in your actions. Here is an example:
+
+```
 ```
 
 If you want some help with your executor, please don't be afraid to [reach out](https://github.com/{{ site.repo }}/issues).
