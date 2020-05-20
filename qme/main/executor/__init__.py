@@ -9,7 +9,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from .shell import ShellExecutor
+from .slurm import SlurmExecutor
 import sys
+import re
 
 
 def get_executor(command=None):
@@ -17,7 +19,14 @@ def get_executor(command=None):
        other string) matching a regular expression. Currently we just have a 
        ShellExecutor.
     """
-    # TODO: each executor should have a regular expression to match command.
+    # Command needs to be joined into single string for regular expression
+    cmd = " ".join(command)
+
+    # Slurm Executor
+    if re.search(cmd, "srun"):
+        return SlurmExecutor(command=command)
+
+    # Default is standard shell command
     return ShellExecutor(command=command)
 
 
