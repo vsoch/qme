@@ -12,6 +12,7 @@ from qme.utils.file import read_file, get_user
 
 from datetime import datetime
 import os
+import re
 import tempfile
 import uuid
 

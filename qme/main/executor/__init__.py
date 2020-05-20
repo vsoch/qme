@@ -14,16 +14,30 @@ import sys
 import re
 
 
+def matches(Executor, command):
+    """Given a command, determine if it matches the regular expression
+       that determines to use the executor or not. This applies to all
+       executors except for the shell executor. This means that all non-shell
+       classes need to have a matchstring defined.
+    """
+    if not hasattr(Executor, "matchstring"):
+        raise NotImplementedError
+
+    if isinstance(command, list):
+        command = " ".join(command)
+    return not re.search(Executor.matchstring, command) == None
+
+
 def get_executor(command=None):
     """get executor will return the correct executor depending on a command (or
-       other string) matching a regular expression. Currently we just have a 
-       ShellExecutor.
+       other string) matching a regular expression. If nothing matches, we 
+       default to a shell executor. Each non-shell executor should expose
+       a common "matches" function (provided by the base class) that will
+       handle parsing the command (a list) to a single string, and checking
+       if it matches a regular expression.
     """
-    # Command needs to be joined into single string for regular expression
-    cmd = " ".join(command)
-
     # Slurm Executor
-    if re.search(cmd, "srun"):
+    if matches(SlurmExecutor, command):
         return SlurmExecutor(command=command)
 
     # Default is standard shell command

@@ -20,6 +20,7 @@ class SlurmExecutor(ShellExecutor):
     """
 
     name = "slurm"
+    matchstring = "^sbatch"
 
     def execute(self, cmd=None):
         """Execute a system command and return output and error. Execute
