@@ -71,8 +71,12 @@ def get_parser():
     )
 
     # Run a command (gets passed to executor via template)
-    run = subparsers.add_parser("run", help="Run a command to add to the queue.")
-    run.add_argument("cmd", nargs="*")
+    run = subparsers.add_parser("run", help="Run a command.")
+    run.add_argument(
+        "cmd",
+        nargs="*",
+        help="The command to parse. If --help needed, should be fully quoted.",
+    )
 
     # Rerun a task
     rerun = subparsers.add_parser("rerun", help="Re-run a particular task.")

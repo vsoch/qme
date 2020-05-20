@@ -29,7 +29,29 @@ DATABASE: filesystem
 
 The command is so quick that it gives you the result immediately. In the above,
 we see the executor (shell) along with the unique id (the following uuid), 
-and the full command (to list the expanded $PWD) and the return code 0.
+and the full command (to list the expanded $PWD) and the return code 0. 
+
+There is one special case, the argument --help, which if run without
+thinking, will be parsed by the client and print the get help:
+
+```bash
+$ qme run singularity --help
+usage: qme run [-h] [cmd [cmd ...]]
+
+positional arguments:
+  cmd         The command to parse. If --help needed, should be fully quoted.
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+To correctly run this command, we should quote it:
+
+```bash
+$ qme run "singularity --help"
+Database: sqlite
+[shell-7fe77fee-4970-48bd-a11d-70d750ca62d5][returncode: 0]
+```
 
 <a id="get">
 ## Get 

@@ -9,6 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.main import Queue
+import shlex
 import sys
 import os
 
@@ -21,7 +22,17 @@ def run(args, extra):
     # Don't allow an empty command!
     if not args.cmd:
         sys.exit("Please provide a command for QueueMe to execute.")
-    queue.run(args.cmd)
+
+    command = args.cmd
+
+    # --help needs to be quoted, make sure if provided, gets parsed into command
+    if any(["--help" in x for x in args.cmd]):
+        command = []
+        for item in args.cmd:
+            command += shlex.split(item)
+
+    # Extra might include unparsed arguments
+    queue.run(command + extra)
 
 
 def rerun(args, extra):

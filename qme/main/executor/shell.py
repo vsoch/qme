@@ -26,8 +26,8 @@ class ShellExecutor(ExecutorBase):
 
     name = "shell"
 
-    def __init__(self, taskid=None):
-        self.reset()
+    def __init__(self, taskid=None, command=None):
+        self.reset(command)
         super().__init__(taskid)
 
     def summary(self):
@@ -35,7 +35,7 @@ class ShellExecutor(ExecutorBase):
             return "[%s][returncode: %s]" % (self.taskid, self.returncode)
         return "[%s][%s]" % (self.name, self.command)
 
-    def reset(self):
+    def reset(self, command=None):
         """refresh output and error streams
         """
         self.out = []
@@ -44,6 +44,8 @@ class ShellExecutor(ExecutorBase):
         self.pid = None
         self.cmd = []
         self.status = None
+        if command:
+            self.set_command(command)
 
     @property
     def command(self):
@@ -58,7 +60,7 @@ class ShellExecutor(ExecutorBase):
             cmd = shlex.split(cmd)
         self.cmd = cmd
 
-    def execute(self, cmd):
+    def execute(self, cmd=None):
         """Execute a system command and return output and error. Execute
            should take a cmd (a string or list) and execute it according to
            the executor. Attributes should be set on the class that are
@@ -68,13 +70,12 @@ class ShellExecutor(ExecutorBase):
         """
         return self._execute(cmd)
 
-    def _execute(self, cmd):
+    def _execute(self, cmd=None):
         """The actual class to do the execution - can be used if ShellExecutor
            is used as a super and the class using it defines a custom execute
         """
         # Reset the output and error records
-        self.reset()
-        self.set_command(cmd)
+        self.reset(cmd or self.cmd)
 
         # The executable must be found, return code 1 if not
         executable = shutil.which(self.cmd[0])

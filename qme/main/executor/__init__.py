@@ -18,7 +18,7 @@ def get_executor(command=None):
        ShellExecutor.
     """
     # TODO: each executor should have a regular expression to match command.
-    return ShellExecutor()
+    return ShellExecutor(command=command)
 
 
 def get_named_executor(name, taskid=None):

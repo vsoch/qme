@@ -110,7 +110,7 @@ class Queue:
         task = self.db.add_task(executor)
 
         # Execute and store result (this will need to be generalized)
-        task.executor.execute(command)
+        task.executor.execute()
         self.db.update_task(task.executor)
         bot.info(f"{task.summary()}")
         return task

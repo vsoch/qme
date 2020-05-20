@@ -120,7 +120,7 @@ class ExecutorBase:
     def summary(self):
         return "[%s]" % self.name
 
-    def execute(self, cmd):
+    def execute(self, cmd=None):
         raise NotImplementedError
 
     def get_output(self):
