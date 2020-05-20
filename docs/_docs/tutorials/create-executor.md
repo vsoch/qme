@@ -5,9 +5,27 @@ permalink: /tutorials/create-executor/index.html
 order: 3
 ---
 
-## Organization
+For this tutorial we will discuss creation of the Slurm Executor. You will need to:
 
-Each executor has it's own module file, which is located under "qme/main/executors."
+ 1. [Create your Executor](#create-your-executor): Create a file `<executor-name>.py` in the qme/main/executors folder.
+ 2. [Define it's functionality](#define-functionality) (optionally being subclass to a parent like the ShellExecutor), along with a name and matchstring
+ 3. [Import](#add-to-executors-init) the executor into the `__init__.py`
+ 4. [Actions](#define-actions): Add any custom actions that you executor exposes
+ 5. [Write tests](#write-tests) for your executor
+ 6. [Write documentation]((#write-documentation) for your executor
+
+The following sections will discuss these points.
+
+<a id="create-your-executor">
+## 1. Create your Executor File
+
+The first thing to do is decide if your executor warrants a parent class. For
+most terminal commands, a ShellExecutor base would be most appropriate, as it
+already handles parsing the command, and collecting output, error, and a return
+code. For example, below we see importing the `ShellExecutor` into a new file,
+`slurm.py`, and instantiating the `execute` function that will call the
+already existing shell's _execute that will run the command.  Where are these files
+stored? Each executor has it's own module file, which is located under "qme/main/executors."
 For example, here we see a structure that provides a base, shell, and slurm executor:
 
 ```
@@ -22,6 +40,7 @@ In the `__init__.py` file, there is basic logic to run a command over a number
 of regular expressions, and to return the executor class that matches.
 Here is a basic example with two executors, shell and slurm, early in the library
 development:
+
 
 ```python
 def matches(Executor, command):
@@ -61,25 +80,9 @@ from .shell import ShellExecutor
 from .slurm import SlurmExecutor
 ```
 
-For this tutorial we will discuss creation of the Slurm Executor. You will need to:
 
- 1. Create a file `<executor-name>.py` in the qme/main/executors folder.
- 2. Define it's functionality (optionally being subclass to a parent like the ShellExecutor), along with a name and matchstring
- 3. Import the executor into the `__init__.py`
- 4. Add any custom actions that you executor exposes
- 5. Write tests for your executor
 
-The following sections will discuss these points.
-
-## 1. Create your Executor File
-
-The first thing to do is decide if your executor warrants a parent class. For
-most terminal commands, a ShellExecutor base would be most appropriate, as it
-already handles parsing the command, and collecting output, error, and a return
-code. For example, below we see importing the `ShellExecutor` into a new file,
-`slurm.py`, and instantiating the `execute` function that will call the
-already existing shell's _execute that will run the command. 
-
+<a id="define-functionality">
 ## 2. Define it's Functionality
 
 Great! We have a new file. We now need to make sure that we give it a `name`
@@ -120,6 +123,9 @@ metadata items like a jobid.
         self.jobid = None
 ```
 
+You might want to be aware of the class `self.status` variable - you can
+update this at different steps in your execution to update the user on a status.
+It should be one of "complete" "running" or "cancelled".
 Finally, what about slurm output and error? If there is no file defined with
 `--out` and `--err` the output and error will go to output and error flies
 named according to the jobid, and likely prefixed with slurm:
@@ -145,6 +151,7 @@ job file to detect the output and error. Parsing SBATCH directives from
 a job file might be interesting functionality to add at some point, but
 not for this first step.
 
+<a id="add-to-executors-init">
 ## 3. Add to the Executors init file
 
 As we showed earlier, you next need to add your executor to the get_executor
@@ -215,6 +222,7 @@ bot.log("This is a log level message in purple.")
 We don't currently have executor-specific logging files, but this can be added
 if it's needed and requested.
 
+<a id="define-actions">
 ## 4. Define Actions
 
 Great! We have an executor that runs a command, and then grabs a jobid and
@@ -306,6 +314,37 @@ We might then create the empty functions for each action:
 At this point I like to add another IPython.embed() in the excute command
 so I can develop each action, to be run after the original execution is done.
 
+### Environment
+
+If you want to define custom environment variables, other than adding them
+to the documentation page for your executor, you should namespace them
+starting with QME, then the executor name, and then the envar. For example,
+a format string for the sacct action might be obtained via:
+
+```python
+fmt = os.environ.get('QME_SLURM_SACCT_FORMAT', "jobid,jobname,partition,alloccpus,elapsed,state,exitcode")
+```
+
+but actually, we can do better - what if the user wanted to set a value
+for `QME_SLURM_SACCT_FORMAT` that would persist? They can do this via:
+
+```bash
+$ qme config --set slurm sacct_format jobid,jobname,partition,alloccpus,elapsed,state,exitcode
+```
+
+And then we can retrieve it in our executor like this:
+
+```python
+fmt = self.get_setting("sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode")
+```
+
+For the above, we look for the key `sacct_format` in the config file, and since
+we are running the slurm executor, it's looked for in a section called `executor.slurm`.
+But since the user could also export `QME_<executor>_<key>` or for this case,
+`QME_SLURM_SACCT_VALUE` we first check the environment. If we don't find it in the
+environment or the config, we default to the second value (the long format string).
+
+
 ### Shell Capture
 
 The base class provides a helpful function, capture, which is intended
@@ -315,5 +354,10 @@ to use in your actions. Here is an example:
 
 ```
 ```
+<a id="write-tests">
+## 5. Write Tests
+
+<a id="write-documentation">
+## 6. Write Documentation
 
 If you want some help with your executor, please don't be afraid to [reach out](https://github.com/{{ site.repo }}/issues).

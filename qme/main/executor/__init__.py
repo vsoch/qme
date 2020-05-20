@@ -28,7 +28,7 @@ def matches(Executor, command):
     return not re.search(Executor.matchstring, command) == None
 
 
-def get_executor(command=None):
+def get_executor(command=None, config=None):
     """get executor will return the correct executor depending on a command (or
        other string) matching a regular expression. If nothing matches, we 
        default to a shell executor. Each non-shell executor should expose
@@ -38,15 +38,23 @@ def get_executor(command=None):
     """
     # Slurm Executor
     if matches(SlurmExecutor, command):
-        return SlurmExecutor(command=command)
+        executor = SlurmExecutor(command=command)
 
     # Default is standard shell command
-    return ShellExecutor(command=command)
+    else:
+        executor = ShellExecutor(command=command)
+    executor.config = config
+    return executor
 
 
-def get_named_executor(name, taskid=None):
+def get_named_executor(name, taskid=None, config=None):
     """get a named executor, meaning determining based on name and not command
     """
     if name == "shell":
-        return ShellExecutor(taskid)
-    sys.exit(f"{name} is not a known executor.")
+        executor = ShellExecutor(taskid)
+    elif name == "slurm":
+        executor = SlurmExecutor(taskid)
+    else:
+        sys.exit(f"{name} is not a known executor.")
+    executor.config = config
+    return executor

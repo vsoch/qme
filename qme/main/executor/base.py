@@ -170,6 +170,24 @@ class ExecutorBase:
         """
         raise NotImplementedError
 
+    def get_setting(self, key, default=None):
+        """Get a setting, meaning that we first check the environment, then
+           the config file, and then (if provided) a default.
+        """
+        # First preference to environment
+        envar = ("QME_%s_%s" % (self.name, key)).upper()
+        envar = os.environ.get(envar)
+        if envar is not None:
+            return envar
+
+        # Next preference to config setting
+        executor = "executor.%s" % self.name
+        if executor not in self.config.config:
+            return default
+        if key in self.config.config[executor]:
+            return self.config.get(executor, key)
+        return default
+
     def summary(self):
         return "[%s]" % self.name
 

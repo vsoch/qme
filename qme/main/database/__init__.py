@@ -9,7 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 
-def init_db(database, config_dir=None, database_string=""):
+def init_db(database, config_dir=None, database_string="", config=None):
     """Initialize the database, meaning a base client and appropriate functions
        to save, or generate a unique ID based on the backend being used. Each
        client has it's own init to check for a connection (or filesystem 
@@ -27,5 +27,8 @@ def init_db(database, config_dir=None, database_string=""):
     else:
         from .relational import RelationalDatabase as Database
     return Database(
-        config_dir=config_dir, database_string=database_string, database=database
+        config_dir=config_dir,
+        database_string=database_string,
+        database=database,
+        config=config,
     )

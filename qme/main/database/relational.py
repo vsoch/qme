@@ -27,11 +27,12 @@ class RelationalDatabase(Database):
        a custom init function to handle the $HOME/.qme/qme.db file.
     """
 
-    def __init__(self, config_dir, **kwargs):
+    def __init__(self, config_dir, config=None, **kwargs):
         """init for the filesystem ensures that the base folder (named 
            according to the studyid) exists.
         """
         self.database = kwargs.get("database")
+        self.config = config
         database_string = kwargs.get("database_string")
         if not database_string:
             sys.exit(
@@ -135,7 +136,7 @@ class RelationalDatabase(Database):
                 sys.exit(f"Cannot find task {taskid}")
 
         executor = task.taskid.split("-", 1)[0]
-        task.executor = get_named_executor(executor, task.taskid)
+        task.executor = get_named_executor(executor, task.taskid, config=self.config)
         return task
 
     def delete_task(self, taskid):

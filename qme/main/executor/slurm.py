@@ -73,8 +73,11 @@ class SlurmExecutor(ShellExecutor):
     def action_get_status(self):
         """Get the status with squeue, given a jobid
         """
+        fmt = self.get_setting(
+            "sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode"
+        )
         if self.jobid:
-            capture = self.capture(["squeue", "--job", self.jobid])
+            capture = self.capture(["sacct", "--job", self.jobid, "--fmt=%s" % fmt])
 
         self.pid = capture.pid
         self.returncode = capture.returncode

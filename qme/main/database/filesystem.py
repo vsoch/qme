@@ -33,10 +33,11 @@ class FileSystemDatabase(Database):
 
     database = "filesystem"
 
-    def __init__(self, config_dir, **kwargs):
+    def __init__(self, config_dir, config=None, **kwargs):
         """init for the filesystem ensures that the base folder (named 
            according to the studyid) exists.
         """
+        self.config = config
         self.create_database(config_dir)
 
     def create_database(self, config_dir):
@@ -84,7 +85,7 @@ class FileSystemDatabase(Database):
                 get_latest_modified(self.data_base, pattern="*.json")
             ).replace(".json", "")
         executor = taskid.split("-", 1)[0]
-        executor = get_named_executor(executor, taskid)
+        executor = get_named_executor(executor, taskid, config=self.config)
         return FileSystemTask(executor, exists=True, data_base=self.data_base)
 
     def delete_task(self, taskid):

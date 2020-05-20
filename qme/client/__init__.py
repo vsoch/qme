@@ -53,6 +53,14 @@ def get_parser():
         help="select database backend for qme. [filesystem|sqlite] or [sqlite|mysql|postgresql]:///",
     )
 
+    config.add_argument(
+        "--set",
+        help="set a setting, provide the executor, key, and value (set slurm sacct_format value)",
+        default=None,
+        dest="set",
+        nargs=3,
+    )
+
     # Clear an entire executor family, one task, or all tasks
     clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
     clear.add_argument("target", nargs="?")

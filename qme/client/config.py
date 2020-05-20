@@ -50,3 +50,12 @@ def main(args, extra):
         # If we make it here, save the configuration
         config.save()
         bot.info(f"Configuration saved with database {args.database}")
+
+    # Set a value for a particular executor
+    elif args.set:
+        executor, key, value = args.set
+        config = Config(config_dir=args.config_dir)
+        executor = "executor.%s" % executor.lower()
+        config.update(executor, key, value)
+        config.save()
+        bot.info(f"Configuration saved with {executor} {key} {value}")
