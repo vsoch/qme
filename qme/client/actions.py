@@ -46,4 +46,3 @@ def main(args, extra):
         if isinstance(result, list):
             result = " ".join(result)
         print(result)
-
