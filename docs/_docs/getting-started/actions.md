@@ -17,6 +17,7 @@ First, let's run a command to launch a little script.
 
 ```bash
 $ qme run sbatch --partition owners --time 00:00:10 run_job.sh
+[slurm-02eecdcd-a6b2-4055-8fad-c94e846a0f26][returncode: 0]
 ```
 
 To get actions for an executor, just run the `qme exec slurm` without any arguments,
@@ -33,8 +34,17 @@ $ qme exec slurm
 Let's try getting a status, for our last task run (we don't need a task id)
 
 ```bash
-
+$ qme exec slurm status
 ```
+
+If we had needed to include the job identifier (if it wasn't the last job) we 
+could have asked for it. Notice that the executor is provided with the taskid, so
+we don't need to include it again.
+
+```bash
+$ qme exec slurm-02eecdcd-a6b2-4055-8fad-c94e846a0f26 status
+```
+
 
 ## Python
 

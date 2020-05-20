@@ -17,6 +17,7 @@ import os
 
 def main(args, extra):
 
+    result = None
     if not args.actions:
         sys.exit("Please provide an executor to list actions for, or an action.")
 
@@ -31,11 +32,18 @@ def main(args, extra):
         except:
             queue = Queue(config_dir=args.config_dir)
             task = queue.get()
-            task.executor.run_action(args.actions[0])
+            result = task.executor.run_action(args.actions[0])
 
     # user provided exec <action> <taskid>
     elif len(args.actions) == 2:
         taskid, action = args.actions
         queue = Queue(config_dir=args.config_dir)
         task = queue.get(taskid)
-        task.executor.run_action(action)
+        result = task.executor.run_action(action)
+
+    # Print result to terminal
+    if result:
+        if isinstance(result, list):
+            result = " ".join(result)
+        print(result)
+
