@@ -87,7 +87,33 @@ on status, and scancel to cancel. Since the slurm executor is a subclass of shel
 it exposes the same metadata. 
 
 ```bash
-
+$ qme get
+Database: sqlite
+{
+    "executor": "slurm",
+    "uid": "slurm-02eecdcd-a6b2-4055-8fad-c94e846a0f26",
+    "data": {
+        "pwd": "/home/users/vsochat",
+        "user": "vsochat",
+        "timestamp": "2020-05-20 16:24:01.216868",
+        "output": [
+            "Submitted batch job 907484\n"
+        ],
+        "error": [],
+        "returncode": 0,
+        "command": [
+            "sbatch",
+            "--partition",
+            "owners",
+            "--time",
+            "00:00:10",
+            "run_job.sh"
+        ],
+        "status": "complete",
+        "pid": 156932
+    },
+    "command": "sbatch --partition owners --time 00:00:10 run_job.sh"
+}
 ```
 
 #### Actions
@@ -100,7 +126,7 @@ Actions include the following:
   - **cancel**: cancel a job that was run with scancel
 
 For output and error files, you can either leave unset (to use a default) or set `--out` or `--err` to
-be read by QueueMe. SBATCH directives are not currently parsed.
-
+be read by QueueMe. SBATCH directives are not currently parsed. See the [actions](../actions/)
+guide for how to run actions for slurm.
 
 You might next want to learn about the interactive [dashboard]({{ site.baseurl }}/getting-started/dashboard/).

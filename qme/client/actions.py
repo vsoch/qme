@@ -34,6 +34,7 @@ def main(args, extra):
             task = queue.get()
             result = task.executor.run_action(args.actions[0])
 
+    # NEED TO DEBUG THIS FOR SLURM
     # user provided exec <action> <taskid>
     elif len(args.actions) == 2:
         taskid, action = args.actions

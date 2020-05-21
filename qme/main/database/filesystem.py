@@ -157,6 +157,7 @@ class FileSystemTask:
         self.taskid = executor.taskid
         self.executor = executor
         self.data_base = data_base
+        self.data = {}
         self.create(exists)
 
     @property
@@ -171,10 +172,9 @@ class FileSystemTask:
         """Update a data file. This means reading, updating, and writing
         """
         updates = updates or {}
-        data = self.load()
-        if data and updates:
-            data.update(updates)
-            self.save(data)
+        if updates:
+            self.data.update(updates)
+            self.save()
 
     def create(self, should_exist=False):
         """create the filename if it doesn't exist, otherwise if it should (and
@@ -185,29 +185,30 @@ class FileSystemTask:
                 bot.exit(
                     f"{self.executor.taskid} does not exist in the filesystem database"
                 )
+            self.data = self.load()
+
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
 
         # If it's the first time saving, create basic file
         if not should_exist:
-            self.save(
-                {
-                    "executor": self.executor.name,
-                    "uid": self.executor.taskid,
-                    "command": self.executor.command,
-                    "data": self.executor.export(),
-                }
-            )
+            self.data = {
+                "executor": self.executor.name,
+                "uid": self.executor.taskid,
+                "command": self.executor.command,
+                "data": self.executor.export(),
+            }
+            self.save()
 
     def export(self):
         """wrapper to expose the executor.export function
         """
         return self.executor.export()
 
-    def save(self, data):
+    def save(self):
         """Save a json object to the task.
         """
-        write_json(data, self.filename)
+        write_json(self.data, self.filename)
 
     def summary(self):
         return self.executor.summary()

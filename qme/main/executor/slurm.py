@@ -64,6 +64,27 @@ class SlurmExecutor(ShellExecutor):
             if match:
                 self.errorfile = match.groups("error")[1]
 
+    def export(self):
+        """export data as json. In addition to shell defaults, we add slurm
+           metadata like errorfile, outputfile, and jobid
+        """
+        # Get common context (e.g., pwd)
+        common = self._export_common()
+        common.update(
+            {
+                "output": self.out,
+                "error": self.err,
+                "returncode": self.returncode,
+                "command": self.cmd,
+                "status": self.status,
+                "pid": self.pid,
+                "jobid": self.jobid,
+                "outputfile": self.outputfile,
+                "errorfile": self.errorfile,
+            }
+        )
+        return common
+
     # Actions
 
     def action_get_status(self):
