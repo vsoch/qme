@@ -5,7 +5,9 @@ permalink: /tutorials/index.html
 order: 1
 ---
 
-## Qme Examples
+## QueueMe Tutorials
 
-We will provide a qme tutorial here for creating an executor.
+ - The [Slurm](slurm/) executor allows you to submit and manage jobs with srun.
+ - [Create an executor](create-executor/) shows basic steps to create the slurm executor.
+
 If you want to request or suggest a tutorial, please [open an issue](https://github.com/{{ site.repo }}/issues).

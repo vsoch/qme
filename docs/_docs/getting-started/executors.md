@@ -37,7 +37,7 @@ the full details.
 
 ### Shell
 
-The shell executor is the default that will take any command that doesn't match a previous
+The "shell" executor is the default that will take any command that doesn't match a previous
 regular expression, and the executor will run the command, parse output and error streams, and then
 provide a result object with the following metadata:
 
@@ -46,9 +46,112 @@ provide a result object with the following metadata:
  - **returncode**: the returncode from running the command
  - **pid**: the pid of the child process.
 
-The matching [dashboard]({{ site.baseurl }}/getting-started/dashboard/index.html#shell) iterface
-is also optimized to show and search this information, mainly the command and any output or error.
+This means that it doesn't have a specific match string or actions beyond the basic that are
+provided for any command (delete, view, and re-run). The matching [dashboard]({{ site.baseurl }}/getting-started/dashboard/index.html#shell) interface is also optimized to show and search this information, mainly the command and any output or error. An example shell run might look like:
 
-**more executors coming soon!**
+```bash
+$ qme run echo "hello moto"
+```
+```bash
+$ qme get
+Database: sqlite
+{
+    "executor": "shell",
+    "uid": "shell-eab1fcff-d8b8-497a-bb7b-c758b23ff697",
+    "data": {
+        "pwd": "/home/vanessa/Desktop/Code/qme",
+        "user": "vanessa",
+        "timestamp": "2020-05-20 16:47:47.955877",
+        "output": [
+            "hello moto\n"
+        ],
+        "error": [],
+        "returncode": 0,
+        "command": [
+            "echo",
+            "hello moto"
+        ],
+        "status": "complete",
+        "pid": 15048
+    },
+    "command": "echo hello moto"
+}
+```
+
+There are no specific environment variables for shell, beyond the default, nor any actions.
+
+### Slurm
+
+The "slurm" executor is intended for using sbatch to run slurm jobs, sacct to check
+on status, and scancel to cancel. Since the slurm executor is a subclass of shell
+it exposes the same metadata. 
+
+```bash
+$ qme get
+Database: sqlite
+{
+    "executor": "slurm",
+    "uid": "slurm-02eecdcd-a6b2-4055-8fad-c94e846a0f26",
+    "data": {
+        "pwd": "/home/users/vsochat",
+        "user": "vsochat",
+        "timestamp": "2020-05-20 16:24:01.216868",
+        "output": [
+            "Submitted batch job 907484\n"
+        ],
+        "error": [],
+        "returncode": 0,
+        "command": [
+            "sbatch",
+            "--partition",
+            "owners",
+            "--time",
+            "00:00:10",
+            "run_job.sh"
+        ],
+        "status": "complete",
+        "pid": 156932
+    },
+    "command": "sbatch --partition owners --time 00:00:10 run_job.sh"
+}
+```
+
+#### Actions
+
+Actions include the following:
+
+  - **status**: Get a status dictionary, with a default format string set by QueueMe
+  - **output**: Get the output file output, if it exists. You should set `--out` or leave unset.
+  - **error**: Get the error file output, if it exists. You should set `--err` or leave unset. 
+  - **cancel**: cancel a job that was run with scancel
+
+For output and error files, you can either leave unset (to use a default) or set `--out` or `--err` to
+be read by QueueMe. SBATCH directives are not currently parsed. Here are quick examples of using
+running executor actions for the job we just ran above. Since it's the last run task, we don't
+need to specify the taskid, akin to `qme get` without one.
+
+**status**
+
+```bash
+$ qme exec status
+Database: sqlite
+{'jobid': '941170', 'jobname': 'run_job.sh', 'partition': 'owners', 'alloccpus': '1', 'elapsed': '00:00:06', 'state': 'COMPLETED', 'exitcode': '0:0'}
+```
+
+**output** and **error**
+
+```bash
+$ qme exec output
+Database: sqlite
+HELLO WORLD
+```
+
+**cancel**
+
+```bash
+$ qme exec cancel
+```
+
+See the [actions](../actions/) guide for how to run actions generally.
 
 You might next want to learn about the interactive [dashboard]({{ site.baseurl }}/getting-started/dashboard/).

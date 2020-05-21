@@ -14,27 +14,20 @@ import sys
 import pytest
 
 
-def test_executor_shell(tmp_path):
+def test_executor_slurm(tmp_path):
     """Test the shell executor. A shell executor should have added a returncode,
        output, and error to it's data export.
     """
-    from qme.main import Queue
+    # We can't emulate slurm, so just test general executor
+    from qme.main.executor import get_named_executor
 
-    config_dir = os.path.join(str(tmp_path), ".qme")
-    queue = Queue(config_dir=config_dir)
-    task = queue.run("ls")
-    assert task.executor.name == "shell"
-    assert task.filename == os.path.join(
-        queue.config_dir, "database", "shell", "%s.json" % task.taskid
-    )
-    assert task.summary()
-
-    # Task.load includes the file dump, the upper level keys should be same
-    content = task.load()
-    for key in ["executor", "uid", "data"]:
-        assert key in content
+    executor = get_named_executor("slurm")
+    assert executor.name == "slurm"
+    actions = executor.get_actions()
+    for key in ["status", "output", "error", "cancel"]:
+        assert key in actions
 
     # Task.export includes the executor specific data
-    data = task.export()
+    data = executor.export()
     for key in ["cmd", "pwd", "output", "error", "returncode"]:
         assert key in data

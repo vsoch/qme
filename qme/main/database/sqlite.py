@@ -9,15 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.main.database.relational import RelationalDatabase
-from qme.main.executor import get_named_executor
 from qme.logger import bot
-
-from sqlalchemy import create_engine, desc
-from sqlalchemy.orm import scoped_session, sessionmaker
-
 import os
-import json
-import sys
 
 
 class SqliteDatabase(RelationalDatabase):
@@ -28,7 +21,7 @@ class SqliteDatabase(RelationalDatabase):
 
     database = "sqlite"
 
-    def __init__(self, config_dir, **kwargs):
+    def __init__(self, config_dir, config=None, **kwargs):
         """init for the filesystem ensures that the base folder (named 
            according to the studyid) exists.
         """
@@ -41,5 +34,6 @@ class SqliteDatabase(RelationalDatabase):
                 f"Invalid database file for sqlite, {database_file} does not end in .db"
             )
 
+        self.config = config
         self.db = "sqlite:///%s" % db_path
         self.create_database()

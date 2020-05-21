@@ -12,7 +12,9 @@ from qme.utils.file import read_file, get_user
 
 from datetime import datetime
 import os
+import re
 import tempfile
+import subprocess
 import uuid
 
 
@@ -38,6 +40,8 @@ class Capturing:
     def __enter__(self):
         self.set_stdout()
         self.set_stderr()
+        self.output = []
+        self.error = []
         return self
 
     def set_stdout(self):
@@ -91,6 +95,10 @@ class ExecutorBase:
         if taskid:
             _, uid = taskid.split("-", 1)
         self.taskid = "%s-%s" % (self.name, uid)
+        self.pwd = os.getcwd()
+        self.actions = {}
+        if not hasattr(self, "data"):
+            self.data = {}
 
     def _export_common(self):
         """export common task variables such as present working directory, user,
@@ -98,24 +106,90 @@ class ExecutorBase:
            point, but we'd need to be careful.
         """
         return {
-            "pwd": os.getcwd(),
+            "pwd": self.pwd,
             "user": get_user(),
             "timestamp": str(datetime.now()),
         }
+
+    def export(self):
+        """return data as json. This is intended to save to the task database.
+           Any important executor specific metadata should be added to self.data
+        """
+        # Get common context (e.g., pwd)
+        common = self._export_common()
+        common.update(self.data)
+        return common
 
     @property
     def command(self):
         raise NotImplementedError
 
-    def export(self):
-        """return data as json. This is intended to save to the task database.
-           Any important output, returncode, etc. from the execute() function
-           should be provided here. Required strings are "command" and "status"
-           that must be one of "running" or "complete" or "cancelled." Suggested
-           fields are output, error, and returncode. self._export_common() should
-           be called first.
+    def run_action(self, name, data, **kwargs):
+        """Check for a named action in the executors list.
+           This is called from the queue that can also add the data for the task
+           as "data." The user should be able to run an action by name, e.g.,
+           executor.action('status', data) and take key word arguments, which
+           is exposed by a task as task.run_action('status', data)
         """
-        raise NotImplementedError
+        if name in self.actions:
+            return self.actions[name](data, **kwargs)
+
+    def get_actions(self):
+        """return list of actions to expose"""
+        return list(self.actions)
+
+    def capture(self, cmd):
+        """capture is a helper function to capture a shell command. We
+           use Capturing and then save attributes like the pid, output, error
+           to it, and return to the calling function. For example:
+
+           capture = self.capture_command(cmd)
+           self.pid = capture.pid
+           self.returncode = capture.returncode
+           self.out = capture.output
+           self.err = capture.error
+        """
+        # Capturing provides temporary output and error files
+        with Capturing() as capture:
+            process = subprocess.Popen(
+                cmd,
+                stdout=capture.stdout,
+                stderr=capture.stderr,
+                universal_newlines=True,
+            )
+            capture.pid = process.pid
+            returncode = process.poll()
+
+            # Iterate through the output
+            while returncode is None:
+                returncode = process.poll()
+
+        # Get the remainder of lines, add return code
+        capture.output += [x for x in self.decode(capture.out) if x]
+        capture.error += [x for x in self.decode(capture.err) if x]
+
+        # Cleanup capture files and save final return code
+        capture.cleanup()
+        capture.returncode = returncode
+        return capture
+
+    def get_setting(self, key, default=None):
+        """Get a setting, meaning that we first check the environment, then
+           the config file, and then (if provided) a default.
+        """
+        # First preference to environment
+        envar = ("QME_%s_%s" % (self.name, key)).upper()
+        envar = os.environ.get(envar)
+        if envar is not None:
+            return envar
+
+        # Next preference to config setting
+        executor = "executor.%s" % self.name
+        if executor not in self.config.config:
+            return default
+        if key in self.config.config[executor]:
+            return self.config.get(executor, key)
+        return default
 
     def summary(self):
         return "[%s]" % self.name

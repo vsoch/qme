@@ -53,6 +53,14 @@ def get_parser():
         help="select database backend for qme. [filesystem|sqlite] or [sqlite|mysql|postgresql]:///",
     )
 
+    config.add_argument(
+        "--set",
+        help="set a setting, provide the executor, key, and value (set slurm sacct_format value)",
+        default=None,
+        dest="set",
+        nargs=3,
+    )
+
     # Clear an entire executor family, one task, or all tasks
     clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
     clear.add_argument("target", nargs="?")
@@ -63,6 +71,11 @@ def get_parser():
         default=False,
         action="store_true",
     )
+
+    execute = subparsers.add_parser(
+        "exec", help="Execute an action for the last task, or a taskid"
+    )
+    execute.add_argument("actions", nargs="*")
 
     # List tasks and print to terminal
     ls = subparsers.add_parser("ls", help="List tasks")
@@ -140,6 +153,8 @@ def main():
         from .clear import main
     if args.command == "config":
         from .config import main
+    if args.command == "exec":
+        from .actions import main
     if args.command == "get":
         from .get import main
     if args.command == "ls":

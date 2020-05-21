@@ -61,7 +61,10 @@ class Queue:
 
         # Create database client with functions for database type
         self.db = init_db(
-            self.database, config_dir=self.config_dir, database_string=database_string
+            self.database,
+            config_dir=self.config_dir,
+            database_string=database_string,
+            config=self.config,
         )
 
     def list(self, executor=None):
@@ -104,7 +107,7 @@ class Queue:
         """Given a command, get the executor for it (also creating an entry
            in the task database) and run the command.
         """
-        executor = get_executor(command)
+        executor = get_executor(command, config=self.config)
 
         # add executor unique id and command to the database, returns a task object
         task = self.db.add_task(executor)
@@ -121,7 +124,7 @@ class Queue:
            rerun, it is returned. Otherwise None is returned.
         """
         task = self.db.get_task(taskid)
-        params = task.load().get("data", {})
+        params = task.load()
         command = params.get("command")
         pwd = params.get("pwd")
         if pwd:

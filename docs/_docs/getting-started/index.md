@@ -26,6 +26,7 @@ for running tasks, starting the interface, or otherwise interacting with your qu
  - [Commands](commands/) including run, re-run, list (ls), get, and others.
  - [Executors](executors/) are parsers for the commands that you run to create tasks.
  - [Dashboard](dashboard/) to better interact with and manage your tasks.
+ - [Actions](actions/) are defined per executors, and can be called from command line or sometimes interface.
  - [Containers](containers/) including Docker, or more likely important, Singularity.
 
 <a id="#how-does-it-work">

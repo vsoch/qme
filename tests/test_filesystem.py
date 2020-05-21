@@ -43,7 +43,7 @@ def test_executors_filesystem(tmp_path):
 
         # Task.export includes the executor specific data
         data = task.export()
-        for key in ["command", "pwd", "user", "timestamp"]:
+        for key in ["pwd", "user", "timestamp"]:
             assert key in data
 
 
@@ -86,10 +86,10 @@ def test_filesystem(tmp_path):
     exports = newtask.export()
 
     # Check exports
-    for required in ["pwd", "output", "error", "command", "returncode"]:
+    for required in ["pwd", "output", "error", "cmd", "returncode"]:
         assert required in exports
     assert exports["pwd"] == os.getcwd()
-    assert exports["command"] == ["whoami"]
+    assert exports["cmd"] == ["whoami"]
     assert exports["returncode"] == 0
 
     # Get a task id that isn't the last task

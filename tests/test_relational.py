@@ -35,16 +35,16 @@ def test_executors_sqlite(tmp_path):
 
         # Task.load includes the file dump, the upper level keys should be same
         content = task.load()
-        for key in ["executor", "uid", "data"]:
+        for key in ["executor", "uid", "data", "command"]:
             assert key in content
 
         # Task.export includes the executor specific data
         data = task.export()
-        for key in ["command", "pwd", "user", "timestamp"]:
+        for key in ["pwd", "user", "timestamp"]:
             assert key in data
 
 
-def test_filesystem(tmp_path):
+def test_relational(tmp_path):
     """Test loading and using a queue with the filesystem database.
     """
     from qme.main import Queue
@@ -82,10 +82,10 @@ def test_filesystem(tmp_path):
     exports = newtask.export()
 
     # Check exports
-    for required in ["pwd", "output", "error", "command", "returncode"]:
+    for required in ["pwd", "output", "error", "cmd", "returncode"]:
         assert required in exports
     assert exports["pwd"] == os.getcwd()
-    assert exports["command"] == ["whoami"]
+    assert exports["cmd"] == ["whoami"]
     assert exports["returncode"] == 0
 
     # Get a task id that isn't the last task

@@ -33,10 +33,11 @@ class FileSystemDatabase(Database):
 
     database = "filesystem"
 
-    def __init__(self, config_dir, **kwargs):
+    def __init__(self, config_dir, config=None, **kwargs):
         """init for the filesystem ensures that the base folder (named 
            according to the studyid) exists.
         """
+        self.config = config
         self.create_database(config_dir)
 
     def create_database(self, config_dir):
@@ -84,7 +85,7 @@ class FileSystemDatabase(Database):
                 get_latest_modified(self.data_base, pattern="*.json")
             ).replace(".json", "")
         executor = taskid.split("-", 1)[0]
-        executor = get_named_executor(executor, taskid)
+        executor = get_named_executor(executor, taskid, config=self.config)
         return FileSystemTask(executor, exists=True, data_base=self.data_base)
 
     def delete_task(self, taskid):
@@ -156,6 +157,7 @@ class FileSystemTask:
         self.taskid = executor.taskid
         self.executor = executor
         self.data_base = data_base
+        self.data = {}
         self.create(exists)
 
     @property
@@ -167,13 +169,12 @@ class FileSystemTask:
         return os.path.join(self.data_base, self.executor.name)
 
     def update(self, updates=None):
-        """Update a data file. This means reading, updating, and writing
+        """Update a data file. This means reading, updating, and writing.
         """
         updates = updates or {}
-        data = self.load()
-        if data and updates:
-            data.update(updates)
-            self.save(data)
+        if updates:
+            self.data.update(updates)
+            self.save()
 
     def create(self, should_exist=False):
         """create the filename if it doesn't exist, otherwise if it should (and
@@ -184,35 +185,42 @@ class FileSystemTask:
                 bot.exit(
                     f"{self.executor.taskid} does not exist in the filesystem database"
                 )
+            self.data = self.load()
+
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
 
         # If it's the first time saving, create basic file
         if not should_exist:
-            self.save(
-                {
-                    "executor": self.executor.name,
-                    "uid": self.executor.taskid,
-                    "command": self.executor.command,
-                    "data": self.executor.export(),
-                }
-            )
+            self.data = {
+                "executor": self.executor.name,
+                "uid": self.executor.taskid,
+                "command": self.executor.command,
+                "data": self.executor.export(),
+            }
+            self.save()
 
     def export(self):
         """wrapper to expose the executor.export function
         """
         return self.executor.export()
 
-    def save(self, data):
+    def save(self):
         """Save a json object to the task.
         """
-        write_json(data, self.filename)
+        write_json(self.data, self.filename)
 
     def summary(self):
         return self.executor.summary()
 
     def load(self):
-        """Given a task, load the filename
+        """Given a task, load data from filename.
         """
         if os.path.exists(self.filename):
             return read_json(self.filename)
+
+    def run_action(self, name, **kwargs):
+        """Run an action, meaning running the executor's run_action but
+           providing data from the database.
+        """
+        return self.executor.run_action(name, self.data, **kwargs)
