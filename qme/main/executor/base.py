@@ -121,7 +121,7 @@ class ExecutorBase:
            is exposed by a task as task.run_action('status', data)
         """
         if name in self.actions:
-            return self.actions[name](**kwargs)
+            return self.actions[name](data, **kwargs)
 
     def get_actions(self):
         """return list of actions to expose"""

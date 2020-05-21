@@ -296,16 +296,18 @@ us with a `run_action` function, which takes a named action, and then any keywor
 arguments, and runs it if it is defined for the executor:
 
 ```python
-    def run_action(self, name, **kwargs):
+    def run_action(self, name, data, **kwargs):
         """Check for a named action in the executors list.
            The user should be able to run an action by name, e.g.,
            executor.action('status')
         """
         if name in self.actions:
-            return self.actions[name](**kwargs)
+            return self.actions[name](data, **kwargs)
 ```
 
-This also tells us that each executor has a self.actions variable, a dictionary
+Notice that we are passing in a data object, which is provided by the calling
+task that is on the level of the database. This snippet of code
+also tells us that each executor has a self.actions variable, a dictionary
 that serves as a lookup by name. By default, an executor doesn't have any actions
 (the base class):
 
@@ -338,37 +340,126 @@ to easily get the names of actions, so we don't need to implement that:
         return list(self.actions)
 ```
 
-We might then create the empty functions for each action:
+We might then create the empty functions for each action. Note that since the
+database (on the level of the task) and the executor sit next to one another,
+we actually run the run_action function by way of the task, and the task adds
+any current data (that was exported via the export() function) as a variable.
+For example, when we have a task (which is associated with a particular database)
+it also has an executor:
 
 ```python
-    def action_get_status(self):
+from qme.main import Queue
+queue = Queue()
+Database: sqlite
+
+# Here is the task, which has an executor associated (e.g., slurm or shell)
+task = queue.get() 
+task.executor
+ <qme.main.executor.shell.ShellExecutor at 0x7f8c6c107910>
+```
+
+And then we can call task.run_action to run an action, and ensure that data gets passed
+to the executor.
+
+```python
+task.run_action('name')
+```
+Under the hood, the task is handing it's data and the task name off to task.executor.run_task,
+which requires both. However for shell we don't have any actions, so there is nothing
+to do :)
+
+```python
+task.executor.get_actions()                                                                                               
+[]
+```
+
+Now that we know each action function needs to take data (minimally) as input,
+let's write skeleton functions for our actions:
+
+```python
+    def action_get_status(self, data):
         """Get the status with squeue, given a jobid
         """
         pass
 
-    def action_get_error(self):
+    def action_get_error(self, data):
         """Get error stream, if the file exists.
         """
         pass
 
-    def action_get_output(self):
+    def action_get_output(self, data):
         """Get just output stream, if the file exists.
         """
         pass
 
-    def action_get_outputs(self):
+    def action_get_outputs(self, data):
         """Get *both* output and error streams, if files exist.
         """
         pass
 
-    def action_cancel(self):
+    def action_cancel(self, data):
         """Cancel a job if there is a jobid
         """
         pass
 ```
 
-At this point I like to add another IPython.embed() in the excute command
-so I can develop each action, to be run after the original execution is done.
+To give you a explicit example of data, let's remember above that we exported
+the job id to the "jobid" key under the executor's data export:
+
+```
+common.update(
+    {
+        "output": self.out,
+        "error": self.err,
+        "returncode": self.returncode,
+        "command": self.cmd,
+        "status": self.status,
+        "pid": self.pid,
+        "jobid": self.jobid,
+        "outputfile": self.outputfile,
+        "errorfile": self.errorfile,
+     }
+)
+```
+
+So for the same slurm executor that export a jobid to it's data object,
+we would get that jobid again like this:
+
+```python
+jobid = data.get("jobid")
+```
+
+And here is a full example in the context of the action function.
+
+```python
+    def action_get_status(self, data):
+        """Get the status with squeue, given a jobid. This returns information
+           for the job that is based on a format string, default looks like:
+
+		{'jobid': '904366',
+		 'jobname': 'run_job.sh',
+		 'partition': 'owners',
+		 'alloccpus': '1',
+		 'elapsed': '00:00:00',
+		 'state': 'PENDING',
+		 'exitcode': '0:0'}
+        """
+        fmt = self.get_setting(
+            "sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode"
+        )
+        jobid = data.get("jobid")
+        if jobid:
+            capture = self.capture(
+                ["sacct", "--job", jobid, "--format=%s" % fmt, "--noheader"]
+            )
+            values = {}
+            output = [x for x in capture.output[0].strip().split(" ") if x]
+            for i, varname in enumerate(fmt.split(",")):
+                values[varname] = output[i]
+            return values
+```
+
+Notice how we are also grabbing a configuration setting, discussed next.
 
 ### Environment
 
@@ -400,7 +491,6 @@ But since the user could also export `QME_<executor>_<key>` or for this case,
 `QME_SLURM_SACCT_VALUE` we first check the environment. If we don't find it in the
 environment or the config, we default to the second value (the long format string).
 
-
 ### Shell Capture
 
 The base class provides a helpful function, capture, which is intended
@@ -416,6 +506,10 @@ capture = self.capture(["scancel", self.jobid])
 # capture.pid
 return capture.output
 ```
+
+At this point when writing actions I like to add another IPython.embed() in the execute 
+or task.run_action command so I can develop each action.
+
 
 <a id="write-tests">
 ## 5. Write Tests
