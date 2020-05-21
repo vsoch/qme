@@ -50,7 +50,7 @@ def update_database():
 
             # Break into executor types and taskids
             message = "use a relational or sqlite database to see more metadata."
-            rows = [(x[0].split("-")[0], x[0], x[1]) for x in app.queue.list()]
+            rows = [(x[0].split("-")[0], x[0], message) for x in app.queue.list()]
             socketio.emit(
                 "FSdatabase",
                 {"rows": rows, "database": app.queue.database},

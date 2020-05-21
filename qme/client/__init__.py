@@ -107,6 +107,14 @@ def get_parser():
         help="select port to run qme dashboard on (defaults to 5000)",
     )
     start.add_argument(
+        "--host",
+        dest="host",
+        default="127.0.0.1",
+        type=str,
+        help="the hostname to run for the server (defaults to 127.0.0.1)",
+    )
+
+    start.add_argument(
         "--debug",
         dest="debug",
         help="run server in debug mode (defaults to False)",
@@ -145,7 +153,7 @@ def main():
 
     # Show the version and exit
     if args.command == "version" or args.version:
-        print(gridtest.__version__)
+        print(qme.__version__)
         sys.exit(0)
 
     # Does the user want a shell?

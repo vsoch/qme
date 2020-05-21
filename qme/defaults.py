@@ -40,15 +40,15 @@ QME_WORKERS = int(getenv("QME_WORKERS", QME_NPROC * 2 + 1))
 QME_SHELL = getenv("QME_SHELL", "ipython")
 
 # Default database is filesystem
-QME_DATABASE = getenv("QME_DATABASE", "filesystem")
+QME_DATABASE = getenv("QME_DATABASE")
 
 # Determine database backend to use, and where to store config
 USERHOME = get_userhome()
 QME_HOME = os.path.join(USERHOME, ".qme")
 
 # Database folder for filesystem or sqlite database
-QME_DATABASE = os.path.join(QME_HOME, "database")
 QME_DATABASE_STRING = os.environ.get("QME_DATABASE")
 
 # Dashboard settings
 QME_SOCKET_UPDATE_SECONDS = int(getenv("QME_SOCKET_UPDATE_SECONDS", 5))
+QME_HOSTNAME = getenv("QME_HOSTNAME", "127.0.0.1")

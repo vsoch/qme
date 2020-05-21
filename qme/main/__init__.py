@@ -47,7 +47,12 @@ class Queue:
             - config_dir (str) : the configuration directory (home for qme)
             - database (str) : a string to specify the database setup
         """
-        self.database = database or self.config.get("DEFAULT", "database")
+        self.database = (
+            database
+            or QME_DATABASE
+            or self.config.get("DEFAULT", "database")
+            or "filesystem"
+        )
         database_string = self.config.get("DEFAULT", "databaseconnect")
         bot.info("Database: %s" % self.database)
 
