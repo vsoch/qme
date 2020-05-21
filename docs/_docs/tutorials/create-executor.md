@@ -12,7 +12,7 @@ For this tutorial we will discuss creation of the Slurm Executor. You will need 
  3. [Import](#add-to-executors-init) the executor into the `__init__.py`
  4. [Actions](#define-actions): Add any custom actions that you executor exposes
  5. [Write tests](#write-tests) for your executor
- 6. [Write documentation]((#write-documentation) for your executor
+ 6. [Write documentation](#write-documentation) for your executor
  7. [Create a Dashboard](#create-dashboard): for your executor, meaning a template to render it.
 
 The following sections will discuss these points.
