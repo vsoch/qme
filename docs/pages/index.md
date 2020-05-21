@@ -9,6 +9,9 @@ QueueMe (on the command line, qme) is a jobs queue and dashboard generation tool
 to specify executors (entities that run jobs) and actions for them. You can
 use qme only on the command line, or if desired, via an interactive web dashboard.
 In both cases, you can customize using (or not using) a database, along with 
+setting executor-specific arguments that might be available (for example, an sacct
+format string can be set to override the default to determine the output of
+the "status" action for the slurm executor. 
 The dashboard (and it's dependencies) are not required for using the base library.
 
 <a id="#how-does-it-work">
