@@ -32,7 +32,7 @@ def main(args, extra):
         except:
             queue = Queue(config_dir=args.config_dir)
             task = queue.get()
-            result = task.executor.run_action(args.actions[0])
+            result = task.run_action(args.actions[0])
 
     # NEED TO DEBUG THIS FOR SLURM
     # user provided exec <action> <taskid>
@@ -40,7 +40,7 @@ def main(args, extra):
         taskid, action = args.actions
         queue = Queue(config_dir=args.config_dir)
         task = queue.get(taskid)
-        result = task.executor.run_action(action)
+        result = task.run_action(action)
 
     # Print result to terminal
     if result:

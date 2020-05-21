@@ -169,11 +169,13 @@ class FileSystemTask:
         return os.path.join(self.data_base, self.executor.name)
 
     def update(self, updates=None):
-        """Update a data file. This means reading, updating, and writing
+        """Update a data file. This means reading, updating, and writing. We
+           also update the executor data object.
         """
         updates = updates or {}
         if updates:
             self.data.update(updates)
+            self.executor.data = self.data
             self.save()
 
     def create(self, should_exist=False):
@@ -186,6 +188,7 @@ class FileSystemTask:
                     f"{self.executor.taskid} does not exist in the filesystem database"
                 )
             self.data = self.load()
+            self.executor.data = self.data
 
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
@@ -218,3 +221,9 @@ class FileSystemTask:
         """
         if os.path.exists(self.filename):
             return read_json(self.filename)
+
+    def run_action(self, name, **kwargs):
+        """Run an action, meaning running the executor's run_action but
+           providing data from the database.
+        """
+        return self.executor.run_action(name, self.data, **kwargs)

@@ -63,6 +63,12 @@ class Task(Base):
         """Export removes the outer wrapper, and just returns the data"""
         return self.load().get("data", {})
 
+    def run_action(self, name, **kwargs):
+        """Run an action, meaning that we prepare data to it, and then run
+           the self.executor.run_action(name, data) function.
+        """
+        return self.executor.run_action(name, self.export(), **kwargs)
+
     def __repr__(self):
         return "<Task %r>" % self.taskid
 

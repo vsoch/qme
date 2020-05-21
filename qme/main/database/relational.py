@@ -135,6 +135,7 @@ class RelationalDatabase(Database):
             if not task:
                 sys.exit(f"Cannot find task {taskid}")
 
+        # Add the executor to the task
         executor = task.taskid.split("-", 1)[0]
         task.executor = get_named_executor(executor, task.taskid, config=self.config)
         return task

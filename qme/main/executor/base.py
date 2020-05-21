@@ -113,10 +113,12 @@ class ExecutorBase:
     def command(self):
         raise NotImplementedError
 
-    def run_action(self, name, **kwargs):
+    def run_action(self, name, data, **kwargs):
         """Check for a named action in the executors list.
-           The user should be able to run an action by name, e.g.,
-           executor.action('status') and take key word arguments.
+           This is called from the queue that can also add the data for the task
+           as "data." The user should be able to run an action by name, e.g.,
+           executor.action('status', data) and take key word arguments, which
+           is exposed by a task as task.run_action('status', data)
         """
         if name in self.actions:
             return self.actions[name](**kwargs)

@@ -31,10 +31,11 @@ $ qme exec slurm
 4  cancel
 ```
 
-Let's try getting a status, for our last task run (we don't need a task id)
+Let's try getting a status, for our last task run (we don't need a task id or
+an executor):
 
 ```bash
-$ qme exec slurm status
+$ qme exec status
 ```
 
 If we had needed to include the job identifier (if it wasn't the last job) we 

@@ -55,6 +55,39 @@ With qme, however, we add a `qme run` prefix to that:
 $ qme run sbatch --partition owners --time 00:00:10 run_job.sh
 ```
 
-**under development**
+And then get the job in our Queue:
+
+```bash
+]$ qme get
+Database: sqlite
+{
+    "executor": "slurm",
+    "uid": "slurm-4e84f806-6787-42e2-8ece-00646328df7f",
+    "data": {
+        "pwd": "/home/users/vsochat",
+        "user": "vsochat",
+        "timestamp": "2020-05-21 08:17:06.109921",
+        "output": [
+            "Submitted batch job 940840\n"
+        ],
+        "error": [],
+        "returncode": 0,
+        "command": [
+            "sbatch",
+            "--partition",
+            "owners",
+            "--time",
+            "00:00:10",
+            "run_job.sh"
+        ],
+        "status": "complete",
+        "pid": 150185,
+        "jobid": "940840",
+        "outputfile": "/home/users/vsochat/slurm-940840.out",
+        "errorfile": "/home/users/vsochat/slurm-940840.err"
+    },
+    "command": "sbatch --partition owners --time 00:00:10 run_job.sh"
+}
+```
 
 If you want any help, please don't be afraid to [reach out](https://github.com/{{ site.repo }}/issues).

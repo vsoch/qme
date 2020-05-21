@@ -87,7 +87,7 @@ class SlurmExecutor(ShellExecutor):
 
     # Actions
 
-    def action_get_status(self):
+    def action_get_status(self, data):
         """Get the status with squeue, given a jobid. This returns information
            for the job that is based on a format string, default looks like:
 
@@ -102,9 +102,10 @@ class SlurmExecutor(ShellExecutor):
         fmt = self.get_setting(
             "sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode"
         )
-        if self.jobid:
+        jobid = data.get("jobid")
+        if jobid:
             capture = self.capture(
-                ["sacct", "--job", self.jobid, "--format=%s" % fmt, "--noheader"]
+                ["sacct", "--job", jobid, "--format=%s" % fmt, "--noheader"]
             )
             values = {}
             output = [x for x in capture.output[0].strip().split(" ") if x]
@@ -112,23 +113,26 @@ class SlurmExecutor(ShellExecutor):
                 values[varname] = output[i]
             return values
 
-    def action_get_output(self):
+    def action_get_output(self, data):
         """Get error stream, if the file exists.
         """
-        if os.path.exists(self.outputfile):
-            return read_file(self.outputfile)
-        return ["%s does not exist.\n" % self.outputfile]
+        outputfile = data.get("outputfile")
+        if os.path.exists(outputfile):
+            return read_file(outputfile)
+        return ["%s does not exist.\n" % outputfile]
 
-    def action_get_error(self):
+    def action_get_error(self, data):
         """Get just output stream, if the file exists.
         """
-        if os.path.exists(self.errorfile):
-            return read_file(self.errorfile)
-        return ["%s does not exist.\n" % self.errorfile]
+        errorfile = data.get("outputfile")
+        if os.path.exists(errorfile):
+            return read_file(errorfile)
+        return ["%s does not exist.\n" % errorfile]
 
-    def action_cancel(self):
+    def action_cancel(self, data):
         """Cancel a job if there is a jobid
         """
-        if self.jobid:
-            capture = self.capture(["scancel", self.jobid])
+        jobid = data.get("jobid")
+        if jobid:
+            capture = self.capture(["scancel", jobid])
             return capture.output
