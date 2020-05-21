@@ -13,4 +13,4 @@ import os
 ## Important! This needs to not be dynamic if need to save sessions
 
 WTF_CSRF_ENABLED = True
-SECRET_KEY = "banana-banana-fo-fanna"
+SECRET_KEY = os.environ.get("QME_SERVER_KEY", "banana-banana-fo-fanna")

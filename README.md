@@ -19,11 +19,10 @@ and expose executor-specific views for your tasks!
 
 ![docs/_docs/getting-started/img/executors/shell.png](docs/_docs/getting-started/img/executors/shell.png)
 
-**under development**
 
 ## Documentation
 
-For current documentation, see [https://vsoch.github.io/qme](https://vsoch.github.io/qme)
+For current documentation, see [https://vsoch.github.io/qme](https://vsoch.github.io/qme).
 
 ## License
 
@@ -31,7 +30,6 @@ For current documentation, see [https://vsoch.github.io/qme](https://vsoch.githu
 
 ## TODO
 
- - filesystem task that exists should also be loaded
  - init (when we create config) should generate value for secret?
  - add config command to refresh secret
  - add executor-specific logging?

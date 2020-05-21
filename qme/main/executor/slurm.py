@@ -43,25 +43,27 @@ class SlurmExecutor(ShellExecutor):
            instead, and can be used by the other executors.
         """
         self._execute(cmd)
-        if self.returncode == 0:
+        if self.data["returncode"] == 0:
 
             # Find the job id, and any --out or --error files
-            match = re.search("[0-9]+", self.out[0])
+            match = re.search("[0-9]+", self.data["output"][0])
             if not match:
-                bot.exit(f"Unable to derive job id from {self.out}")
+                bot.exit(f"Unable to derive job id from {self.data['output']}")
             self.data["jobid"] = match.group()
 
             # Get output file, or default to $PWD/slurm-<jobid>
-            self.data["errorfile"] = os.path.join(self.pwd, "slurm-%s.err" % self.jobid)
+            self.data["errorfile"] = os.path.join(
+                self.pwd, "slurm-%s.err" % self.data["jobid"]
+            )
             self.data["outputfile"] = os.path.join(
-                self.pwd, "slurm-%s.out" % self.jobid
+                self.pwd, "slurm-%s.out" % self.data["jobid"]
             )
 
-            match = re.search("(--out|-o) (?P<output>[^\s-]+)", self.command)
+            match = re.search(r"(--out|-o) (?P<output>[^\s-]+)", self.command)
             if match:
                 self.data["outputfile"] = match.groups("output")[1]
 
-            match = re.search("(--err|-e) (?P<error>[^\s-]+)", self.command)
+            match = re.search(r"(--err|-e) (?P<error>[^\s-]+)", self.command)
             if match:
                 self.data["errorfile"] = match.groups("error")[1]
 

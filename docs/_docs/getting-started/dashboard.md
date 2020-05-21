@@ -78,6 +78,34 @@ $ python qme/app/server.py
 
 This would be equivalent to calling the start command with defaults.
 
+### Secret Key
+
+The server requires a secret key, and scripts have been provided
+to generate one for you. For example we can run:
+
+```bash
+$ qme generate-key
+El3;v)DenOah=nyCd2cOQq+3M@?@4C<^Q~?(K)*HM8x5Z:;|kx
+```
+
+and export this to `QME_SERVER_KEY` on our host:
+
+```bash
+export QME_SERVER_KEY=El3;v)DenOah=nyCd2cOQq+3M@?@4C<^Q~?(K)*HM8x5Z:;|kx
+```
+
+and it will be detected in the environment. You could also do:
+
+```bash
+$ export QME_SERVER_KEY=$(qme generate-key)
+```
+
+If you use Qme in a container, you should provide the key as an environment variable on start.
+
+```bash
+$ docker run -it --entrypoint /bin/bash --env QME_SERVER_KEY=mysecretkey --rm -p 5000:5000 quay.io/vanessa/qme 
+```
+
 ### Table
 
 The "home" table includes a list of tasks executed, and actions that are
