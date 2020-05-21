@@ -46,9 +46,9 @@ class SlurmExecutor(ShellExecutor):
         if self.data["returncode"] == 0:
 
             # Find the job id, and any --out or --error files
-            match = re.search("[0-9]+", self.data["out"][0])
+            match = re.search("[0-9]+", self.data["output"][0])
             if not match:
-                bot.exit(f"Unable to derive job id from {self.data['out']}")
+                bot.exit(f"Unable to derive job id from {self.data['output']}")
             self.data["jobid"] = match.group()
 
             # Get output file, or default to $PWD/slurm-<jobid>
