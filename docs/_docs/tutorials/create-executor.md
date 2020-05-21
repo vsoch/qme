@@ -203,6 +203,61 @@ string.
 
 This is also where I could add logic for parsing output and error files.
 
+### Updating Data
+
+The main export function of your executor needs to save data specific to the executor.
+ If you use a shell executor, for example, the export function looks like this:
+
+```python
+    def export(self):
+        """return data as json. This is intended to save to the task database.
+           Any important output, returncode, etc. from the execute() function
+           should be provided here. Required strings are "command" and "status"
+           that must be one of "running" or "complete" or "cancelled." Suggested
+           fields are output, error, and returncode. self._export_common() should
+           be called first.
+        """
+        # Get common context (e.g., pwd)
+        common = self._export_common()
+        common.update(
+            {
+                "output": self.out,
+                "error": self.err,
+                "returncode": self.returncode,
+                "command": self.cmd,
+                "status": self.status,
+                "pid": self.pid,
+            }
+        )
+        return common
+```
+
+And then the `_export_common` function adds pwd (present working directory),
+ a timestamp, and a user id to the bsaic metadata. Note that this data doesn't
+include the outer level metadata about the executor, namely the executor name, 
+taskid, and data. This is handled by the database when it does the export, and you
+don't need to worry about it. What you might want to do, however, is write an 
+export function that adds the executor-specific metadata that you've added.
+Here is what we might add for slurm:
+
+```python
+common = self._export_common()
+common.update(
+    {
+        "output": self.out,
+        "error": self.err,
+        "returncode": self.returncode,
+        "command": self.cmd,
+        "status": self.status,
+        "pid": self.pid,
+        "jobid": self.jobid,
+        "outputfile": self.outputfile,
+        "errorfile": self.errorfile,
+     }
+)
+```
+
+This will ensure that items like the jobid are available to future actions.
 
 ### Logging
 
