@@ -34,7 +34,7 @@ QueueMe!
 By default, it will deploy the dashboard to [localhost:5000](http://localhost:5000).
 The prototype is shown below (hugely subject to change!)
 
-![img/dashboard/prototype.png](img/dashboard/prototype.png)
+![img/dashboard/prototype.png](../img/dashboard/prototype.png)
 
 You can customize the port with `--port`:
 
@@ -85,7 +85,7 @@ applicable to all of them. For example,  the actions in the right of the table i
 for each task, the ability to delete, re-run, or view. If you re-run or delete, you'll see a status
 notification in the top of the screen:
 
-![img/dashboard/status.png](img/dashboard/status.png)
+![img/dashboard/status.png](../img/dashboard/status.png)
 
 
 ### Executors
@@ -96,12 +96,12 @@ the web interface. For example, the shell executor is optimized to show
 you a command executed front and center, basic metadata in a left column, and output and error (if present)
 in a right column.
 
-![img/executors/shell.png](img/executors/shell.png)
+![img/executors/shell.png](../img/executors/shell.png)
 
 To make it easy to search output, a search box at the top will highlight results
 in yellow that match the user search:
 
-![img/executors/shell-search.png](img/executors/shell-search.png)
+![img/executors/shell-search.png](../img/executors/shell-search.png)
 
 ### Logging
 
