@@ -45,7 +45,6 @@ class SlurmExecutor(ShellExecutor):
         self._execute(cmd)
         if self.data["returncode"] == 0:
 
-            print(self.data)
             # Find the job id, and any --out or --error files
             match = re.search("[0-9]+", self.data["output"][0])
             if not match:

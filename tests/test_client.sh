@@ -29,6 +29,10 @@ echo "#### Testing qme run"
 runTest 0 $output qme --config_dir $config run ls
 
 echo
+echo "#### Testing qme generate-key"
+runTest 0 $output qme generate-key
+
+echo
 echo "#### Testing qme get"
 runTest 0 $output qme --config_dir $config get
 
