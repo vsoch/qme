@@ -35,7 +35,7 @@ class Task(Base):
     command = Column(String(500))
     timestamp = Column(DateTime, default=func.now())
     executor_name = Column(String(50))
-    data = relationship("TaskData", uselist=False, back_populates="task")  # one-to-one
+    data = Column(Text, nullable=True)
 
     def __init__(self, taskid=None, executor=None, command=None):
         self.taskid = taskid
@@ -54,8 +54,8 @@ class Task(Base):
             "command": self.command,
         }
 
-        if self.data and self.data.data:
-            data["data"] = json.loads(self.data.data)
+        if self.data:
+            data["data"] = json.loads(self.data)
 
         return data
 
@@ -71,17 +71,3 @@ class Task(Base):
 
     def __repr__(self):
         return "<Task %r>" % self.taskid
-
-
-class TaskData(Base):
-    """a task data object includes custom data for an executor (json)"""
-
-    __tablename__ = "taskdata"
-    id = Column(Integer, primary_key=True)
-    taskid = Column(String, ForeignKey("task.taskid"))
-    timestamp = Column(DateTime, default=func.now())
-    data = Column(Text, nullable=True)
-    task = relationship("Task", back_populates="data")
-
-    def __repr__(self):
-        return "<TaskData %r>" % self.taskid

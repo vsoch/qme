@@ -62,9 +62,8 @@ class RelationalDatabase(Database):
     def clear(self):
         """clear (delete) all tasks. This could be improved to cascade instead.
         """
-        from qme.main.database.models import Task, TaskData
+        from qme.main.database.models import Task
 
-        TaskData.query.delete()
         Task.query.delete()
         self.session.commit()
         return True
@@ -86,10 +85,11 @@ class RelationalDatabase(Database):
     def update_task(self, executor, updates=None):
         """update a task with a json dictionary.
         """
-        from qme.main.database.models import Task, TaskData
+        from qme.main.database.models import Task
 
         task = Task.query.filter(Task.taskid == executor.taskid).first()
-        updates = updates or executor.export()
+        updates = updates or {}
+        updates.update(executor.export())
 
         # If we find a matching task
         if task:
@@ -98,22 +98,14 @@ class RelationalDatabase(Database):
             if executor.command:
                 task.command = executor.command
 
-            # Look for previous data
-            taskdata = TaskData.query.filter(Task.taskid == task.taskid).first()
-            if not taskdata:
-                taskdata = TaskData(taskid=executor.taskid)
-
             # Load the previous data to update
             data = {}
-            if taskdata.data:
-                data = json.loads(taskdata.data)
+            if task.data:
+                data = json.loads(task.data)
             data.update(updates)
 
-            taskdata.data = json.dumps(data)
+            task.data = json.dumps(data)
             self.session.add(task)
-            self.session.add(taskdata)
-            task.data = taskdata
-
             self.session.commit()
             return task
 
@@ -145,13 +137,12 @@ class RelationalDatabase(Database):
            in the format of <taskid>-<uid> without extra dashes so we can
            reliably split based on the first dash.
         """
-        from qme.main.database.models import Task, TaskData
+        from qme.main.database.models import Task
 
         task = self.get_task(taskid)
         if not task:
             bot.error(f"{taskid} does not exist in the database.")
             return False
-        TaskData.query.filter(TaskData.taskid == task.taskid).delete()
         Task.query.filter(Task.taskid == task.taskid).delete()
         self.session.commit()
         bot.info(f"{taskid} has been removed.")
@@ -160,13 +151,11 @@ class RelationalDatabase(Database):
     def delete_executor(self, name):
         """delete all tasks for an executor, based on executor's name (str).
         """
-        from qme.main.database.models import Task, TaskData
+        from qme.main.database.models import Task
 
         deleted_items = False
         for task in Task.query.filter(Task.executor_name == name):
             deleted_items = True
-            if task.data:
-                self.session.delete(task.data)
             self.session.delete(task)
         self.session.commit()
         return deleted_items

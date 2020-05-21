@@ -107,6 +107,14 @@ def get_parser():
         help="select port to run qme dashboard on (defaults to 5000)",
     )
     start.add_argument(
+        "--host",
+        dest="host",
+        default="127.0.0.1",
+        type=str,
+        help="the hostname to run for the server (defaults to 127.0.0.1)",
+    )
+
+    start.add_argument(
         "--debug",
         dest="debug",
         help="run server in debug mode (defaults to False)",
