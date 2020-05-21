@@ -169,7 +169,9 @@
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 
 
@@ -195,6 +197,8 @@
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_stdout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_stderr</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="Capturing.set_stdout"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.Capturing.set_stdout">[docs]</a>    <span class="k">def</span> <span class="nf">set_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -248,6 +252,10 @@
         <span class="k">if</span> <span class="n">taskid</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">uid</span> <span class="o">=</span> <span class="n">taskid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">taskid</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_export_common</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;export common task variables such as present working directory, user,</span>
@@ -255,29 +263,95 @@
 <span class="sd">           point, but we&#39;d need to be careful.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;pwd&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+            <span class="s2">&quot;pwd&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwd</span><span class="p">,</span>
             <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">get_user</span><span class="p">(),</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()),</span>
         <span class="p">}</span>
+
+<div class="viewcode-block" id="ExecutorBase.export"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return data as json. This is intended to save to the task database.</span>
+<span class="sd">           Any important executor specific metadata should be added to self.data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get common context (e.g., pwd)</span>
+        <span class="n">common</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_export_common</span><span class="p">()</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">common</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ExecutorBase.export"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return data as json. This is intended to save to the task database.</span>
-<span class="sd">           Any important output, returncode, etc. from the execute() function</span>
-<span class="sd">           should be provided here. Required strings are &quot;command&quot; and &quot;status&quot;</span>
-<span class="sd">           that must be one of &quot;running&quot; or &quot;complete&quot; or &quot;cancelled.&quot; Suggested</span>
-<span class="sd">           fields are output, error, and returncode. self._export_common() should</span>
-<span class="sd">           be called first.</span>
+<div class="viewcode-block" id="ExecutorBase.run_action"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.run_action">[docs]</a>    <span class="k">def</span> <span class="nf">run_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check for a named action in the executors list.</span>
+<span class="sd">           This is called from the queue that can also add the data for the task</span>
+<span class="sd">           as &quot;data.&quot; The user should be able to run an action by name, e.g.,</span>
+<span class="sd">           executor.action(&#39;status&#39;, data) and take key word arguments, which</span>
+<span class="sd">           is exposed by a task as task.run_action(&#39;status&#39;, data)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExecutorBase.get_actions"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.get_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return list of actions to expose&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExecutorBase.capture"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.capture">[docs]</a>    <span class="k">def</span> <span class="nf">capture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;capture is a helper function to capture a shell command. We</span>
+<span class="sd">           use Capturing and then save attributes like the pid, output, error</span>
+<span class="sd">           to it, and return to the calling function. For example:</span>
+
+<span class="sd">           capture = self.capture_command(cmd)</span>
+<span class="sd">           self.pid = capture.pid</span>
+<span class="sd">           self.returncode = capture.returncode</span>
+<span class="sd">           self.out = capture.output</span>
+<span class="sd">           self.err = capture.error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Capturing provides temporary output and error files</span>
+        <span class="k">with</span> <span class="n">Capturing</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">capture</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">capture</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">capture</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">pid</span>
+            <span class="n">returncode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+
+            <span class="c1"># Iterate through the output</span>
+            <span class="k">while</span> <span class="n">returncode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">returncode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+
+        <span class="c1"># Get the remainder of lines, add return code</span>
+        <span class="n">capture</span><span class="o">.</span><span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">capture</span><span class="o">.</span><span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">capture</span><span class="o">.</span><span class="n">error</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">capture</span><span class="o">.</span><span class="n">err</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
+
+        <span class="c1"># Cleanup capture files and save final return code</span>
+        <span class="n">capture</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+        <span class="n">capture</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="n">returncode</span>
+        <span class="k">return</span> <span class="n">capture</span></div>
+
+<div class="viewcode-block" id="ExecutorBase.get_setting"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.get_setting">[docs]</a>    <span class="k">def</span> <span class="nf">get_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a setting, meaning that we first check the environment, then</span>
+<span class="sd">           the config file, and then (if provided) a default.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># First preference to environment</span>
+        <span class="n">envar</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;QME_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">envar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">envar</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">envar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">envar</span>
+
+        <span class="c1"># Next preference to config setting</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="s2">&quot;executor.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">executor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">executor</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default</span></div>
 
 <div class="viewcode-block" id="ExecutorBase.summary"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
 
-<div class="viewcode-block" id="ExecutorBase.execute"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="ExecutorBase.execute"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="ExecutorBase.get_output"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.base.ExecutorBase.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

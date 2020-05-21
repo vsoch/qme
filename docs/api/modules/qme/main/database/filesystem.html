@@ -190,10 +190,11 @@
 
     <span class="n">database</span> <span class="o">=</span> <span class="s2">&quot;filesystem&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;init for the filesystem ensures that the base folder (named </span>
 <span class="sd">           according to the studyid) exists.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_database</span><span class="p">(</span><span class="n">config_dir</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileSystemDatabase.create_database"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemDatabase.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">):</span>
@@ -241,7 +242,7 @@
                 <span class="n">get_latest_modified</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_base</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.json&quot;</span><span class="p">)</span>
             <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">executor</span> <span class="o">=</span> <span class="n">taskid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">executor</span> <span class="o">=</span> <span class="n">get_named_executor</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">taskid</span><span class="p">)</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">get_named_executor</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">taskid</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">FileSystemTask</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_base</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FileSystemDatabase.delete_task"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemDatabase.delete_task">[docs]</a>    <span class="k">def</span> <span class="nf">delete_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskid</span><span class="p">):</span>
@@ -313,6 +314,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">taskid</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">taskid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">executor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_base</span> <span class="o">=</span> <span class="n">data_base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">exists</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -324,13 +326,12 @@
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileSystemTask.update"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">updates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update a data file. This means reading, updating, and writing</span>
+        <span class="sd">&quot;&quot;&quot;Update a data file. This means reading, updating, and writing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">updates</span> <span class="o">=</span> <span class="n">updates</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">updates</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">updates</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FileSystemTask.create"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">should_exist</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;create the filename if it doesn&#39;t exist, otherwise if it should (and</span>
@@ -341,38 +342,45 @@
                 <span class="n">bot</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
                     <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.executor.taskid}</span><span class="s2"> does not exist in the filesystem database&quot;</span>
                 <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executor_dir</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executor_dir</span><span class="p">)</span>
 
         <span class="c1"># If it&#39;s the first time saving, create basic file</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">should_exist</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;executor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span>
-                    <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
-                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span>
-                <span class="p">}</span>
-            <span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;executor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span>
+                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FileSystemTask.export"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;wrapper to expose the executor.export function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">export</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FileSystemTask.save"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="FileSystemTask.save"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save a json object to the task.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">write_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span></div>
+        <span class="n">write_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FileSystemTask.summary"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FileSystemTask.load"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Given a task, load the filename</span>
+        <span class="sd">&quot;&quot;&quot;Given a task, load data from filename.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">read_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="n">read_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FileSystemTask.run_action"><a class="viewcode-back" href="../../../../source/qme.main.database.html#qme.main.database.filesystem.FileSystemTask.run_action">[docs]</a>    <span class="k">def</span> <span class="nf">run_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run an action, meaning running the executor&#39;s run_action but</span>
+<span class="sd">           providing data from the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">run_action</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -164,6 +164,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">qme.main</span> <span class="k">import</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -176,7 +177,17 @@
     <span class="c1"># Don&#39;t allow an empty command!</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">cmd</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Please provide a command for QueueMe to execute.&quot;</span><span class="p">)</span>
-    <span class="n">queue</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">cmd</span><span class="p">)</span></div>
+
+    <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">cmd</span>
+
+    <span class="c1"># --help needs to be quoted, make sure if provided, gets parsed into command</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">cmd</span><span class="p">]):</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">cmd</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">+=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="c1"># Extra might include unparsed arguments</span>
+    <span class="n">queue</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span> <span class="o">+</span> <span class="n">extra</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="rerun"><a class="viewcode-back" href="../../../source/qme.client.html#qme.client.run.rerun">[docs]</a><span class="k">def</span> <span class="nf">rerun</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">extra</span><span class="p">):</span>

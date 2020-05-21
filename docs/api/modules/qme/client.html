@@ -206,6 +206,14 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;select database backend for qme. [filesystem|sqlite] or [sqlite|mysql|postgresql]:///&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="n">config</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--set&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;set a setting, provide the executor, key, and value (set slurm sacct_format value)&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="c1"># Clear an entire executor family, one task, or all tasks</span>
     <span class="n">clear</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;clear&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run a command to add to the queue.&quot;</span><span class="p">)</span>
     <span class="n">clear</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
@@ -217,6 +225,11 @@
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="n">execute</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;exec&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Execute an action for the last task, or a taskid&quot;</span>
+    <span class="p">)</span>
+    <span class="n">execute</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
     <span class="c1"># List tasks and print to terminal</span>
     <span class="n">ls</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List tasks&quot;</span><span class="p">)</span>
     <span class="n">ls</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -224,8 +237,12 @@
     <span class="p">)</span>
 
     <span class="c1"># Run a command (gets passed to executor via template)</span>
-    <span class="n">run</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run a command to add to the queue.&quot;</span><span class="p">)</span>
-    <span class="n">run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;cmd&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+    <span class="n">run</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run a command.&quot;</span><span class="p">)</span>
+    <span class="n">run</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;cmd&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The command to parse. If --help needed, should be fully quoted.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Rerun a task</span>
     <span class="n">rerun</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;rerun&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Re-run a particular task.&quot;</span><span class="p">)</span>
@@ -289,6 +306,8 @@
         <span class="kn">from</span> <span class="nn">.clear</span> <span class="k">import</span> <span class="n">main</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">.config</span> <span class="k">import</span> <span class="n">main</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;exec&quot;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">.actions</span> <span class="k">import</span> <span class="n">main</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get&quot;</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">.get</span> <span class="k">import</span> <span class="n">main</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;ls&quot;</span><span class="p">:</span>

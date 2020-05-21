@@ -268,7 +268,7 @@ Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
 <dl class="class">
 <dt id="qme.main.database.filesystem.FileSystemDatabase">
-<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.filesystem.</code><code class="sig-name descname">FileSystemDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.filesystem.</code><code class="sig-name descname">FileSystemDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">config=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#qme.main.database.base.Database" title="qme.main.database.base.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">qme.main.database.base.Database</span></code></a></p>
 <p>A FileSystemDatabase writes raw json to files at $HOME/.qme/database
 This is the default flat database for qme, and on init we ensure
@@ -374,12 +374,19 @@ does not) exit on error.</p>
 <dl class="method">
 <dt id="qme.main.database.filesystem.FileSystemTask.load">
 <code class="sig-name descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemTask.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemTask.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a task, load the filename</p>
+<dd><p>Given a task, load data from filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.database.filesystem.FileSystemTask.run_action">
+<code class="sig-name descname">run_action</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemTask.run_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemTask.run_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an action, meaning running the executor’s run_action but
+providing data from the database.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="qme.main.database.filesystem.FileSystemTask.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemTask.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemTask.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemTask.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemTask.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a json object to the task.</p>
 </dd></dl>
 
@@ -391,7 +398,7 @@ does not) exit on error.</p>
 <dl class="method">
 <dt id="qme.main.database.filesystem.FileSystemTask.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">updates=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/filesystem.html#FileSystemTask.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.filesystem.FileSystemTask.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update a data file. This means reading, updating, and writing</p>
+<dd><p>Update a data file. This means reading, updating, and writing.</p>
 </dd></dl>
 
 </dd></dl>
@@ -434,6 +441,13 @@ be unique.</p>
 <dt id="qme.main.database.models.Task.load">
 <code class="sig-name descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/models.html#Task.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.models.Task.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>loading a task means exporting as json</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.database.models.Task.run_action">
+<code class="sig-name descname">run_action</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/models.html#Task.run_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.models.Task.run_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an action, meaning that we prepare data to it, and then run
+the self.executor.run_action(name, data) function.</p>
 </dd></dl>
 
 <dl class="method">
@@ -494,7 +508,7 @@ Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
 <dl class="class">
 <dt id="qme.main.database.relational.RelationalDatabase">
-<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.relational.</code><code class="sig-name descname">RelationalDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/relational.html#RelationalDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.relational.RelationalDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.relational.</code><code class="sig-name descname">RelationalDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">config=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/relational.html#RelationalDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.relational.RelationalDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#qme.main.database.base.Database" title="qme.main.database.base.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">qme.main.database.base.Database</span></code></a></p>
 <p>A RelationalDatabase is a more robust relational datbase (to sqlite).
 Since the global database property can be any of postgresql, mysql+pysq;,
@@ -572,7 +586,7 @@ Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
 <dl class="class">
 <dt id="qme.main.database.sqlite.SqliteDatabase">
-<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.sqlite.</code><code class="sig-name descname">SqliteDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/sqlite.html#SqliteDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.sqlite.SqliteDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.sqlite.</code><code class="sig-name descname">SqliteDatabase</code><span class="sig-paren">(</span><em class="sig-param">config_dir</em>, <em class="sig-param">config=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/sqlite.html#SqliteDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.sqlite.SqliteDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#qme.main.database.relational.RelationalDatabase" title="qme.main.database.relational.RelationalDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qme.main.database.relational.RelationalDatabase</span></code></a></p>
 <p>A SqliteDatabase writes to a qme.db file in $HOME/.qme. This is
 the suggested database backend for QueueMe, as it doesn’t require anything
@@ -593,7 +607,7 @@ Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at <a class="reference external" href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
 <dl class="function">
 <dt id="qme.main.database.init_db">
-<code class="sig-prename descclassname">qme.main.database.</code><code class="sig-name descname">init_db</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">config_dir=None</em>, <em class="sig-param">database_string=''</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database.html#init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.init_db" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">qme.main.database.</code><code class="sig-name descname">init_db</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">config_dir=None</em>, <em class="sig-param">database_string=''</em>, <em class="sig-param">config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database.html#init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.init_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the database, meaning a base client and appropriate functions
 to save, or generate a unique ID based on the backend being used. Each
 client has it’s own init to check for a connection (or filesystem

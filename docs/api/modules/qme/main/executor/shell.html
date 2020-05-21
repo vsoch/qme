@@ -169,10 +169,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">ExecutorBase</span><span class="p">,</span> <span class="n">Capturing</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">ExecutorBase</span>
 
 
 <div class="viewcode-block" id="ShellExecutor"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor">[docs]</a><span class="k">class</span> <span class="nc">ShellExecutor</span><span class="p">(</span><span class="n">ExecutorBase</span><span class="p">):</span>
@@ -183,28 +182,32 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;shell&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ShellExecutor.summary"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">][returncode: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;returncode&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">][returncode: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taskid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;returncode&quot;</span><span class="p">))</span>
         <span class="k">return</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ShellExecutor.reset"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ShellExecutor.reset"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;refresh output and error streams</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;cmd&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">command</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cmd&quot;</span><span class="p">,</span> <span class="p">[]))</span>
 
 <div class="viewcode-block" id="ShellExecutor.set_command"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.set_command">[docs]</a>    <span class="k">def</span> <span class="nf">set_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;parse is called when a new command is provided to ensure we have</span>
@@ -213,9 +216,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmd</span></div>
 
-<div class="viewcode-block" id="ShellExecutor.execute"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="ShellExecutor.execute"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute a system command and return output and error. Execute</span>
 <span class="sd">           should take a cmd (a string or list) and execute it according to</span>
 <span class="sd">           the executor. Attributes should be set on the class that are</span>
@@ -225,74 +228,36 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The actual class to do the execution - can be used if ShellExecutor</span>
 <span class="sd">           is used as a super and the class using it defines a custom execute</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Reset the output and error records</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">cmd</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cmd&quot;</span><span class="p">))</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cmd&quot;</span><span class="p">)</span>
 
         <span class="c1"># The executable must be found, return code 1 if not</span>
-        <span class="n">executable</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">executable</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">executable</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found.&quot;</span> <span class="o">%</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;returncode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span>
 
         <span class="c1"># remove the original executable</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
 
         <span class="c1"># Use updated command with executable and remainder (list)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">executable</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
 
         <span class="c1"># Capturing provides temporary output and error files</span>
-        <span class="k">with</span> <span class="n">Capturing</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
-            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-                <span class="n">cmd</span><span class="p">,</span>
-                <span class="n">stdout</span><span class="o">=</span><span class="n">capture</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">capture</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
-                <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">pid</span>
-            <span class="n">returncode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
-
-            <span class="c1"># Iterate through the output</span>
-            <span class="k">while</span> <span class="n">returncode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">returncode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
-
-        <span class="c1"># Get the remainder of lines, add return code</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">capture</span><span class="o">.</span><span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">err</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">capture</span><span class="o">.</span><span class="n">err</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
-
-        <span class="c1"># Cleanup capture files and save final return code</span>
-        <span class="n">capture</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="n">returncode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ShellExecutor.export"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return data as json. This is intended to save to the task database.</span>
-<span class="sd">           Any important output, returncode, etc. from the execute() function</span>
-<span class="sd">           should be provided here. Required strings are &quot;command&quot; and &quot;status&quot;</span>
-<span class="sd">           that must be one of &quot;running&quot; or &quot;complete&quot; or &quot;cancelled.&quot; Suggested</span>
-<span class="sd">           fields are output, error, and returncode. self._export_common() should</span>
-<span class="sd">           be called first.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Get common context (e.g., pwd)</span>
-        <span class="n">common</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_export_common</span><span class="p">()</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
-                <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">,</span>
-                <span class="s2">&quot;returncode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span>
-                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">,</span>
-                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
-                <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">common</span></div>
+        <span class="n">capture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;pid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">pid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;returncode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ShellExecutor.decode"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given a line of output (error or regular) decode using the</span>
@@ -310,13 +275,13 @@
         <span class="sd">&quot;&quot;&quot;Returns the output from shell command</span>
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ShellExecutor.get_error"><a class="viewcode-back" href="../../../../source/qme.main.executor.html#qme.main.executor.shell.ShellExecutor.get_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the error from shell command</span>
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

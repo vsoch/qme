@@ -214,7 +214,10 @@
 
         <span class="c1"># Create database client with functions for database type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">init_db</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">config_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">database_string</span><span class="o">=</span><span class="n">database_string</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span>
+            <span class="n">config_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_dir</span><span class="p">,</span>
+            <span class="n">database_string</span><span class="o">=</span><span class="n">database_string</span><span class="p">,</span>
+            <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Queue.list"><a class="viewcode-back" href="../../source/qme.main.html#qme.main.Queue.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -257,13 +260,13 @@
         <span class="sd">&quot;&quot;&quot;Given a command, get the executor for it (also creating an entry</span>
 <span class="sd">           in the task database) and run the command.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">executor</span> <span class="o">=</span> <span class="n">get_executor</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">get_executor</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
 
         <span class="c1"># add executor unique id and command to the database, returns a task object</span>
         <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">executor</span><span class="p">)</span>
 
         <span class="c1"># Execute and store result (this will need to be generalized)</span>
-        <span class="n">task</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">update_task</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">executor</span><span class="p">)</span>
         <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{task.summary()}&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">task</span></div>
@@ -274,7 +277,7 @@
 <span class="sd">           rerun, it is returned. Otherwise None is returned.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="n">command</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;command&quot;</span><span class="p">)</span>
         <span class="n">pwd</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pwd&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pwd</span><span class="p">:</span>

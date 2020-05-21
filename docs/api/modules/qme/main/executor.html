@@ -164,24 +164,55 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.shell</span> <span class="k">import</span> <span class="n">ShellExecutor</span>
+<span class="kn">from</span> <span class="nn">.slurm</span> <span class="k">import</span> <span class="n">SlurmExecutor</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 
-<div class="viewcode-block" id="get_executor"><a class="viewcode-back" href="../../../source/qme.main.executor.html#qme.main.executor.get_executor">[docs]</a><span class="k">def</span> <span class="nf">get_executor</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;get executor will return the correct executor depending on a command (or</span>
-<span class="sd">       other string) matching a regular expression. Currently we just have a </span>
-<span class="sd">       ShellExecutor.</span>
+<div class="viewcode-block" id="matches"><a class="viewcode-back" href="../../../source/qme.main.executor.html#qme.main.executor.matches">[docs]</a><span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="n">Executor</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a command, determine if it matches the regular expression</span>
+<span class="sd">       that determines to use the executor or not. This applies to all</span>
+<span class="sd">       executors except for the shell executor. This means that all non-shell</span>
+<span class="sd">       classes need to have a matchstring defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: each executor should have a regular expression to match command.</span>
-    <span class="k">return</span> <span class="n">ShellExecutor</span><span class="p">()</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Executor</span><span class="p">,</span> <span class="s2">&quot;matchstring&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Executor</span><span class="o">.</span><span class="n">matchstring</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="get_named_executor"><a class="viewcode-back" href="../../../source/qme.main.executor.html#qme.main.executor.get_named_executor">[docs]</a><span class="k">def</span> <span class="nf">get_named_executor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">taskid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="get_executor"><a class="viewcode-back" href="../../../source/qme.main.executor.html#qme.main.executor.get_executor">[docs]</a><span class="k">def</span> <span class="nf">get_executor</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get executor will return the correct executor depending on a command (or</span>
+<span class="sd">       other string) matching a regular expression. If nothing matches, we </span>
+<span class="sd">       default to a shell executor. Each non-shell executor should expose</span>
+<span class="sd">       a common &quot;matches&quot; function (provided by the base class) that will</span>
+<span class="sd">       handle parsing the command (a list) to a single string, and checking</span>
+<span class="sd">       if it matches a regular expression.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Slurm Executor</span>
+    <span class="k">if</span> <span class="n">matches</span><span class="p">(</span><span class="n">SlurmExecutor</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">SlurmExecutor</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="c1"># Default is standard shell command</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">ShellExecutor</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">)</span>
+    <span class="n">executor</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+    <span class="k">return</span> <span class="n">executor</span></div>
+
+
+<div class="viewcode-block" id="get_named_executor"><a class="viewcode-back" href="../../../source/qme.main.executor.html#qme.main.executor.get_named_executor">[docs]</a><span class="k">def</span> <span class="nf">get_named_executor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">taskid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;get a named executor, meaning determining based on name and not command</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;shell&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ShellExecutor</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2"> is not a known executor.&quot;</span><span class="p">)</span></div>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">ShellExecutor</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;slurm&quot;</span><span class="p">:</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">SlurmExecutor</span><span class="p">(</span><span class="n">taskid</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2"> is not a known executor.&quot;</span><span class="p">)</span>
+    <span class="n">executor</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+    <span class="k">return</span> <span class="n">executor</span></div>
 </pre></div>
 
            </div>

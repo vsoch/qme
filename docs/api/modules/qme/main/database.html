@@ -164,7 +164,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="init_db"><a class="viewcode-back" href="../../../source/qme.main.database.html#qme.main.database.init_db">[docs]</a><span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">config_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">database_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="init_db"><a class="viewcode-back" href="../../../source/qme.main.database.html#qme.main.database.init_db">[docs]</a><span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">config_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">database_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize the database, meaning a base client and appropriate functions</span>
 <span class="sd">       to save, or generate a unique ID based on the backend being used. Each</span>
 <span class="sd">       client has it&#39;s own init to check for a connection (or filesystem </span>
@@ -182,7 +182,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">.relational</span> <span class="k">import</span> <span class="n">RelationalDatabase</span> <span class="k">as</span> <span class="n">Database</span>
     <span class="k">return</span> <span class="n">Database</span><span class="p">(</span>
-        <span class="n">config_dir</span><span class="o">=</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">database_string</span><span class="o">=</span><span class="n">database_string</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+        <span class="n">config_dir</span><span class="o">=</span><span class="n">config_dir</span><span class="p">,</span>
+        <span class="n">database_string</span><span class="o">=</span><span class="n">database_string</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
     <span class="p">)</span></div>
 </pre></div>
 

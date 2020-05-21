@@ -204,7 +204,16 @@
 
         <span class="c1"># If we make it here, save the configuration</span>
         <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Configuration saved with database </span><span class="si">{args.database}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Configuration saved with database </span><span class="si">{args.database}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set a value for a particular executor</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">set</span><span class="p">:</span>
+        <span class="n">executor</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">set</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">config_dir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config_dir</span><span class="p">)</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="s2">&quot;executor.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">executor</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">executor</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Configuration saved with </span><span class="si">{executor}</span><span class="s2"> </span><span class="si">{key}</span><span class="s2"> </span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
