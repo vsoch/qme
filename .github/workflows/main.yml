@@ -41,6 +41,8 @@ jobs:
   build:
     needs: testing
     runs-on: ubuntu-latest
+    env:
+      CONTAINER: quay.io/vanessa/qme
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker Image
