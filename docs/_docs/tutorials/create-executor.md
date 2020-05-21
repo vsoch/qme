@@ -205,8 +205,10 @@ This is also where I could add logic for parsing output and error files.
 
 ### Updating Data
 
-The main export function of your executor needs to save data specific to the executor.
- If you use a shell executor, for example, the export function looks like this:
+Each executor by default has a data attribute (self.data) that you should
+add executor-specific data to that you want to export. The base executor will
+export a common set of metadata (user, present working directory, and a timestamp)
+and then add the self.data to it. That looks like this:
 
 ```python
     def export(self):
@@ -219,45 +221,19 @@ The main export function of your executor needs to save data specific to the exe
         """
         # Get common context (e.g., pwd)
         common = self._export_common()
-        common.update(
-            {
-                "output": self.out,
-                "error": self.err,
-                "returncode": self.returncode,
-                "command": self.cmd,
-                "status": self.status,
-                "pid": self.pid,
-            }
-        )
+        common.update(self.data)
         return common
 ```
 
-And then the `_export_common` function adds pwd (present working directory),
+The `_export_common` function is what adds pwd (present working directory),
  a timestamp, and a user id to the bsaic metadata. Note that this data doesn't
 include the outer level metadata about the executor, namely the executor name, 
 taskid, and data. This is handled by the database when it does the export, and you
-don't need to worry about it. What you might want to do, however, is write an 
-export function that adds the executor-specific metadata that you've added.
-Here is what we might add for slurm:
-
-```python
-common = self._export_common()
-common.update(
-    {
-        "output": self.out,
-        "error": self.err,
-        "returncode": self.returncode,
-        "command": self.cmd,
-        "status": self.status,
-        "pid": self.pid,
-        "jobid": self.jobid,
-        "outputfile": self.outputfile,
-        "errorfile": self.errorfile,
-     }
-)
-```
-
-This will ensure that items like the jobid are available to future actions.
+don't need to worry about it. You also don't need to subclass the export function.
+What you might want to do, however, is update self.data with any executor-specific
+metadata that you might have. For example, for slurm when we run execute, we
+add `self.data['jobid']` along with an outputfile and errorfile. This will
+then be exported to the database and available to future actions.
 
 ### Logging
 
@@ -404,25 +380,13 @@ let's write skeleton functions for our actions:
 ```
 
 To give you a explicit example of data, let's remember above that we exported
-the job id to the "jobid" key under the executor's data export:
+the job id to the "jobid" key under self.data:
 
-```
-common.update(
-    {
-        "output": self.out,
-        "error": self.err,
-        "returncode": self.returncode,
-        "command": self.cmd,
-        "status": self.status,
-        "pid": self.pid,
-        "jobid": self.jobid,
-        "outputfile": self.outputfile,
-        "errorfile": self.errorfile,
-     }
-)
+```python
+self.data['jobid'] = jobid
 ```
 
-So for the same slurm executor that export a jobid to it's data object,
+So for the same slurm executor loaded from the database that exported a jobid to it's data object,
 we would get that jobid again like this:
 
 ```python

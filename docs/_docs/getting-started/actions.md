@@ -36,15 +36,29 @@ an executor):
 
 ```bash
 $ qme exec status
+{'jobid': '941170', 'jobname': 'run_job.sh', 'partition': 'owners', 'alloccpus': '1', 'elapsed': '00:00:00', 'state': 'PENDING', 'exitcode': '0:0'}
 ```
 
-If we had needed to include the job identifier (if it wasn't the last job) we 
-could have asked for it. Notice that the executor is provided with the taskid, so
-we don't need to include it again.
+I could have also obtained the taskid from `qme get` or `qme ls slurm` and then asked
+an action to be run. Here is a listing with a previous (now finished) job:
 
 ```bash
-$ qme exec slurm-02eecdcd-a6b2-4055-8fad-c94e846a0f26 status
+$ qme ls slurm
+Database: sqlite
+1  slurm-4e84f806-6787-42e2-8ece-00646328df7f	sbatch --partition owners --time 00:00:10 run_job.sh
+2  slurm-66756885-00c3-4d34-9976-3b8a04337537	sbatch --partition owners --time 00:00:10 run_job.sh
 ```
+
+and getting it's status:
+
+```bash
+$ qme exec slurm-66756885-00c3-4d34-9976-3b8a04337537 status
+Database: sqlite
+{'jobid': '941170', 'jobname': 'run_job.sh', 'partition': 'owners', 'alloccpus': '1', 'elapsed': '00:00:06', 'state': 'COMPLETED', 'exitcode': '0:0'}
+```
+
+Running an action with a taskid is useful if we need to run an action
+for some command that wasn't the last one run.
 
 
 ## Python
@@ -72,7 +86,7 @@ $ qme run sbatch --partition owners --time 00:00:10 run_job.sh
 ```
 
 ### 2. Inspect Metadata
-on the command line. We could quickly get the current metadat with task.load:
+on the command line. We could quickly get the current metadata with task.load:
 
 ```python
 > task.load()
@@ -107,10 +121,12 @@ task.executor.get_actions()
 
 #### 4. Run Actions
 
-Cool! Let's get a status.
+Cool! Let's get a status. When we run an action, we use the `task.run_action()`
+function, as this will run the executor action and also provide the task's loaded
+metadata.
 
 ```python
-> task.executor.run_action('status')
+> task.run_action('status')
 {'jobid': '906448',
  'jobname': 'run_job.sh',
  'partition': 'owners',
@@ -125,14 +141,14 @@ exist). Here is what we see when it doesn't exist yet - it's presented as a list
 of lines, when returned by the function.
 
 ```python
-> task.executor.run_action('output')
+> task.run_action('output')
 ['/home/users/vsochat/slurm-906448.err does not exist.\n']
 ```
 
 When we get that the status is complete, we can try again:
 
 ```python
-> task.executor.run_action('output')
+> task.run_action('output')
 ['HELLO WORLD\n']
 ```
 

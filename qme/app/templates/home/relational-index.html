@@ -1,6 +1,6 @@
 {% extends "home/index.html" %}
 {% block table %}
-  <table class='table table-sortable'>
+  <table class="table table-sortable">
     <thead>
       <tr>
         <th :class="{ sorted: sort === 'id' }" @click="sortBy('id')">
@@ -25,11 +25,11 @@
         <td>{% raw %}{{ row.command }}{% endraw %}</td>
         <td data-id="{% raw %}{{ row.id }}{% endraw %}">
           <div class='btn-group btn-group-xs'>
-            <button class="btn btn-default" title="View">
+            <button v-on:click="viewRow" class="btn btn-default" title="View">
               <span class="glyphicon glyphicon-eye-open"></span>
             </button>
-            <button class="btn btn-default" title="Re-run">
-              <span v-on:click="rerunRow" class="glyphicon glyphicon-repeat"></span>
+            <button v-on:click="rerunRow" class="btn btn-default" title="Re-run">
+              <span class="glyphicon glyphicon-repeat"></span>
             </button>
             <button v-on:click="deleteRow" class="btn btn-default" title="Delete">
               <span class="glyphicon glyphicon-remove"></span>

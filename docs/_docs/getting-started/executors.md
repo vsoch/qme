@@ -126,7 +126,32 @@ Actions include the following:
   - **cancel**: cancel a job that was run with scancel
 
 For output and error files, you can either leave unset (to use a default) or set `--out` or `--err` to
-be read by QueueMe. SBATCH directives are not currently parsed. See the [actions](../actions/)
-guide for how to run actions for slurm.
+be read by QueueMe. SBATCH directives are not currently parsed. Here are quick examples of using
+running executor actions for the job we just ran above. Since it's the last run task, we don't
+need to specify the taskid, akin to `qme get` without one.
+
+**status**
+
+```bash
+$ qme exec status
+Database: sqlite
+{'jobid': '941170', 'jobname': 'run_job.sh', 'partition': 'owners', 'alloccpus': '1', 'elapsed': '00:00:06', 'state': 'COMPLETED', 'exitcode': '0:0'}
+```
+
+**output** and **error**
+
+```bash
+$ qme exec output
+Database: sqlite
+HELLO WORLD
+```
+
+**cancel**
+
+```bash
+$ qme exec cancel
+```
+
+See the [actions](../actions/) guide for how to run actions generally.
 
 You might next want to learn about the interactive [dashboard]({{ site.baseurl }}/getting-started/dashboard/).

@@ -169,13 +169,11 @@ class FileSystemTask:
         return os.path.join(self.data_base, self.executor.name)
 
     def update(self, updates=None):
-        """Update a data file. This means reading, updating, and writing. We
-           also update the executor data object.
+        """Update a data file. This means reading, updating, and writing.
         """
         updates = updates or {}
         if updates:
             self.data.update(updates)
-            self.executor.data = self.data
             self.save()
 
     def create(self, should_exist=False):

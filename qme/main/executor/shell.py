@@ -26,29 +26,31 @@ class ShellExecutor(ExecutorBase):
     name = "shell"
 
     def __init__(self, taskid=None, command=None):
-        self.reset(command)
         super().__init__(taskid)
+        self.reset(command)
 
     def summary(self):
-        if self.returncode is not None:
-            return "[%s][returncode: %s]" % (self.taskid, self.returncode)
+        if self.data.get("returncode") is not None:
+            return "[%s][returncode: %s]" % (self.taskid, self.data.get("returncode"))
         return "[%s][%s]" % (self.name, self.command)
 
     def reset(self, command=None):
         """refresh output and error streams
         """
-        self.out = []
-        self.err = []
-        self.returncode = None
-        self.pid = None
-        self.cmd = []
-        self.status = None
+        self.data = {
+            "output": [],
+            "error": [],
+            "returncode": None,
+            "pid": None,
+            "cmd": [],
+            "status": None,
+        }
         if command:
             self.set_command(command)
 
     @property
     def command(self):
-        return " ".join(self.cmd)
+        return " ".join(self.data.get("cmd"))
 
     def set_command(self, cmd):
         """parse is called when a new command is provided to ensure we have
@@ -57,7 +59,7 @@ class ShellExecutor(ExecutorBase):
         """
         if not isinstance(cmd, list):
             cmd = shlex.split(cmd)
-        self.cmd = cmd
+        self.data["cmd"] = cmd
 
     def execute(self, cmd=None):
         """Execute a system command and return output and error. Execute
@@ -74,52 +76,31 @@ class ShellExecutor(ExecutorBase):
            is used as a super and the class using it defines a custom execute
         """
         # Reset the output and error records
-        self.reset(cmd or self.cmd)
+        self.reset(cmd or self.data.get("cmd"))
+        cmd = self.data.get("cmd")
 
         # The executable must be found, return code 1 if not
-        executable = shutil.which(self.cmd[0])
+        executable = shutil.which(cmd[0])
         if not executable:
-            self.err = ["%s not found." % self.cmd[0]]
-            self.returncode = 1
-            return (self.out, self.err)
+            self.data["error"] = ["%s not found." % cmd[0]]
+            self.data["returncode"] = 1
+            return self.data["output"], self.data["error"]
 
         # remove the original executable
-        args = self.cmd[1:]
-        self.status = "running"
+        args = cmd[1:]
+        self.data["status"] = "running"
 
         # Use updated command with executable and remainder (list)
         cmd = [executable] + args
 
         # Capturing provides temporary output and error files
         capture = self.capture(cmd)
-        self.pid = capture.pid
-        self.returncode = capture.returncode
-        self.out = capture.output
-        self.err = capture.error
-        self.status = "complete"
-        return (self.out, self.err)
-
-    def export(self):
-        """return data as json. This is intended to save to the task database.
-           Any important output, returncode, etc. from the execute() function
-           should be provided here. Required strings are "command" and "status"
-           that must be one of "running" or "complete" or "cancelled." Suggested
-           fields are output, error, and returncode. self._export_common() should
-           be called first.
-        """
-        # Get common context (e.g., pwd)
-        common = self._export_common()
-        common.update(
-            {
-                "output": self.out,
-                "error": self.err,
-                "returncode": self.returncode,
-                "command": self.cmd,
-                "status": self.status,
-                "pid": self.pid,
-            }
-        )
-        return common
+        self.data["pid"] = capture.pid
+        self.data["returncode"] = capture.returncode
+        self.data["output"] = capture.output
+        self.data["error"] = capture.error
+        self.data["status"] = "complete"
+        return self.data["output"], self.data["error"]
 
     def decode(self, line):
         """Given a line of output (error or regular) decode using the
@@ -137,10 +118,10 @@ class ShellExecutor(ExecutorBase):
         """Returns the output from shell command
         :rtype: str
         """
-        return self.out
+        return self.data.get("output")
 
     def get_error(self):
         """Returns the error from shell command
         :rtype: str
         """
-        return self.err
+        return self.data.get("error")

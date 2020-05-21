@@ -97,6 +97,8 @@ class ExecutorBase:
         self.taskid = "%s-%s" % (self.name, uid)
         self.pwd = os.getcwd()
         self.actions = {}
+        if not hasattr(self, "data"):
+            self.data = {}
 
     def _export_common(self):
         """export common task variables such as present working directory, user,
@@ -108,6 +110,15 @@ class ExecutorBase:
             "user": get_user(),
             "timestamp": str(datetime.now()),
         }
+
+    def export(self):
+        """return data as json. This is intended to save to the task database.
+           Any important executor specific metadata should be added to self.data
+        """
+        # Get common context (e.g., pwd)
+        common = self._export_common()
+        common.update(self.data)
+        return common
 
     @property
     def command(self):
@@ -161,16 +172,6 @@ class ExecutorBase:
         capture.cleanup()
         capture.returncode = returncode
         return capture
-
-    def export(self):
-        """return data as json. This is intended to save to the task database.
-           Any important output, returncode, etc. from the execute() function
-           should be provided here. Required strings are "command" and "status"
-           that must be one of "running" or "complete" or "cancelled." Suggested
-           fields are output, error, and returncode. self._export_common() should
-           be called first.
-        """
-        raise NotImplementedError
 
     def get_setting(self, key, default=None):
         """Get a setting, meaning that we first check the environment, then

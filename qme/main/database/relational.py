@@ -193,5 +193,5 @@ class RelationalDatabase(Database):
 
         rows = []
         for task in tasks:
-            rows.append([task.taskid, task.command])
+            rows.append([task.taskid, task.command or ""])
         return rows

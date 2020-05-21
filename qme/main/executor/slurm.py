@@ -27,7 +27,6 @@ class SlurmExecutor(ShellExecutor):
 
     def __init__(self, taskid=None, command=None):
         super().__init__(taskid, command)
-        self.jobid = None
         self.actions = {
             "status": self.action_get_status,
             "output": self.action_get_output,
@@ -50,40 +49,21 @@ class SlurmExecutor(ShellExecutor):
             match = re.search("[0-9]+", self.out[0])
             if not match:
                 bot.exit(f"Unable to derive job id from {self.out}")
-            self.jobid = match.group()
+            self.data["jobid"] = match.group()
 
             # Get output file, or default to $PWD/slurm-<jobid>
-            self.errorfile = os.path.join(self.pwd, "slurm-%s.err" % self.jobid)
-            self.outputfile = os.path.join(self.pwd, "slurm-%s.out" % self.jobid)
+            self.data["errorfile"] = os.path.join(self.pwd, "slurm-%s.err" % self.jobid)
+            self.data["outputfile"] = os.path.join(
+                self.pwd, "slurm-%s.out" % self.jobid
+            )
 
             match = re.search("(--out|-o) (?P<output>[^\s-]+)", self.command)
             if match:
-                self.outputfile = match.groups("output")[1]
+                self.data["outputfile"] = match.groups("output")[1]
 
             match = re.search("(--err|-e) (?P<error>[^\s-]+)", self.command)
             if match:
-                self.errorfile = match.groups("error")[1]
-
-    def export(self):
-        """export data as json. In addition to shell defaults, we add slurm
-           metadata like errorfile, outputfile, and jobid
-        """
-        # Get common context (e.g., pwd)
-        common = self._export_common()
-        common.update(
-            {
-                "output": self.out,
-                "error": self.err,
-                "returncode": self.returncode,
-                "command": self.cmd,
-                "status": self.status,
-                "pid": self.pid,
-                "jobid": self.jobid,
-                "outputfile": self.outputfile,
-                "errorfile": self.errorfile,
-            }
-        )
-        return common
+                self.data["errorfile"] = match.groups("error")[1]
 
     # Actions
 

@@ -61,29 +61,38 @@ we likely want to get a summary of it. We can do that with `qme get`, which
 expects a task id.
 
 ```bash
-$ qme get shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7
-DATABASE: filesystem
+$ qme get shell-e8098ce8-bb9d-4193-bcdf-fc3dc221ca0c
+Database: sqlite
 {
     "executor": "shell",
-    "uid": "shell-17f3d485-5820-4833-bc6c-1c8ed4ce31b7",
+    "uid": "shell-e8098ce8-bb9d-4193-bcdf-fc3dc221ca0c",
     "data": {
-        "pwd": "/home/vanessa/Desktop/Code/qme/tests",
+        "pwd": "/home/vanessa/Desktop/Code/qme",
         "user": "vanessa",
+        "timestamp": "2020-05-21 10:35:10.894684",
         "output": [
-            "helpers.sh\n",
-            "__init__.py\n",
-            "__pycache__\n",
-            "test_client.sh\n",
-            "test_executor_shell.py\n",
-            "test_filesystem.py\n"
+            "build\n",
+            "CHANGELOG.md\n",
+            "dist\n",
+            "Dockerfile\n",
+            "docs\n",
+            "LICENSE\n",
+            "MANIFEST.in\n",
+            "paper\n",
+            "qme\n",
+            "qme.egg-info\n",
+            "README.md\n",
+            "setup.cfg\n",
+            "setup.py\n",
+            "tests\n"
         ],
         "error": [],
         "returncode": 0,
-        "command": [
+        "pid": 1639,
+        "cmd": [
             "ls"
         ],
-        "status": "complete",
-        "pid": 15183
+        "status": "complete"
     },
     "command": "ls"
 }
