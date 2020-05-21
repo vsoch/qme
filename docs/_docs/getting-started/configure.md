@@ -115,7 +115,17 @@ export QME_DATABASE=sqlite
 export QME_DATABASE_STRING=mydatabase.db
 ```
 
-to achieve the same result.
+to achieve the same result. When you have an sqlite database (akin to another
+relational) your `qme ls` listing will have the command added, making
+it much more useful:
+
+```bash
+$ qme ls
+Database: sqlite
+1  shell-9d38a272-e0d1-4027-8c93-382a8fcbd290	ls
+2  shell-9f593e88-3ecd-4e14-adf5-d615f2262f24	whoami
+3  shell-513a4c2f-13be-4a9c-8f97-8ae3bcc8049b	singularity --help
+```
 
 
 ### Postgres and MySql
