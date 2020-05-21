@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  formatting:
+  docker-deploy:
     runs-on: ubuntu-latest
     env:
       CONTAINER: quay.io/vanessa/qme

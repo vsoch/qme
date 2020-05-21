@@ -22,7 +22,7 @@ $ docker build -t quay.io/vanessa/qme .
 ```
 
 Note that you can also just pull the container - there is an automated build
-for it at Quay io.
+for it at Quay.io at [quay.io/vanessa/qme](https://quay.io/repository/vanessa/qme?tab=tags).
 
 ```bash
 $ docker pull quay.io/vanessa/qme
@@ -33,6 +33,13 @@ Commands in the container will be parsed.
 
 ```bash
 $ docker run -it --entrypoint /bin/bash --rm -p 5000:5000 quay.io/vanessa/qme 
+```
+
+Also remember that you should generate and include a secret key for your container
+if you want to use the interface.
+
+```bash
+$ docker run -it --entrypoint /bin/bash --env QME_SERVER_KEY=mysecretkey --rm -p 5000:5000 quay.io/vanessa/qme 
 ```
 
 Then you can run a few commands:
@@ -133,6 +140,19 @@ quay.io:
 $ singularity pull docker://quay.io/vanessa/qme
 ```
 
+Here is a simple script:
 
+```bash
+$ cat run_job.sh 
+#!/bin/bash
+
+echo "HELLO WORLD"
+```
+
+Let's run it via the QME container:
+
+```bash
+
+```
 
 

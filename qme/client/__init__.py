@@ -77,6 +77,11 @@ def get_parser():
     )
     execute.add_argument("actions", nargs="*")
 
+    generate = subparsers.add_parser(
+        "generate-key",
+        help="generate a key for qme start, should be exported to QME_SERVER_KEY.",
+    )
+
     # List tasks and print to terminal
     ls = subparsers.add_parser("ls", help="List tasks")
     ls.add_argument(
@@ -163,6 +168,8 @@ def main():
         from .config import main
     if args.command == "exec":
         from .actions import main
+    if args.command == "generate-key":
+        from .generate import main
     if args.command == "get":
         from .get import main
     if args.command == "ls":
