@@ -153,7 +153,7 @@ def main():
 
     # Show the version and exit
     if args.command == "version" or args.version:
-        print(gridtest.__version__)
+        print(qme.__version__)
         sys.exit(0)
 
     # Does the user want a shell?
