@@ -124,7 +124,7 @@ class Queue:
            rerun, it is returned. Otherwise None is returned.
         """
         task = self.db.get_task(taskid)
-        params = task.load().get("data", {})
+        params = task.load()
         command = params.get("command")
         pwd = params.get("pwd")
         if pwd:

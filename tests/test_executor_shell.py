@@ -36,5 +36,5 @@ def test_executor_shell(tmp_path):
 
     # Task.export includes the executor specific data
     data = task.export()
-    for key in ["command", "pwd", "output", "error", "returncode"]:
+    for key in ["cmd", "pwd", "output", "error", "returncode"]:
         assert key in data

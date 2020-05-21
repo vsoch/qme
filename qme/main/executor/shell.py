@@ -50,7 +50,7 @@ class ShellExecutor(ExecutorBase):
 
     @property
     def command(self):
-        return " ".join(self.data.get("cmd"))
+        return " ".join(self.data.get("cmd", []))
 
     def set_command(self, cmd):
         """parse is called when a new command is provided to ensure we have

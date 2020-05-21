@@ -186,7 +186,6 @@ class FileSystemTask:
                     f"{self.executor.taskid} does not exist in the filesystem database"
                 )
             self.data = self.load()
-            self.executor.data = self.data
 
         if not os.path.exists(self.executor_dir):
             os.mkdir(self.executor_dir)
@@ -215,7 +214,7 @@ class FileSystemTask:
         return self.executor.summary()
 
     def load(self):
-        """Given a task, load the filename
+        """Given a task, load data from filename.
         """
         if os.path.exists(self.filename):
             return read_json(self.filename)
