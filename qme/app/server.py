@@ -28,8 +28,8 @@ app.config.from_object("qme.app.config")
 # turn the flask app into a socketio app
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 
-# TODO import api here
 from qme.app.views import *
+from qme.app.api import *
 
 
 def start(port=5000, debug=True, queue=None, host=None):
