@@ -315,6 +315,18 @@ for your tasks.
 $ qme start
 ```
 
+You can run it in debug mode:
+
+```bash
+$ qme start --debug
+```
+
+or further customize the port or hostname
+
+```bash
+$ qme start --port 8000 --host 0.0.0.0
+```
+
 For each, you can specify a particular action (e.g., delete or re-run)
 or click on it for further details.  See the [dashboard]({{ site.baseurl }}/getting-started/dashboard/) 
 documentation page for more details.

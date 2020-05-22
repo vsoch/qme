@@ -87,7 +87,7 @@ $ qme clear shell
 $ qme clear shell-a561702d-404e-4fb2-be27-57496b32ac46
 ```
 
-search (coming soon), configure, or start an interactive interface:
+search, configure, or start an interactive interface:
 
 ```bash
 $ qme search <query>
@@ -124,7 +124,7 @@ parse the specific command. Along with parsing the command, the executor can the
  - capture specific metadata important to know (e.g., the present working directory or username)
  - further check the command for correctness, and tell the user how to improve or fix it if needed.
  - define custom actions to run for the command (e.g., a slurm executor would retrieve the job id and expose a status function to the user)
- - define a custom interface for displaying the actions and metadata parsde.
+ - define a custom interface for displaying the actions and metadata parsed.
 
 Executors can be created for general command line tools, serving as a wrapper:
 
