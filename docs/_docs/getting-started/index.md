@@ -28,6 +28,7 @@ for running tasks, starting the interface, or otherwise interacting with your qu
  - [Dashboard](dashboard/) to better interact with and manage your tasks.
  - [Actions](actions/) are defined per executors, and can be called from command line or sometimes interface.
  - [Containers](containers/) including Docker, or more likely important, Singularity.
+ - [API](api/) the dashboard also exposes an application programming interface for your tasks
 
 <a id="#how-does-it-work">
 ### How does it work?

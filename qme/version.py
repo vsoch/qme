@@ -26,6 +26,7 @@ INSTALL_REQUIRES = ()
 APP_REQUIRES = (
     ("Flask", {"min_version": "1.0.2"}),
     ("Flask-SocketIO", {"min_version": "3.1.2"}),
+    ("flask-restful", {"min_version": "0.3.8"}),
     ("gevent-websocket", {"min_version": "0.10.1"}),
 )
 

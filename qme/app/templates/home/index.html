@@ -33,7 +33,8 @@
   <div class="controls">
     <button class="btn btn-sm" :disabled="!hasPage(-1)" @click="prevPage">←</button> 
     <button class="btn btn-sm" :disabled="!hasPage(1)"  @click="nextPage">→</button>
-    <span style="float:right; margin-right:30px; margin-top:20px" class="badge badge-primary">database: {{ database }}</span>
+    <span style="float:right; margin-right:30px; margin-top:20px" class="badge badge-primary">database: {{ database }}</span><a href="/api/tasks"><span style="float:right; margin-right:30px; margin-top:20px" class="badge badge-primary">api</span></a>
+
   </div>
   <hr>
 </div>
