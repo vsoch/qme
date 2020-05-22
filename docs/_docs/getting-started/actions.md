@@ -11,6 +11,7 @@ a user to execute custom actions to get status updates or similar. Here
 we will walk through a basic example for getting actions from within
 Python, or from the command line.
 
+<a id="command-line">
 ## Command Line
 
 First, let's run a command to launch a little script.
@@ -60,7 +61,7 @@ Database: sqlite
 Running an action with a taskid is useful if we need to run an action
 for some command that wasn't the last one run.
 
-
+<a id="python">
 ## Python
 
 Let's say that we create a Queue, and we use all the defaults.

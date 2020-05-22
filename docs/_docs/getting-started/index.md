@@ -27,6 +27,7 @@ for running tasks, starting the interface, or otherwise interacting with your qu
  - [Executors](executors/) are parsers for the commands that you run to create tasks.
  - [Dashboard](dashboard/) to better interact with and manage your tasks.
  - [Actions](actions/) are defined per executors, and can be called from command line or sometimes interface.
+   - [Python](https://vsoch.github.io/qme/getting-started/actions/index.html#python): an example of running an action from a Python terminal.
  - [Containers](containers/) including Docker, or more likely important, Singularity.
  - [API](api/) the dashboard also exposes an application programming interface for your tasks
 
