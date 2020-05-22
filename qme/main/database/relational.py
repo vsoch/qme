@@ -14,6 +14,7 @@ from qme.logger import bot
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import and_, or_, not_
 
 import os
 import json
@@ -184,3 +185,18 @@ class RelationalDatabase(Database):
         for task in tasks:
             rows.append([task.taskid, task.command or ""])
         return rows
+
+    def search(self, query):
+        """Search across the database for a particular query.
+        """
+        from qme.main.database.models import Task
+
+        # Ensure that query can be part of a larger string
+        query = "%" + query + "%"
+
+        query = self.session.query(Task).filter(
+            or_(Task.command.ilike(query), Task.data.ilike(query))
+        )
+        # list of tuples, (taskid, command, datetime, executor]
+        results = self.session.execute(query).fetchall()
+        return [[r[0], str(r[2]), r[1]] for r in results]

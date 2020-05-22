@@ -62,6 +62,9 @@ def test_filesystem(tmp_path):
     assert queue.db.database == "filesystem"
     assert queue.db.data_base == os.path.join(config_dir, "database")
 
+    with pytest.raises(SystemExit):
+        queue.search("Not possible for non-relational databases.")
+
     # Test list, empty without anything
     assert not queue.list()
 

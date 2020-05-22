@@ -107,6 +107,20 @@ Is a Flask application that comes with qme, exposed via `qme start`, that provid
 an table to manage and otherwise interact with tasks.
 
 
+**database**
+
+A database is the backend database used by QME to store your tasks. The default (and dummy)
+database is the filesystem, which is good if you want to briefly test out QueueMe but
+not use extensively. For most use cases, sqlite is recommended as it supports display
+or more information and easier search. You can easily install the sqlachemy database
+dependency and then specify using sqlite for your configuration by doing the following:
+
+```bash
+$ pip install -e .[all]         # local install from repository
+$ pip install -e qme[all]       # install from pypi
+$ qme config --database sqlite
+```
+
 ## Licenses
 
 This code is licensed under the Mozilla, version 2.0 or later [LICENSE](LICENSE).
