@@ -1,9 +1,7 @@
 include README.md LICENSE
-graft qme
 recursive-include qme *
 recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
-recursive-exclude * IGNORE *
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
 recursive-include qme/app *.html *.css *.png *.js
 recursive-include qme/main/config *.ini
-#recursive-include docs *.rst conf.py *.jpg *.png *.gif
