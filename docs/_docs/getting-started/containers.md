@@ -140,19 +140,11 @@ quay.io:
 $ singularity pull docker://quay.io/vanessa/qme
 ```
 
-Here is a simple script:
+Access to the QueueMe executable is available when you run the container!
 
 ```bash
-$ cat run_job.sh 
-#!/bin/bash
-
-echo "HELLO WORLD"
+./qme_latest.sif ls
 ```
 
-Let's run it via the QME container:
-
-```bash
-
-```
-
+See the [Singularity tutorial]({{ site.baseurl }}/tutorials/singularity/) for more details.
 
