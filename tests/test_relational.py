@@ -81,6 +81,9 @@ def test_relational(tmp_path):
     assert len(queue.list()) == 2
     exports = newtask.export()
 
+    # Search for tasks
+    assert len(queue.search("ls")) > 0
+
     # Check exports
     for required in ["pwd", "output", "error", "cmd", "returncode"]:
         assert required in exports

@@ -119,6 +119,7 @@ $('input[type="search"] + .search-cancel-button').hide($(this).prev('input').val
 const app = new Vue({
   data: () => ({
     rows: [],
+    lookup: Object(),
     newRow: { name: '', command: '' },
     sort: 'id',
     sortDir:'asc',
@@ -139,7 +140,9 @@ const app = new Vue({
       // receive new rows from the server, filesystem database
       this.socket.on('FSdatabase', function(msg) {
         self.rows = []
+        self.lookup = Object()
         $.each(msg.rows, function(i, row){
+          self.lookup[i] = row[1]
           self.rows.push({
             id:      i,
             executor: row[0],
@@ -152,7 +155,9 @@ const app = new Vue({
       // receive new rows for relational database
       this.socket.on('RELdatabase', function(msg) {
         self.rows = []
+        self.lookup = Object()
         $.each(msg.rows, function(i, row){
+          self.lookup[i] = row[1]
           self.rows.push({
             id:      i,
             executor: row[0],
@@ -184,19 +189,20 @@ const app = new Vue({
     deleteRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
         if (confirm("Are you sure you want to delete this task? This cannot be undone.")) {
-            this.actionSocket.emit('deleterow', {taskid : this.rows[rowId].name})
+            this.actionSocket.emit('deleterow', {taskid : this.lookup[rowId]})
         }
     },
 
     viewRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
-        var taskid = this.rows[rowId].name
+        var taskid = this.lookup[rowId]
         document.location = "/executor/" + taskid
     },
 
     rerunRow: function(event) {
         var rowId = $(event.target).closest('tr').find('td:first').text()
-        this.actionSocket.emit('rerunrow', {taskid : this.rows[rowId].name})
+        console.log(rowId)
+        this.actionSocket.emit('rerunrow', {taskid : this.lookup[rowId]})
     },
 
 
