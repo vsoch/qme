@@ -82,7 +82,7 @@ But since the entrypoint to the container is qme, we instead give the run
 command to it:
 
 ```bash
-qme_latest.sif run sbatch --partition owners --time 00:00:10 run_job.sh
+./qme_latest.sif run sbatch --partition owners --time 00:00:10 run_job.sh
 Database: sqlite
 [slurm-6f84c002-e3e0-4137-9af9-bb4f2c966399][returncode: 0]
 ```
