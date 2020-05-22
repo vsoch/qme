@@ -252,6 +252,12 @@ a task id is not provided, get the last run task.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="qme.main.database.base.Database.search">
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">query</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/base.html#Database.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.base.Database.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>search is only available to non-filesystem databases</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="qme.main.database.base.Database.update_task">
 <code class="sig-name descname">update_task</code><span class="sig-paren">(</span><em class="sig-param">executor</em>, <em class="sig-param">updates=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/base.html#Database.update_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.base.Database.update_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>update a task with a json dictionary.</p>
@@ -467,38 +473,6 @@ the self.executor.run_action(name, data) function.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="qme.main.database.models.TaskData">
-<em class="property">class </em><code class="sig-prename descclassname">qme.main.database.models.</code><code class="sig-name descname">TaskData</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/models.html#TaskData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.models.TaskData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
-<p>a task data object includes custom data for an executor (json)</p>
-<dl class="attribute">
-<dt id="qme.main.database.models.TaskData.data">
-<code class="sig-name descname">data</code><a class="headerlink" href="#qme.main.database.models.TaskData.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qme.main.database.models.TaskData.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#qme.main.database.models.TaskData.id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qme.main.database.models.TaskData.task">
-<code class="sig-name descname">task</code><a class="headerlink" href="#qme.main.database.models.TaskData.task" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qme.main.database.models.TaskData.taskid">
-<code class="sig-name descname">taskid</code><a class="headerlink" href="#qme.main.database.models.TaskData.taskid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="qme.main.database.models.TaskData.timestamp">
-<code class="sig-name descname">timestamp</code><a class="headerlink" href="#qme.main.database.models.TaskData.timestamp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-qme.main.database.relational">
 <span id="qme-main-database-relational-module"></span><h2>qme.main.database.relational module<a class="headerlink" href="#module-qme.main.database.relational" title="Permalink to this headline">¶</a></h2>
@@ -567,6 +541,12 @@ a task id is not provided, get the last run task.</p>
 <dd><p>list tasks, either under a particular executor name (if provided)
 or just the executors. This returns tasks in rows to be printed
 (or otherwise parsed).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="qme.main.database.relational.RelationalDatabase.search">
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">query</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/main/database/relational.html#RelationalDatabase.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.main.database.relational.RelationalDatabase.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search across the database for a particular query.</p>
 </dd></dl>
 
 <dl class="method">

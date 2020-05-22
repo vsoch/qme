@@ -164,6 +164,7 @@
 <span class="kn">from</span> <span class="nn">flask_socketio</span> <span class="k">import</span> <span class="n">SocketIO</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span>
 <span class="kn">from</span> <span class="nn">qme.logger</span> <span class="k">import</span> <span class="n">bot</span>
+<span class="kn">from</span> <span class="nn">qme.defaults</span> <span class="k">import</span> <span class="n">QME_HOSTNAME</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -184,10 +185,12 @@
 <span class="kn">from</span> <span class="nn">qme.app.views</span> <span class="k">import</span> <span class="o">*</span>
 
 
-<div class="viewcode-block" id="start"><a class="viewcode-back" href="../../../source/qme.app.html#qme.app.server.start">[docs]</a><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="start"><a class="viewcode-back" href="../../../source/qme.app.html#qme.app.server.start">[docs]</a><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Start can be invoked when this file is executed (see __main__ below)</span>
 <span class="sd">       or used as a function to programmatically start a server. If started</span>
-<span class="sd">       via qme view, we can add the queue to the server.</span>
+<span class="sd">       via qme view, we can add the queue to the server. If you want to change</span>
+<span class="sd">       the hostname, set the environment variable QME_HOSTNAME or set on command</span>
+<span class="sd">       line with qme start.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;QueueMe!&quot;</span><span class="p">)</span>
 
@@ -208,7 +211,7 @@
 
     <span class="c1"># Add the queue to the server</span>
     <span class="n">app</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
-    <span class="n">socketio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span></div>
+    <span class="n">socketio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span> <span class="ow">or</span> <span class="n">QME_HOSTNAME</span><span class="p">)</span></div>
 
 
 <span class="c1"># This is how the command line version will run</span>

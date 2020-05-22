@@ -193,18 +193,18 @@
 <span class="n">QME_SHELL</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;QME_SHELL&quot;</span><span class="p">,</span> <span class="s2">&quot;ipython&quot;</span><span class="p">)</span>
 
 <span class="c1"># Default database is filesystem</span>
-<span class="n">QME_DATABASE</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;QME_DATABASE&quot;</span><span class="p">,</span> <span class="s2">&quot;filesystem&quot;</span><span class="p">)</span>
+<span class="n">QME_DATABASE</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;QME_DATABASE&quot;</span><span class="p">)</span>
 
 <span class="c1"># Determine database backend to use, and where to store config</span>
 <span class="n">USERHOME</span> <span class="o">=</span> <span class="n">get_userhome</span><span class="p">()</span>
 <span class="n">QME_HOME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">USERHOME</span><span class="p">,</span> <span class="s2">&quot;.qme&quot;</span><span class="p">)</span>
 
 <span class="c1"># Database folder for filesystem or sqlite database</span>
-<span class="n">QME_DATABASE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">QME_HOME</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
 <span class="n">QME_DATABASE_STRING</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;QME_DATABASE&quot;</span><span class="p">)</span>
 
 <span class="c1"># Dashboard settings</span>
 <span class="n">QME_SOCKET_UPDATE_SECONDS</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;QME_SOCKET_UPDATE_SECONDS&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">QME_HOSTNAME</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;QME_HOSTNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>

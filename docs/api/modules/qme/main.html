@@ -200,7 +200,12 @@
 <span class="sd">            - config_dir (str) : the configuration directory (home for qme)</span>
 <span class="sd">            - database (str) : a string to specify the database setup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">database</span>
+            <span class="ow">or</span> <span class="n">QME_DATABASE</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="s2">&quot;database&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="s2">&quot;filesystem&quot;</span>
+        <span class="p">)</span>
         <span class="n">database_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="s2">&quot;databaseconnect&quot;</span><span class="p">)</span>
         <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
 
@@ -288,7 +293,16 @@
             <span class="n">bot</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{task.summary()}&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">task</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">bot</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{task.executor.taskid}</span><span class="s2"> does not have an associated command.&quot;</span><span class="p">)</span></div></div>
+            <span class="n">bot</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{task.executor.taskid}</span><span class="s2"> does not have an associated command.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Queue.search"><a class="viewcode-back" href="../../source/qme.main.html#qme.main.Queue.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search across commands and general metadata for a string of interest.</span>
+<span class="sd">           We use regular expressions (re.search) so they are supported.</span>
+<span class="sd">           Search is only available for non-filesystem databases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">==</span> <span class="s2">&quot;filesystem&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Search is only supported for relational databases.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

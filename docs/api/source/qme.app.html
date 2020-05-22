@@ -221,10 +221,12 @@ with this file, You can obtain one at <a class="reference external" href="http:/
 
 <dl class="function">
 <dt id="qme.app.server.start">
-<code class="sig-prename descclassname">qme.app.server.</code><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">port=5000</em>, <em class="sig-param">debug=True</em>, <em class="sig-param">queue=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/app/server.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.app.server.start" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">qme.app.server.</code><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">port=5000</em>, <em class="sig-param">debug=True</em>, <em class="sig-param">queue=None</em>, <em class="sig-param">host=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/qme/app/server.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qme.app.server.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start can be invoked when this file is executed (see __main__ below)
 or used as a function to programmatically start a server. If started
-via qme view, we can add the queue to the server.</p>
+via qme view, we can add the queue to the server. If you want to change
+the hostname, set the environment variable QME_HOSTNAME or set on command
+line with qme start.</p>
 </dd></dl>
 
 </div>
