@@ -27,6 +27,11 @@ class Database:
         """
         raise NotImplementedError
 
+    def search(self, query):
+        """search is only available to non-filesystem databases
+        """
+        raise NotImplementedError
+
     def list_tasks(self, name=None):
         """list tasks associated with an executor, or all tasks.
 

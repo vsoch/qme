@@ -36,6 +36,12 @@ or list all tasks for a particular executor (e.g., shell):
 $ qme ls shell
 ```
 
+or search across all metadata and task commands for a query of interest:
+
+```bash
+$ qme search moto
+```
+
 or just list all tasks
 
 ```bash

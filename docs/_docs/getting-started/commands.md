@@ -265,11 +265,44 @@ $ qme rerun
 <a id="search">
 ## Search
 
-**not yet developed** will allow for a query across executors and tasks, or
-just a specific executor or task.
+Let's say that we run a bunch of tasks, and either the command or result has a term
+of choice that we want to find again. 
 
 ```bash
-$ qme search <query>
+$ qme run echo Hello Moto
+$ qme run echo Hello Another Moto
+```
+
+We might then want to search for these commands! For a sanity check, let's make
+sure we know their taskids in advance:
+
+```bash
+$ qme ls | grep Moto
+2  shell-de58f61b-81da-467c-981c-497f7ae8556b	echo Hello Moto
+3  shell-c231699a-4c3e-43f0-961f-2829d16d588c	echo Hello Another Moto
+```
+
+Aside from listing and using grep, we can just use `qme search`.
+
+```bash
+$ qme search moto
+Database: sqlite
+1  shell-de58f61b-81da-467c-981c-497f7ae8556b	2020-05-22 17:47:37	echo Hello Moto
+2  shell-c231699a-4c3e-43f0-961f-2829d16d588c	2020-05-22 17:47:45	echo Hello Another Moto
+```
+
+Notice that the search is case insensitive. We get back the taskid (that is prefixed with
+the executor) along with the timestamp and the command itself. Tasks with matches in
+some part of the metadata (e.g., a string in the output or error) would be included too.
+Since search takes advantage of using a relational (or sqlite) database,
+the filesystem database is not supported.
+
+```bsah
+$ qme config --database filesystem
+Configuration saved with database filesystem
+$ qme search moto
+Database: filesystem
+Search is only supported for relational databases.
 ```
 
 <a id="start">

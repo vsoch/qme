@@ -141,3 +141,12 @@ class Queue:
             return task
         else:
             bot.warning(f"{task.executor.taskid} does not have an associated command.")
+
+    def search(self, query):
+        """Search across commands and general metadata for a string of interest.
+           We use regular expressions (re.search) so they are supported.
+           Search is only available for non-filesystem databases.
+        """
+        if self.database == "filesystem":
+            sys.exit("Search is only supported for relational databases.")
+        return self.db.search(query)

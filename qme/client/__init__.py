@@ -101,6 +101,13 @@ def get_parser():
     rerun.add_argument("taskid", nargs="?")
 
     # Start the queueMe dashboard
+    search = subparsers.add_parser(
+        "search",
+        help="Search for content in a command or metadata (sqlite or relational only).",
+    )
+    search.add_argument("query", nargs="*")
+
+    # Start the queueMe dashboard
     start = subparsers.add_parser(
         "start", help="View the queue web interface (requires Flask)"
     )
@@ -178,6 +185,8 @@ def main():
         from .run import run as main
     if args.command == "rerun":
         from .run import rerun as main
+    if args.command == "search":
+        from .search import main
     if args.command == "start":
         from .start import main
 
