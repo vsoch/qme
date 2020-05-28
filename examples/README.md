@@ -6,5 +6,6 @@ will persist as long as the container is running (unless you bind it somewhere
 to your host) and if you use Singularity, the usage can be seamless.
 
  - [nltk-docker](nltk-docker): Create a dashboard for a container installed with nltk to perform basic text processing commands.
+ - [datalad](datalad): getting started with datalad, and using it in the context of QueueMe.
 
 You should also look at [tutorials](https://vsoch.github.io/qme/tutorials/) for the QueueMe documentation for more examples.

@@ -11,6 +11,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from .shell import ShellExecutor
 from .slurm import SlurmExecutor
 from .reproman import RepromanExecutor
+from .datalad import DataladExecutor
 import sys
 import re
 
@@ -44,6 +45,10 @@ def get_executor(command=None, config=None):
     # Reproman executor (running remote commands)
     elif matches(RepromanExecutor, command):
         executor = RepromanExecutor(command=command)
+
+    # Reproman executor (running remote commands)
+    elif matches(DataladExecutor, command):
+        executor = DataladExecutor(command=command)
 
     # Default is standard shell command
     else:

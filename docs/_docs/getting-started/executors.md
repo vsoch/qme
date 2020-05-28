@@ -2,7 +2,7 @@
 title: Executors
 category: Getting Started
 permalink: /getting-started/executors/index.html
-order: 4
+order: 1
 ---
 
 As executor in the context of QuemeMe is a controller that will handle parsing of a command line (terminal)
@@ -155,8 +155,35 @@ $ qme exec cancel
 See the [actions](../actions/) guide for how to run actions generally.
 
 
+### Datalad
+
+[Datalad](http://docs.datalad.org/en/stable/generated/man/datalad-run.html) is a tool
+for managing local and remote datasets. QueueMe has a wrapper for the `datalad run`
+command. Note that you will need to install both DataLad and git-annex, and 
+instructions are provided [here](http://handbook.datalad.org/en/latest/intro/installation.html).
+On Ubuntu that looks like this:
+
+```bash
+sudo apt-get install -y git-annex
+pip install datalad
+```
+
+Next, let's create a folder for a fun dataset. We will download a small pokemon 
+database.
+
+```bash
+git clone https://github.com/vsoch/pokemon
+
+```
+
+We will start with the tutorial [here](http://handbook.datalad.org/en/latest/basics/101-108-run.html)
+to set up a repository and run a command, and then do it with QueueMe.
+
 ### Reproman
 
 [Reproman](https://reproman.readthedocs.io/en/latest/execute.html) is software that makes
 it easy to execute commands on remote resources.
+
+**under development**
+
 You might next want to learn about the interactive [dashboard]({{ site.baseurl }}/getting-started/dashboard/).
