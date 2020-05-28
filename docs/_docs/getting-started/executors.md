@@ -154,4 +154,9 @@ $ qme exec cancel
 
 See the [actions](../actions/) guide for how to run actions generally.
 
+
+### Reproman
+
+[Reproman](https://reproman.readthedocs.io/en/latest/execute.html) is software that makes
+it easy to execute commands on remote resources.
 You might next want to learn about the interactive [dashboard]({{ site.baseurl }}/getting-started/dashboard/).

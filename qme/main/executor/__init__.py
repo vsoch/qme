@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from .shell import ShellExecutor
 from .slurm import SlurmExecutor
+from .reproman import RepromanExecutor
 import sys
 import re
 
@@ -39,6 +40,10 @@ def get_executor(command=None, config=None):
     # Slurm Executor
     if matches(SlurmExecutor, command):
         executor = SlurmExecutor(command=command)
+
+    # Reproman executor (running remote commands)
+    elif matches(RepromanExecutor, command):
+        executor = RepromanExecutor(command=command)
 
     # Default is standard shell command
     else:
