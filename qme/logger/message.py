@@ -322,7 +322,7 @@ def get_logging_level():
         MESSAGELEVEL. if MESSAGELEVEL is not set, the maximum level
         (5) is assumed (all messages).
     """
-    level = os.environ.get("MESSAGELEVEL", INFO)
+    level = os.environ.get("QME_MESSAGELEVEL", INFO)
 
     # User knows logging levels and set one
     if isinstance(level, int):
