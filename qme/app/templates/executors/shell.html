@@ -48,6 +48,10 @@
 				<td>Return Code</td>
 				<td>{{ task.data.returncode }}</td>
 			      </tr>
+			      {% if task.data.message %}<tr>
+				<td>Annotation</td>
+				<td>{{ task.data.message }}</td>
+			      </tr>{% endif %}
 			      <tr>
 				<td>Status</td>
 				<td>{{ task.data.status }}</td>

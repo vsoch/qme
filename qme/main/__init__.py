@@ -108,7 +108,7 @@ class Queue:
         else:
             sys.exit(f"Unrecognized target to clear {target}")
 
-    def run(self, command):
+    def run(self, command, message=None):
         """Given a command, get the executor for it (also creating an entry
            in the task database) and run the command.
         """
@@ -118,12 +118,12 @@ class Queue:
         task = self.db.add_task(executor)
 
         # Execute and store result (this will need to be generalized)
-        task.executor.execute()
+        task.executor.execute(message=message)
         self.db.update_task(task.executor)
         bot.info(f"{task.summary()}")
         return task
 
-    def rerun(self, taskid=None):
+    def rerun(self, taskid=None, message=None):
         """Given a command, get the executor for it (also creating an entry
            in the task database) and run the command. If the task is found and
            rerun, it is returned. Otherwise None is returned.
@@ -135,7 +135,7 @@ class Queue:
         if pwd:
             os.chdir(pwd)
         if command:
-            task.executor.execute(command)
+            task.executor.execute(command, message=message)
             self.db.update_task(task.executor)
             bot.info(f"{task.summary()}")
             return task

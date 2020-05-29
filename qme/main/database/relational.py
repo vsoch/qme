@@ -114,7 +114,8 @@ class RelationalDatabase(Database):
 
     def get_task(self, taskid=None):
         """Get a task based on a taskid. Exits on error if doesn't exist. If
-           a task id is not provided, get the last run task.
+           a task id is not provided, get the last run task. Unlike the filesystem
+           database, this get_task supports getting a partial task id.
         """
         from qme.main.database.models import Task
 
@@ -125,8 +126,18 @@ class RelationalDatabase(Database):
                 sys.exit(f"There are no tasks in the database.")
         else:
             task = Task.query.filter(Task.taskid == taskid).first()
+
+            # If an exact match isn't there, look for partial match
             if not task:
-                sys.exit(f"Cannot find task {taskid}")
+                query = "%" + taskid + "%"
+                query = self.session.query(Task).filter(Task.taskid.ilike(query))
+                results = self.session.execute(query).fetchall()
+                if len(results) == 1:
+                    return self.get_task(results[0][0])
+                elif len(results) > 1:
+                    sys.exit(f"More than one task found for {taskid}")
+                else:
+                    sys.exit(f"Cannot find task {taskid}")
 
         # Add the executor to the task
         executor = task.taskid.split("-", 1)[0]

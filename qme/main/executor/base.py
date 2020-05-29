@@ -96,6 +96,7 @@ class ExecutorBase:
             _, uid = taskid.split("-", 1)
         self.taskid = "%s-%s" % (self.name, uid)
         self.pwd = os.getcwd()
+        self.message = None
         self.actions = {}
         if not hasattr(self, "data"):
             self.data = {}
@@ -105,11 +106,14 @@ class ExecutorBase:
            and timestamp for when it was run. This might include envars at some
            point, but we'd need to be careful.
         """
-        return {
+        common = {
             "pwd": self.pwd,
             "user": get_user(),
             "timestamp": str(datetime.now()),
         }
+        if self.message:
+            common["message"] = self.message
+        return common
 
     def export(self):
         """return data as json. This is intended to save to the task database.
@@ -194,7 +198,7 @@ class ExecutorBase:
     def summary(self):
         return "[%s]" % self.name
 
-    def execute(self, cmd=None):
+    def execute(self, cmd=None, message=None):
         raise NotImplementedError
 
     def get_output(self):

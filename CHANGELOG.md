@@ -14,5 +14,6 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/qme/tree/master) (0.0.x)
+ - small updates to interface and nitpicks (0.0.11)
  - first release with basic dashboard and databases (0.0.1)
  - skeleton release (0.0.0)

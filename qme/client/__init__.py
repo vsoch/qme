@@ -33,6 +33,13 @@ def get_parser():
         help="select database and configuration directory (defaults to $HOME/.qme).",
     )
 
+    parser.add_argument(
+        "-m",
+        "--message",
+        dest="message",
+        help="Add a message or description to store alongside a run.",
+    )
+
     description = "actions for qme"
     subparsers = parser.add_subparsers(
         help="qme actions", title="actions", description=description, dest="command",
