@@ -40,7 +40,7 @@ def start(port=5000, debug=True, queue=None, host=None):
        the hostname, set the environment variable QME_HOSTNAME or set on command
        line with qme start.
     """
-    bot.info(f"QueueMe: running on http://localhost:{port}")
+    bot.info(f"QueueMe: running on http://{host}:{port}")
 
     # If the user doesn't specify a queue, use default
     if not queue:
