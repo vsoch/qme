@@ -22,6 +22,7 @@ from glob import glob
 import shutil
 import uuid
 import os
+import re
 import sys
 
 
@@ -182,9 +183,23 @@ class FileSystemTask:
         """
         if should_exist:
             if not os.path.exists(self.filename):
-                bot.exit(
-                    f"{self.executor.taskid} does not exist in the filesystem database"
+
+                # Might be provided prefix
+                contenders = glob(
+                    "%s*" % os.path.join(self.executor_dir, self.executor.taskid)
                 )
+                if len(contenders) == 1:
+                    self.executor.taskid = re.sub(
+                        "(%s/|[.]json)"
+                        % os.path.join(self.data_base, self.executor.name),
+                        "",
+                        contenders[0],
+                    )
+
+                elif len(contenders) > 1:
+                    sys.exit(f"More than one task found for {self.executor.taskid}")
+                else:
+                    sys.exit(f"Cannot find task {self.executor.taskid}")
             self.data = self.load()
 
         if not os.path.exists(self.executor_dir):

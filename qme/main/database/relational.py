@@ -114,8 +114,7 @@ class RelationalDatabase(Database):
 
     def get_task(self, taskid=None):
         """Get a task based on a taskid. Exits on error if doesn't exist. If
-           a task id is not provided, get the last run task. Unlike the filesystem
-           database, this get_task supports getting a partial task id.
+           a task id is not provided, get the last run task.
         """
         from qme.main.database.models import Task
 
