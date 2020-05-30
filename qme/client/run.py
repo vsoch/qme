@@ -32,11 +32,11 @@ def run(args, extra):
             command += shlex.split(item)
 
     # Extra might include unparsed arguments
-    queue.run(command + extra)
+    queue.run(command=command + extra, message=args.message)
 
 
 def rerun(args, extra):
 
     # Create a queue object, run the command to match to an executor
     queue = Queue(config_dir=args.config_dir)
-    queue.rerun(args.taskid)
+    queue.rerun(taskid=args.taskid, message=args.message)

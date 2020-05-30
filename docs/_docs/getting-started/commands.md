@@ -30,6 +30,12 @@ DATABASE: filesystem
 The command is so quick that it gives you the result immediately. In the above,
 we see the executor (shell) along with the unique id (the following uuid), 
 and the full command (to list the expanded $PWD) and the return code 0. 
+If you want to add a message (annotation) to store with the task and be used
+for search, add `-m/--message` to your run:
+
+```bash
+qme -m "This is a listing for the thing" run ls $PWD
+```
 
 There is one special case, the argument --help, which if run without
 thinking, will be parsed by the client and print the get help:
@@ -261,6 +267,15 @@ You can also rerun the last touched task without needing to specify the identifi
 ```bash
 $ qme rerun
 ```
+
+And akin to run, if you want to add a message (to update the existing) you can
+do that too:
+
+
+```bash
+qme -m "This is a listing for the thing" rerun
+```
+
 
 <a id="search">
 ## Search

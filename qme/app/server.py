@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from flask_socketio import SocketIO
 from flask import Flask
+
 from qme.logger import bot
 from qme.defaults import QME_HOSTNAME
 
@@ -39,7 +40,8 @@ def start(port=5000, debug=True, queue=None, host=None):
        the hostname, set the environment variable QME_HOSTNAME or set on command
        line with qme start.
     """
-    bot.info("QueueMe!")
+    host = host or QME_HOSTNAME
+    bot.info(f"QueueMe: running on http://{host}:{port}")
 
     # If the user doesn't specify a queue, use default
     if not queue:
@@ -58,7 +60,7 @@ def start(port=5000, debug=True, queue=None, host=None):
 
     # Add the queue to the server
     app.queue = queue
-    socketio.run(app, port=port, debug=debug, host=host or QME_HOSTNAME)
+    socketio.run(app, port=port, debug=debug, host=host)
 
 
 # This is how the command line version will run

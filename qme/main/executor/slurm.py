@@ -34,7 +34,7 @@ class SlurmExecutor(ShellExecutor):
             "cancel": self.action_cancel,
         }
 
-    def execute(self, cmd=None):
+    def execute(self, cmd=None, message=None):
         """Execute a system command and return output and error. Execute
            should take a cmd (a string or list) and execute it according to
            the executor. Attributes should be set on the class that are
@@ -42,6 +42,7 @@ class SlurmExecutor(ShellExecutor):
            by most executors, we create a self._execute() class that is called
            instead, and can be used by the other executors.
         """
+        self.message = message
         self._execute(cmd)
         if self.data["returncode"] == 0:
 

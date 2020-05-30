@@ -46,6 +46,10 @@ def test_executors_filesystem(tmp_path):
         for key in ["pwd", "user", "timestamp"]:
             assert key in data
 
+        # Ensure a message is added, if defined with run
+        task = queue.run("ls", message="this is my custom message")
+        assert "message" in task.load()["data"]
+
 
 def test_filesystem(tmp_path):
     """Test loading and using a queue with the filesystem database.
