@@ -99,7 +99,7 @@ def get_userhome():
 
         return pwd.getpwuid(os.getuid())[5]
     except:
-        return os.environ.get("HOME")
+        return os.environ.get("HOME") or os.environ.get("HOMEPATH")
 
 
 def get_user():
@@ -111,7 +111,7 @@ def get_user():
 
         return pwd.getpwuid(os.getuid())[0]
     except:
-        return os.environ.get("USER")
+        return os.environ.get("USER") or os.environ.get("USERNAME")
 
 
 def mkdir_p(path):
