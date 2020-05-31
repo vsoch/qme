@@ -9,6 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.defaults import QME_DATABASE
+from qme.exceptions import NotSupportedError, UnrecognizedTargetError
 from qme.main.config import Config
 from qme.main.database import init_db
 from qme.main.executor import get_executor
@@ -108,7 +109,7 @@ class Queue:
             ):
                 return self.db.delete_executor(target)
         else:
-            sys.exit(f"Unrecognized target to clear {target}")
+            raise UnrecognizedTargetError(target, "to clear")
 
     def run(self, command, message=None):
         """Given a command, get the executor for it (also creating an entry
@@ -150,5 +151,7 @@ class Queue:
            Search is only available for non-filesystem databases.
         """
         if self.database == "filesystem":
-            sys.exit("Search is only supported for relational databases.")
+            raise NotSupportedError(
+                "Search is only supported for relational databases."
+            )
         return self.db.search(query)

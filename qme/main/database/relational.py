@@ -8,6 +8,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import (
+    MissingDatabaseString,
+    NoTasksError,
+    MultipleTasksExistError,
+    TaskNotFoundError,
+)
 from qme.main.database.base import Database
 from qme.main.executor import get_named_executor
 
@@ -18,7 +24,6 @@ from sqlalchemy import and_, or_, not_
 import logging
 import os
 import json
-import sys
 
 bot = logging.getLogger("qme.main.database.relational")
 
@@ -38,9 +43,7 @@ class RelationalDatabase(Database):
         self.config = config
         database_string = kwargs.get("database_string")
         if not database_string:
-            sys.exit(
-                "A database url must be defined to use a relational database. Set with qme config --database"
-            )
+            raise MissingDatabaseString
 
         # The database url includes the type and string
         self.db = "%s://%s" % (self.database, database_string)
@@ -124,7 +127,7 @@ class RelationalDatabase(Database):
         if not taskid:
             task = self.session.query(Task).order_by(desc("timestamp")).first()
             if not task:
-                sys.exit(f"There are no tasks in the database.")
+                raise NoTasksError
         else:
             task = Task.query.filter(Task.taskid == taskid).first()
 
@@ -136,9 +139,9 @@ class RelationalDatabase(Database):
                 if len(results) == 1:
                     return self.get_task(results[0][0])
                 elif len(results) > 1:
-                    sys.exit(f"More than one task found for {taskid}")
+                    raise MultipleTasksExistError(taskid)
                 else:
-                    sys.exit(f"Cannot find task {taskid}")
+                    raise TaskNotFoundError(taskid)
 
         # Add the executor to the task
         executor = task.taskid.split("-", 1)[0]

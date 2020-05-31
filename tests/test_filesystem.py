@@ -9,6 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import NotSupportedError
 import os
 import sys
 import pytest
@@ -66,7 +67,7 @@ def test_filesystem(tmp_path):
     assert queue.db.database == "filesystem"
     assert queue.db.data_base == os.path.join(config_dir, "database")
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(NotSupportedError):
         queue.search("Not possible for non-relational databases.")
 
     # Test list, empty without anything

@@ -8,9 +8,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import UnrecognizedExecutorError
 from .shell import ShellExecutor
 from .slurm import SlurmExecutor
-import sys
 import re
 
 
@@ -55,6 +55,6 @@ def get_named_executor(name, taskid=None, config=None):
     elif name == "slurm":
         executor = SlurmExecutor(taskid)
     else:
-        sys.exit(f"{name} is not a known executor.")
+        raise UnrecognizedExecutorError(name)
     executor.config = config
     return executor

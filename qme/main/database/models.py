@@ -8,8 +8,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import MissingImportError
 import json
-import sys
 
 
 try:
@@ -18,7 +18,7 @@ try:
     from sqlalchemy.orm import relationship, backref
     from uuid import uuid4
 except:
-    sys.exit("sqlalchemy is required for a non-filesystem database.")
+    raise MissingImportError("sqlalchemy", "is required for a non-filesystem database.")
 
 # Shared declarative base
 Base = declarative_base()

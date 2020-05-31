@@ -13,6 +13,7 @@ import os
 import sys
 import re
 
+from qme.exceptions import OutputParsingError
 from qme.utils.file import read_file
 from .shell import ShellExecutor
 
@@ -51,8 +52,9 @@ class SlurmExecutor(ShellExecutor):
             # Find the job id, and any --out or --error files
             match = re.search("[0-9]+", self.data["output"][0])
             if not match:
-                bot.error(f"Unable to derive job id from {self.data['output']}")
-                sys.exit(1)
+                raise OutputParsingError(
+                    f"Unable to derive job id from {self.data['output']}"
+                )
             self.data["jobid"] = match.group()
 
             # Get output file, or default to $PWD/slurm-<jobid>
