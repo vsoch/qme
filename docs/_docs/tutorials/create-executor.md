@@ -237,18 +237,26 @@ then be exported to the database and available to future actions.
 
 ### Logging
 
-You might find the bot logger useful for writing messages to the user:
+You can import a logger to write messages to the user:
+
+```bash
+import logging
+logger = logging.getLogger("qme.main.executor.slurm")
+
+bot.info("This is an information message in purple")
+logger.warning("This is a warning in yellow")
+logger.error("This is an error in red")
+logger.debug("This is a debug message in aqua.")
+```
+
+If you need to format a list of lists into a table, or if you need a spinner
+or other colored output, you can import the QueueMeMessage class:
 
 ```bash
 from qme.logger import bot
-
-bot.info("This is an information message in purple")
-bot.warning("This is a warning in yellow")
-bot.error("This is an error in red")
-bot.exit("This is also an error, with return code 1")
-bot.exit("This is also an error, with return code 255", return_code=255)
-bot.debug("This is a debug message in aqua.")
-bot.log("This is a log level message in purple.")
+bot.table([["1", "1", "1"],["2","2", "2"]]) 
+1  1	1	1
+2  2	2	2
 ```
 
 We don't currently have executor-specific logging files, but this can be added

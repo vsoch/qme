@@ -10,15 +10,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from qme.main.database.base import Database
 from qme.main.executor import get_named_executor
-from qme.logger import bot
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import and_, or_, not_
 
+import logging
 import os
 import json
 import sys
+
+bot = logging.getLogger("qme.main.database.relational")
 
 
 class RelationalDatabase(Database):

@@ -33,7 +33,7 @@ from qme.app.views import *
 from qme.app.api import *
 
 
-def start(port=5000, debug=True, queue=None, host=None):
+def start(port=5000, debug=True, queue=None, host=None, level="DEBUG"):
     """Start can be invoked when this file is executed (see __main__ below)
        or used as a function to programmatically start a server. If started
        via qme view, we can add the queue to the server. If you want to change
@@ -56,7 +56,7 @@ def start(port=5000, debug=True, queue=None, host=None):
     )
     file_handler.setFormatter(formatter)
     app.logger.addHandler(file_handler)
-    app.logger.setLevel(logging.DEBUG)
+    app.logger.setLevel(getattr(logging, level))
 
     # Add the queue to the server
     app.queue = queue

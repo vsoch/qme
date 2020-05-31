@@ -17,13 +17,15 @@ from qme.utils.file import (
 )
 from qme.main.database.base import Database
 from qme.main.executor import get_named_executor
-from qme.logger import bot
 from glob import glob
+import logging
 import shutil
 import uuid
 import os
 import re
 import sys
+
+bot = logging.getLogger("qme.main.database.filesystem")
 
 
 class FileSystemDatabase(Database):

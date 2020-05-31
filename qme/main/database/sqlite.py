@@ -9,8 +9,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.main.database.relational import RelationalDatabase
-from qme.logger import bot
+
+import logging
 import os
+import sys
+
+bot = logging.getLogger("qme.main.database.sqlite")
 
 
 class SqliteDatabase(RelationalDatabase):
@@ -30,9 +34,10 @@ class SqliteDatabase(RelationalDatabase):
         # Derive database path, use default of qme.db if not provided
         db_path = os.path.join(config_dir, database_file)
         if not db_path.endswith(".db"):
-            bot.exit(
+            bot.error(
                 f"Invalid database file for sqlite, {database_file} does not end in .db"
             )
+            sys.exit(1)
 
         self.config = config
         self.db = "sqlite:///%s" % db_path

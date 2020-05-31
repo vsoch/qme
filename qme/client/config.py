@@ -9,13 +9,14 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.main.config import Config
-from qme.logger import bot
 import sys
 import os
 import re
 
 
 def main(args, extra):
+
+    bot = logging.getLogger("qme.client")
 
     # The user wants to set the database
     if args.database:

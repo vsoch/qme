@@ -8,13 +8,15 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import logging
 import os
 import sys
 import re
 
 from qme.utils.file import read_file
-from qme.logger import bot
 from .shell import ShellExecutor
+
+bot = logging.getLogger("qme.main.executor.slurm")
 
 
 class SlurmExecutor(ShellExecutor):
@@ -49,7 +51,8 @@ class SlurmExecutor(ShellExecutor):
             # Find the job id, and any --out or --error files
             match = re.search("[0-9]+", self.data["output"][0])
             if not match:
-                bot.exit(f"Unable to derive job id from {self.data['output']}")
+                bot.error(f"Unable to derive job id from {self.data['output']}")
+                sys.exit(1)
             self.data["jobid"] = match.group()
 
             # Get output file, or default to $PWD/slurm-<jobid>

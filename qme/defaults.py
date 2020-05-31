@@ -8,10 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.logger import QME_LOG_LEVEL, QME_LOG_LEVELS
 from qme.utils.file import get_userhome
+import logging
 import multiprocessing
 import os
 import sys
+
+
+logging.basicConfig(level=getattr(logging, QME_LOG_LEVEL))
+bot = logging.getLogger("qme.defaults")
 
 
 def getenv(variable_key, default=None, required=False, silent=True):
