@@ -14,11 +14,13 @@ from qme.main.database import init_db
 from qme.main.executor import get_executor
 from qme.utils.regex import uuid_regex
 from qme.utils.prompt import confirm
-from qme.logger import bot
 
+import logging
 import os
 import re
 import sys
+
+bot = logging.getLogger("qme.main")
 
 
 class Queue:

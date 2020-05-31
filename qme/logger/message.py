@@ -354,7 +354,7 @@ def get_logging_level():
 
 
 def get_user_color_preference():
-    COLORIZE = os.environ.get("SINGULARITY_COLORIZE", None)
+    COLORIZE = os.environ.get("QME_COLORIZE", None)
     if COLORIZE is not None:
         COLORIZE = convert2boolean(COLORIZE)
     return COLORIZE

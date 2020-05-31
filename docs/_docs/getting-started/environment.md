@@ -61,6 +61,27 @@ Within that directory, you will see the following structure:
 If you want to change this location, then you'll need to (more permanently) export
 `QME_HOME` in your bash profile, or perhaps in a container install.
 
+### QME_LOG_LEVEL
+
+If you want to set the logging level from the environment, set `QME_LOG_LEVEL` to 
+one of "WARNING" "DEBUG" "INFO" "CRITICAL" "ERROR" or "FATAL". For example, to silence
+most all messages, we might set it to fatal:
+
+```bash
+export QME_LOG_LEVEL=FATAL
+```
+
+You can override the environment default by way of using the `--log_level` flag:
+
+```bash
+$ qme --log_level INFO get
+```
+
+If you set an environment level that is not one of the choices, it will default
+to using info. If you provide an inccorect value to `--log_level` you will be asked
+to run the command again and choose from the valid choices.
+
+
 ### QME_SOCKET_UPDATE_SECONDS
 
 If you are using the dashboard (which uses web sockets) this is the number of

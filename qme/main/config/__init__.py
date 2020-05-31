@@ -8,14 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from qme.logger import bot
 from qme.utils.file import mkdir_p, read_json, write_json
 
 import configparser
+import logging
 import os
 import shutil
 
 here = os.path.dirname(os.path.abspath(__file__))
+
+bot = logging.getLogger("qme.main.config")
 
 
 class Config:

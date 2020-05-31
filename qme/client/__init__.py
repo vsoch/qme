@@ -10,10 +10,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.logger import QME_LOG_LEVEL, QME_LOG_LEVELS
 import qme
 import argparse
 import sys
 import os
+import logging
 
 
 def get_parser():
@@ -25,6 +27,14 @@ def get_parser():
         help="suppress additional output.",
         default=False,
         action="store_true",
+    )
+
+    parser.add_argument(
+        "--log_level",
+        dest="log_level",
+        choices=QME_LOG_LEVELS,
+        default=QME_LOG_LEVEL,
+        help="Customize logging level for QueueMe.",
     )
 
     parser.add_argument(
@@ -169,6 +179,11 @@ def main():
 
     # If an error occurs while parsing the arguments, the interpreter will exit with value 2
     args, extra = parser.parse_known_args()
+
+    # Set the logging level
+    logging.basicConfig(level=getattr(logging, args.log_level))
+    bot = logging.getLogger("qme.client")
+    bot.setLevel(getattr(logging, args.log_level))
 
     # Show the version and exit
     if args.command == "version" or args.version:
