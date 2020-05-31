@@ -22,7 +22,7 @@ def main(args, extra):
     try:
         from qme.app.server import start
 
-        start(port=args.port, queue=queue, debug=args.debug)
+        start(port=args.port, queue=queue, debug=args.debug, level=args.log_level)
     except:
         sys.exit(
             "You must 'pip install qme[app]' 'pip install qme[all]' to use the dashboard."
