@@ -12,7 +12,6 @@ from qme.main import Queue
 from qme.main.executor import get_named_executor
 from qme.logger import bot
 import sys
-import os
 
 
 def main(args, extra):

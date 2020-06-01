@@ -10,9 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import flask
 from flask_restful import Resource, Api
-from qme.logger import bot
 from qme.app.server import app
-import os
 
 
 def list_tasks(executor=None):

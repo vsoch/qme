@@ -14,7 +14,6 @@ from qme.logger import QME_LOG_LEVEL, QME_LOG_LEVELS
 import qme
 import argparse
 import sys
-import os
 import logging
 
 

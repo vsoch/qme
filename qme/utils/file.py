@@ -8,11 +8,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import errno
 import fnmatch
-import glob
 import json
 import os
 import pickle
+import sys
 import tempfile
 
 
@@ -86,7 +87,7 @@ def save_pickle(obj, filename):
         - filename (str) : the output file to write to
     """
     with open(filename, "wb") as fd:
-        pickle.dump(json_obj, fd)
+        pickle.dump(obj, fd)
     return filename
 
 

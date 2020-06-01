@@ -19,10 +19,9 @@ from qme.main.executor import get_named_executor
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import or_
 
 import logging
-import os
 import json
 
 bot = logging.getLogger("qme.main.database.relational")

@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from qme.logger import QME_LOG_LEVEL, QME_LOG_LEVELS
+from qme.logger import QME_LOG_LEVEL
 from qme.exceptions import MissingEnvironmentVariable
 from qme.utils.file import get_userhome
 import logging

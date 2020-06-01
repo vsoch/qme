@@ -9,10 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 import locale
-import os
 import shlex
 import shutil
-import sys
 
 from .base import ExecutorBase
 
