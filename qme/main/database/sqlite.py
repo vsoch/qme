@@ -13,7 +13,6 @@ from qme.exceptions import InvalidDatabaseFilename
 
 import logging
 import os
-import sys
 
 bot = logging.getLogger("qme.main.database.sqlite")
 

@@ -19,7 +19,6 @@ from qme.utils.prompt import confirm
 import logging
 import os
 import re
-import sys
 
 bot = logging.getLogger("qme.main")
 

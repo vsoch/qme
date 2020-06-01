@@ -14,7 +14,6 @@ from qme.utils.file import get_userhome
 import logging
 import multiprocessing
 import os
-import sys
 
 
 logging.basicConfig(level=getattr(logging, QME_LOG_LEVEL))
