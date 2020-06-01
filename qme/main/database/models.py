@@ -13,10 +13,8 @@ import sys
 
 
 try:
-    from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey, func
+    from sqlalchemy import Column, DateTime, String, Text, func
     from sqlalchemy.ext.declarative import declarative_base
-    from sqlalchemy.orm import relationship, backref
-    from uuid import uuid4
 except:
     sys.exit("sqlalchemy is required for a non-filesystem database.")
 

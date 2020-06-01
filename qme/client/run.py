@@ -11,7 +11,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from qme.main import Queue
 import shlex
 import sys
-import os
 
 
 def run(args, extra):

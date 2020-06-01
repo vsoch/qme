@@ -14,6 +14,7 @@ import subprocess
 import shlex
 import shutil
 import tempfile
+from .file import read_file
 
 
 class Capturing:
