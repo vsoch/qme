@@ -14,13 +14,21 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup black environment
-        run: conda create --quiet --name black black
+        run: conda create --quiet --name black black pyflakes
 
-      - name: Check formatting
+      - name: Check formatting with black
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate black
           black --check qme
+
+      - name: Check imports with pyflakes
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate black
+          pyflakes qme/client || true
+          pyflakes qme/*.py qme/main qme/utils
+
 
   testing:
     needs: formatting

@@ -13,10 +13,9 @@ from qme.main.executor import get_named_executor
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import or_
 
 import logging
-import os
 import json
 import sys
 
@@ -124,7 +123,7 @@ class RelationalDatabase(Database):
         if not taskid:
             task = self.session.query(Task).order_by(desc("timestamp")).first()
             if not task:
-                sys.exit(f"There are no tasks in the database.")
+                sys.exit("There are no tasks in the database.")
         else:
             task = Task.query.filter(Task.taskid == taskid).first()
 

@@ -8,14 +8,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from flask import Flask, render_template
-from flask_socketio import emit
+from flask import render_template
 
 # from werkzeug import secure_filename
 from qme.app.server import app, socketio
 from qme.defaults import QME_SOCKET_UPDATE_SECONDS
 
-from time import sleep
 from threading import Thread, Event
 
 # thread for updates

@@ -93,7 +93,7 @@ class Queue:
         """
         # Case 1: no target indicates clearing all
         if not target:
-            if noprompt or confirm(f"This will delete all tasks, are you sure?"):
+            if noprompt or confirm("This will delete all tasks, are you sure?"):
                 return self.db.clear()
 
         # Case 2, it's a specific taskid

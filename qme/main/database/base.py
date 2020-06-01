@@ -8,9 +8,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-import os
-import sys
-
 
 class Database:
     """A qme database holds common functions to represent tasks, and results.

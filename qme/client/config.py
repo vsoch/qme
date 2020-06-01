@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from qme.main.config import Config
 import sys
+import logging
 import os
 import re
 

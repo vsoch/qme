@@ -20,7 +20,6 @@ from qme.main.executor import get_named_executor
 from glob import glob
 import logging
 import shutil
-import uuid
 import os
 import re
 import sys
@@ -109,7 +108,7 @@ class FileSystemDatabase(Database):
         """
         executor_dir = os.path.join(self.data_base, name)
         if not os.path.exists(executor_dir):
-            bot.error(f"Executor {executor} does not exist.")
+            bot.error(f"Executor {executor_dir} directory does not exist.")
             return False
         shutil.rmtree(executor_dir)
         return True
