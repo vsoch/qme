@@ -161,7 +161,7 @@ class MissingDatabaseString(RuntimeError):
 
 
 class DatabaseStringFormatError(RuntimeError):
-    """Thrown if tasks are requested, but there are none
+    """Thrown if database prefix is not supported
     """
 
     def __str__(self):
