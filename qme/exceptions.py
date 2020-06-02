@@ -21,18 +21,8 @@ class MissingEnvironmentVariable(RuntimeError):
         return "Missing environment variable '{}' is required".format(self.varname)
 
 
-class InvalidDatabaseFilename(RuntimeError):
-    """Database filename is invalid (must end in .db)
-    """
-
-    def __init__(self, filename, *args, **kwargs):
-        super(InvalidDatabaseFilename, self).__init__(*args, **kwargs)
-        self.filename = filename
-
-    def __str__(self):
-        return "Invalid database file for sqlite, '{}' does not end in .db".format(
-            self.filename
-        )
+class InvalidDatabaseFilename(ValueError):
+    pass
 
 
 class DirectoryNotFoundError(FileNotFoundError):
