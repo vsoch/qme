@@ -22,7 +22,7 @@ class MissingEnvironmentVariable(RuntimeError):
 
 
 class InvalidDatabaseFilename(RuntimeError):
-    """Database filename is invalid (must end in .db
+    """Database filename is invalid (must end in .db)
     """
 
     def __init__(self, filename, *args, **kwargs):
@@ -48,36 +48,51 @@ class DirectoryNotFoundError(FileNotFoundError):
         return "{} {}.".format(self.dirname, self.reason)
 
 
-class MultipleTasksExistError(RuntimeError):
+## Tasks
+
+
+class TaskError(RuntimeError):
+    """Abstract base class for any kind of TaskError.
+    """
+
+    def __init__(self, taskid=None, reason=None, *args, **kwargs):
+        super(TaskError, self).__init__(*args, **kwargs)
+        self.taskid = taskid or ""
+        self.reason = reason or "There was a problem with task"
+
+    def __str__(self):
+        return "{} {}".format(self.reason, self.taskid)
+
+
+class MultipleTasksExistError(TaskError):
     """Thrown if multiple tasks exist.
     """
 
     def __init__(self, taskid, *args, **kwargs):
-        super(MultipleTasksExistError, self).__init__(*args, **kwargs)
-        self.taskid = taskid
+        reason = "More than one task found for"
+        super(MultipleTasksExistError, self).__init__(
+            taskid=taskid, reason=reason, *args, **kwargs
+        )
 
-    def __str__(self):
-        return "More than one task found for {}.".format(self.taskid)
 
-
-class TaskNotFoundError(RuntimeError):
+class TaskNotFoundError(TaskError):
     """Thrown if task does not exist.
     """
 
     def __init__(self, taskid, *args, **kwargs):
-        super(TaskNotFoundError, self).__init__(*args, **kwargs)
-        self.taskid = taskid
+        reason = "Cannot find task"
+        super(TaskNotFoundError, self).__init__(
+            taskid=taskid, reason=reason, *args, **kwargs
+        )
 
-    def __str__(self):
-        return "Cannot find task {}.".format(self.taskid)
 
-
-class NoTasksError(RuntimeError):
+class NoTasksError(TaskError):
     """Thrown if tasks are requested, but there are none
     """
 
-    def __str__(self):
-        return "There are no tasks in the database."
+    def __init__(self, *args, **kwargs):
+        reason = "There are no tasks in the database."
+        super(NoTasksError, self).__init__(reason=reason, *args, **kwargs)
 
 
 class MissingImportError(ImportError):
@@ -93,18 +108,6 @@ class MissingImportError(ImportError):
         return "{} {}.".format(self.name, self.reason)
 
 
-class YerAnIdiotHarryError(RuntimeError):
-    """Thrown if task does not exist.
-    """
-
-    def __init__(self, name, *args, **kwargs):
-        super(YerAnIdiotHarryError, self).__init__(*args, **kwargs)
-        self.name = name
-
-    def __str__(self):
-        return "I can't believe you tried to do that, {}.".format(self.name)
-
-
 class NotSupportedError(NotImplementedError):
     """Thrown if functionality isn't supported, and not implemented.
     """
@@ -117,7 +120,7 @@ class NotSupportedError(NotImplementedError):
         return self.reason
 
 
-class UnrecognizedTargetError(RuntimeError):
+class UnrecognizedTargetError(ValueError):
     """Thrown if an unrecognized target is given for an action
     """
 
@@ -140,7 +143,7 @@ class UnrecognizedExecutorError(UnrecognizedTargetError):
         )
 
 
-class OutputParsingError(RuntimeError):
+class OutputParsingError(ValueError):
     """Thrown if an output cannot be correctly parsed
     """
 
