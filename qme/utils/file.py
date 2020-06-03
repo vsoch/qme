@@ -13,7 +13,6 @@ import fnmatch
 import json
 import os
 import pickle
-import sys
 import tempfile
 
 
@@ -127,7 +126,7 @@ def mkdir_p(path):
         if e.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
-            sys.exit("Error creating path %s, exiting." % path)
+            raise e
 
 
 def get_tmpfile(prefix=""):

@@ -8,6 +8,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import (
+    DirectoryNotFoundError,
+    MultipleTasksExistError,
+    TaskNotFoundError,
+)
 from qme.utils.file import (
     write_json,
     mkdir_p,
@@ -22,7 +27,6 @@ import logging
 import shutil
 import os
 import re
-import sys
 
 bot = logging.getLogger("qme.main.database.filesystem")
 
@@ -47,7 +51,9 @@ class FileSystemDatabase(Database):
         """
         self.data_base = os.path.abspath(os.path.join(config_dir, "database"))
         if not os.path.exists(config_dir):
-            sys.exit(f"{config_dir} must exist to create database there.")
+            raise DirectoryNotFoundError(
+                config_dir, "must exist to create database there"
+            )
         if not os.path.exists(self.data_base):
             mkdir_p(self.data_base)
 
@@ -198,9 +204,9 @@ class FileSystemTask:
                     )
 
                 elif len(contenders) > 1:
-                    sys.exit(f"More than one task found for {self.executor.taskid}")
+                    raise MultipleTasksExistError(self.executor.taskid)
                 else:
-                    sys.exit(f"Cannot find task {self.executor.taskid}")
+                    raise TaskNotFoundError(self.executor.taskid)
             self.data = self.load()
 
         if not os.path.exists(self.executor_dir):

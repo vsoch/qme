@@ -8,8 +8,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from qme.exceptions import DatabaseStringFormatError, MissingDatabaseString
 from qme.main.config import Config
-import sys
 import logging
 import os
 import re
@@ -22,9 +22,7 @@ def main(args, extra):
     # The user wants to set the database
     if args.database:
         if not re.search("^(sqlite|filesystem|mysql+pymysql|postgres)", args.database):
-            sys.exit(
-                "Database must start with sqlite, filesystem, mysql+pymysql, or postgres."
-            )
+            raise DatabaseStringFormatError
 
         # Ensure that database string, if exists, is correct
         database = args.database.split("://")[0]
@@ -38,7 +36,7 @@ def main(args, extra):
 
         # Mysql and postgres require connection strings
         if not connection_string and database in ["postgres", "mysql+pymysql"]:
-            sys.exit(
+            raise MissingDatabaseString(
                 "You are required to provide a connection string for mysql+pymysql and postgres."
             )
 

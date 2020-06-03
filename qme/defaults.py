@@ -9,11 +9,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from qme.logger import QME_LOG_LEVEL
+from qme.exceptions import MissingEnvironmentVariable
 from qme.utils.file import get_userhome
 import logging
 import multiprocessing
 import os
-import sys
 
 
 logging.basicConfig(level=getattr(logging, QME_LOG_LEVEL))
@@ -32,11 +32,10 @@ def getenv(variable_key, default=None, required=False, silent=True):
     """
     variable = os.environ.get(variable_key, default)
     if variable is None and required:
-        bot.error("Cannot find environment variable %s, exiting." % variable_key)
-        sys.exit(1)
+        raise MissingEnvironmentVariable(variable_key)
 
     if not silent and variable is not None:
-        bot.verbose("%s found as %s" % (variable_key, variable))
+        bot.debug("%s found as %s" % (variable_key, variable))
 
     return variable
 
