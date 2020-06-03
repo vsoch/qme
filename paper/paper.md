@@ -45,25 +45,24 @@ QueueMe can be interacted with on the command line, or if desired, via an intera
 The basic workflow of QueueMe looks like the following:
 
 ```
-                                             +-------+
-                                             |       |
-                                         +-->+ shell |
-                                         |   |       |
-                                         |   +-------+                     +--> qme clear...
-                                         |                                 |
-+-------------------+    +----------+    |   +-------+    +------------+   +--> qme get...
-|                   |    |          |    |   |       |    |            |   |
-|  qme run command  +--->+ executor +------->+ slurm |--->| database   +---+--> qme ls...
-|                   |    |          |    |   |       |    |            |   |
-+-------------------+    +----------+    |   +-------+    +------------+   +--> qme rerun...
-                                         |       .                         |
-                                         |       .                         +--> qme search...
-                                         |   +-------+                     |
-                                         |   |       |                     +--> qme start...
-                                         +-->+ other |
-                                             |       |
-                                             +-------+
-
+                                    +-------+
+                                    |       |
+                                +-->+ shell |
+                                |   |       |
+                                |   +-------+                   +--> qme clear...
+                                |                               |
++------------+    +----------+  |   +-------+    +----------+   +--> qme get...
+|            |    |          |  |   |       |    |          |   |
+| qme run .. +--->+ executor +----->+ slurm |--->| database +---+--> qme ls...
+|            |    |          |  |   |       |    |          |   |
++------------+    +----------+  |   +-------+    +----------+   +--> qme rerun...
+                                |       .                       |
+                                |       .                       +--> qme search...
+                                |   +-------+                   |
+                                |   |       |                   +--> qme start...
+                                +-->+ other |
+                                    |       |
+                                    +-------+
 ```
 
 In the above diagram, we start with a qme run command, and it get's parsed by a particular
@@ -384,8 +383,8 @@ Instead, however, we can use `qme search`.
 ```bash
 $ qme search moto
 Database: sqlite
-1  shell-de58f61b-81da-467c-981c-497f7ae8556b	2020-05-22 17:47:37	echo Hello Moto
-2  shell-c231699a-4c3e-43f0-961f-2829d16d588c	2020-05-22 17:47:45	echo Hello Another Moto
+1  shell-de58f61b-81da-467c-981c-497f7ae8556b	2020-05-22 17:47:37	echo...
+2  shell-c231699a-4c3e-43f0-961f-2829d16d588c	2020-05-22 17:47:45	echo...
 ```
 
 Notice that the search is case insensitive. We get back the taskid (that is prefixed with
