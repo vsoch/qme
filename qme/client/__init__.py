@@ -78,7 +78,7 @@ def get_parser():
     )
 
     # Clear an entire executor family, one task, or all tasks
-    clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
+    clear = subparsers.add_parser("clear", help="clear an executor, taskid, or target")
     clear.add_argument("target", nargs="?")
     clear.add_argument(
         "--force",
