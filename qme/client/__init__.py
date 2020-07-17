@@ -58,7 +58,7 @@ def get_parser():
     subparsers.add_parser("version", help="show software version")
 
     # Configure qme (not written yet, will be written when databases added)
-    config = subparsers.add_parser("config", help="configure qme.")
+    config = subparsers.add_parser("config", help="configure qme")
 
     # Specify a database, if not sqlite must include a complete string
     config.add_argument(
@@ -78,7 +78,7 @@ def get_parser():
     )
 
     # Clear an entire executor family, one task, or all tasks
-    clear = subparsers.add_parser("clear", help="Run a command to add to the queue.")
+    clear = subparsers.add_parser("clear", help="clear an executor, taskid, or target")
     clear.add_argument("target", nargs="?")
     clear.add_argument(
         "--force",
@@ -89,23 +89,23 @@ def get_parser():
     )
 
     execute = subparsers.add_parser(
-        "exec", help="Execute an action for the last task, or a taskid"
+        "exec", help="execute an action for the last task, or a taskid"
     )
     execute.add_argument("actions", nargs="*")
 
     generate = subparsers.add_parser(
         "generate-key",
-        help="generate a key for qme start, should be exported to QME_SERVER_KEY.",
+        help="generate a key for qme start, should be exported to QME_SERVER_KEY",
     )
 
     # List tasks and print to terminal
-    ls = subparsers.add_parser("ls", help="List tasks")
+    ls = subparsers.add_parser("ls", help="list tasks")
     ls.add_argument(
         "executor", help="list one or more executors or taskids.", nargs="*"
     )
 
     # Run a command (gets passed to executor via template)
-    run = subparsers.add_parser("run", help="Run a command.")
+    run = subparsers.add_parser("run", help="run a command")
     run.add_argument(
         "cmd",
         nargs="*",
@@ -113,19 +113,19 @@ def get_parser():
     )
 
     # Rerun a task
-    rerun = subparsers.add_parser("rerun", help="Re-run a particular task.")
+    rerun = subparsers.add_parser("rerun", help="re-run a particular task")
     rerun.add_argument("taskid", nargs="?")
 
     # Start the queueMe dashboard
     search = subparsers.add_parser(
         "search",
-        help="Search for content in a command or metadata (sqlite or relational only).",
+        help="search for content in a command or metadata (sqlite or relational only)",
     )
     search.add_argument("query", nargs="*")
 
     # Start the queueMe dashboard
     start = subparsers.add_parser(
-        "start", help="View the queue web interface (requires Flask)"
+        "start", help="view the queue web interface (requires Flask)"
     )
     start.add_argument(
         "--port",
@@ -151,7 +151,7 @@ def get_parser():
     )
 
     # Print complete metadata for a specific task
-    get = subparsers.add_parser("get", help="Get task")
+    get = subparsers.add_parser("get", help="get task")
     get.add_argument("taskid", help="list taskid to return", nargs="?")
     return parser
 
