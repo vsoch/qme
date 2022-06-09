@@ -51,7 +51,10 @@ def get_parser():
 
     description = "actions for qme"
     subparsers = parser.add_subparsers(
-        help="qme actions", title="actions", description=description, dest="command",
+        help="qme actions",
+        title="actions",
+        description=description,
+        dest="command",
     )
 
     # print version and exit
@@ -157,14 +160,13 @@ def get_parser():
 
 
 def main():
-    """main entrypoint for qme
-    """
+    """main entrypoint for qme"""
 
     parser = get_parser()
 
     def help(return_code=0):
-        """print help, including the software version and active client 
-           and exit with return code.
+        """print help, including the software version and active client
+        and exit with return code.
         """
         version = qme.__version__
 

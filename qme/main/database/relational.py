@@ -29,14 +29,14 @@ bot = logging.getLogger("qme.main.database.relational")
 
 class RelationalDatabase(Database):
     """A RelationalDatabase is a more robust relational datbase (to sqlite).
-       Since the global database property can be any of postgresql, mysql+pysq;,
-       it is defined on init. The sqlite database also uses this class, but defines
-       a custom init function to handle the $HOME/.qme/qme.db file.
+    Since the global database property can be any of postgresql, mysql+pysq;,
+    it is defined on init. The sqlite database also uses this class, but defines
+    a custom init function to handle the $HOME/.qme/qme.db file.
     """
 
     def __init__(self, config_dir, config=None, **kwargs):
-        """init for the filesystem ensures that the base folder (named 
-           according to the studyid) exists.
+        """init for the filesystem ensures that the base folder (named
+        according to the studyid) exists.
         """
         self.database = kwargs.get("database")
         self.config = config
@@ -50,7 +50,7 @@ class RelationalDatabase(Database):
 
     def create_database(self):
         """create the databsae based on the string, whether it's relational or
-           sqlite. self.db must be defined.
+        sqlite. self.db must be defined.
         """
         from qme.main.database.models import Base
 
@@ -65,8 +65,7 @@ class RelationalDatabase(Database):
     # Global
 
     def clear(self):
-        """clear (delete) all tasks. This could be improved to cascade instead.
-        """
+        """clear (delete) all tasks. This could be improved to cascade instead."""
         from qme.main.database.models import Task
 
         Task.query.delete()
@@ -77,7 +76,7 @@ class RelationalDatabase(Database):
 
     def add_task(self, executor):
         """Create a new task based on an executor type. The executor controls
-           what data is exported and the uid, the task object just handles saving it.
+        what data is exported and the uid, the task object just handles saving it.
         """
         from qme.main.database.models import Task
 
@@ -88,8 +87,7 @@ class RelationalDatabase(Database):
         return task
 
     def update_task(self, executor, updates=None):
-        """update a task with a json dictionary.
-        """
+        """update a task with a json dictionary."""
         from qme.main.database.models import Task
 
         task = Task.query.filter(Task.taskid == executor.taskid).first()
@@ -118,7 +116,7 @@ class RelationalDatabase(Database):
 
     def get_task(self, taskid=None):
         """Get a task based on a taskid. Exits on error if doesn't exist. If
-           a task id is not provided, get the last run task.
+        a task id is not provided, get the last run task.
         """
         from qme.main.database.models import Task
 
@@ -149,8 +147,8 @@ class RelationalDatabase(Database):
 
     def delete_task(self, taskid):
         """delete a task based on a specific task id. All task ids must be
-           in the format of <taskid>-<uid> without extra dashes so we can
-           reliably split based on the first dash.
+        in the format of <taskid>-<uid> without extra dashes so we can
+        reliably split based on the first dash.
         """
         from qme.main.database.models import Task
 
@@ -164,8 +162,7 @@ class RelationalDatabase(Database):
         return True
 
     def delete_executor(self, name):
-        """delete all tasks for an executor, based on executor's name (str).
-        """
+        """delete all tasks for an executor, based on executor's name (str)."""
         from qme.main.database.models import Task
 
         deleted_items = False
@@ -176,8 +173,7 @@ class RelationalDatabase(Database):
         return deleted_items
 
     def iter_executors(self, fullpath=False):
-        """list executors based on the subfolders in the base database folder.
-        """
+        """list executors based on the subfolders in the base database folder."""
         from qme.main.database.models import Task
 
         for executor in self.session.query(Task.executor_name).distinct():
@@ -185,8 +181,8 @@ class RelationalDatabase(Database):
 
     def list_tasks(self, name=None):
         """list tasks, either under a particular executor name (if provided)
-           or just the executors. This returns tasks in rows to be printed
-           (or otherwise parsed).
+        or just the executors. This returns tasks in rows to be printed
+        (or otherwise parsed).
         """
         from qme.main.database.models import Task
 
@@ -201,8 +197,7 @@ class RelationalDatabase(Database):
         return rows
 
     def search(self, query):
-        """Search across the database for a particular query.
-        """
+        """Search across the database for a particular query."""
         from qme.main.database.models import Task
 
         # Ensure that query can be part of a larger string

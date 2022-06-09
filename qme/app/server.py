@@ -35,10 +35,10 @@ from qme.app.api import *
 
 def start(port=5000, debug=True, queue=None, host=None, level="DEBUG"):
     """Start can be invoked when this file is executed (see __main__ below)
-       or used as a function to programmatically start a server. If started
-       via qme view, we can add the queue to the server. If you want to change
-       the hostname, set the environment variable QME_HOSTNAME or set on command
-       line with qme start.
+    or used as a function to programmatically start a server. If started
+    via qme view, we can add the queue to the server. If you want to change
+    the hostname, set the environment variable QME_HOSTNAME or set on command
+    line with qme start.
     """
     host = host or QME_HOSTNAME
     bot.info(f"QueueMe: running on http://{host}:{port}")

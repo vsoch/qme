@@ -19,21 +19,21 @@ import uuid
 
 class Capturing:
     """capture output from stdout and stderr into capture object.
-       This is based off of github.com/vsoch/gridtest but modified
-       to write files. The stderr and stdout are set to temporary files at
-       the init of the capture, and then they are closed when we exit. This
-       means expected usage looks like:
+    This is based off of github.com/vsoch/gridtest but modified
+    to write files. The stderr and stdout are set to temporary files at
+    the init of the capture, and then they are closed when we exit. This
+    means expected usage looks like:
 
-       with Capturing() as capture:
-           process = subprocess.Popen(...)
-           
-       And then the output and error are retrieved from reading the files:
-       and exposed as properties to the client:
+    with Capturing() as capture:
+        process = subprocess.Popen(...)
 
-           capture.out
-           capture.err
+    And then the output and error are retrieved from reading the files:
+    and exposed as properties to the client:
 
-       And cleanup means deleting these files, if they exist.
+        capture.out
+        capture.err
+
+    And cleanup means deleting these files, if they exist.
     """
 
     def __enter__(self):
@@ -56,7 +56,7 @@ class Capturing:
     @property
     def out(self):
         """Return output stream. Returns empty string if empty or doesn't exist.
-           Returns (str) : output stream written to file
+        Returns (str) : output stream written to file
         """
         if os.path.exists(self.stdout.name):
             return read_file(self.stdout.name)
@@ -65,7 +65,7 @@ class Capturing:
     @property
     def err(self):
         """Return error stream. Returns empty string if empty or doesn't exist.
-           Returns (str) : error stream written to file
+        Returns (str) : error stream written to file
         """
         if os.path.exists(self.stderr.name):
             return read_file(self.stderr.name)
@@ -79,17 +79,16 @@ class Capturing:
 
 class ExecutorBase:
     """A qme executor exists to translate a terminal command into a parsed
-       job (shown in the dashboard) and expose one or more actions for it.
-       The base executor will work for any generic command, generates
-       status based on return codes, and exposes basic options to cancel (kill)
-       or re-run.
+    job (shown in the dashboard) and expose one or more actions for it.
+    The base executor will work for any generic command, generates
+    status based on return codes, and exposes basic options to cancel (kill)
+    or re-run.
     """
 
     name = "base"
 
     def __init__(self, taskid):
-        """set a unique id that includes executor name (type) and random uuid)
-        """
+        """set a unique id that includes executor name (type) and random uuid)"""
         uid = str(uuid.uuid4())
         if taskid:
             _, uid = taskid.split("-", 1)
@@ -102,8 +101,8 @@ class ExecutorBase:
 
     def _export_common(self):
         """export common task variables such as present working directory, user,
-           and timestamp for when it was run. This might include envars at some
-           point, but we'd need to be careful.
+        and timestamp for when it was run. This might include envars at some
+        point, but we'd need to be careful.
         """
         common = {
             "pwd": self.pwd,
@@ -116,7 +115,7 @@ class ExecutorBase:
 
     def export(self):
         """return data as json. This is intended to save to the task database.
-           Any important executor specific metadata should be added to self.data
+        Any important executor specific metadata should be added to self.data
         """
         # Get common context (e.g., pwd)
         common = self._export_common()
@@ -129,10 +128,10 @@ class ExecutorBase:
 
     def run_action(self, name, data, **kwargs):
         """Check for a named action in the executors list.
-           This is called from the queue that can also add the data for the task
-           as "data." The user should be able to run an action by name, e.g.,
-           executor.action('status', data) and take key word arguments, which
-           is exposed by a task as task.run_action('status', data)
+        This is called from the queue that can also add the data for the task
+        as "data." The user should be able to run an action by name, e.g.,
+        executor.action('status', data) and take key word arguments, which
+        is exposed by a task as task.run_action('status', data)
         """
         if name in self.actions:
             return self.actions[name](data, **kwargs)
@@ -143,14 +142,14 @@ class ExecutorBase:
 
     def capture(self, cmd):
         """capture is a helper function to capture a shell command. We
-           use Capturing and then save attributes like the pid, output, error
-           to it, and return to the calling function. For example:
+        use Capturing and then save attributes like the pid, output, error
+        to it, and return to the calling function. For example:
 
-           capture = self.capture_command(cmd)
-           self.pid = capture.pid
-           self.returncode = capture.returncode
-           self.out = capture.output
-           self.err = capture.error
+        capture = self.capture_command(cmd)
+        self.pid = capture.pid
+        self.returncode = capture.returncode
+        self.out = capture.output
+        self.err = capture.error
         """
         # Capturing provides temporary output and error files
         with Capturing() as capture:
@@ -178,7 +177,7 @@ class ExecutorBase:
 
     def get_setting(self, key, default=None):
         """Get a setting, meaning that we first check the environment, then
-           the config file, and then (if provided) a default.
+        the config file, and then (if provided) a default.
         """
         # First preference to environment
         envar = ("QME_%s_%s" % (self.name, key)).upper()
