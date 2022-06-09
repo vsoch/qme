@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -39,8 +39,7 @@ def index():
 
 
 def update_database():
-    """A function to be run at some interval to update the qme database listing
-    """
+    """A function to be run at some interval to update the qme database listing"""
     while not thread_stop_event.isSet():
 
         # The data sent to the table depends on the database
@@ -82,8 +81,7 @@ def delete_row(json):
 
 @socketio.on("rerunrow", namespace="/table/action")
 def rerun_row(json):
-    """a request to re-run a particular task.
-    """
+    """a request to re-run a particular task."""
     app.logger.debug("Received re-run request for %s", json.get("taskid"))
     taskid = json.get("taskid", "doesnotexist")
     was_rerun = app.queue.rerun(taskid) is not None

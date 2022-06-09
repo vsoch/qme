@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -24,7 +24,7 @@ Base = declarative_base()
 
 class Task(Base):
     """An executor task. The id is prefixed with the executor type, and must
-       be unique.
+    be unique.
     """
 
     __tablename__ = "task"
@@ -62,7 +62,7 @@ class Task(Base):
 
     def run_action(self, name, **kwargs):
         """Run an action, meaning that we prepare data to it, and then run
-           the self.executor.run_action(name, data) function.
+        the self.executor.run_action(name, data) function.
         """
         return self.executor.run_action(name, self.export(), **kwargs)
 

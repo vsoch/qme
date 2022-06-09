@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -10,8 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
 class MissingEnvironmentVariable(RuntimeError):
-    """Thrown if a required environment variable is not provided.
-    """
+    """Thrown if a required environment variable is not provided."""
 
     def __init__(self, varname, *args, **kwargs):
         super(MissingEnvironmentVariable, self).__init__(*args, **kwargs)
@@ -26,8 +25,7 @@ class InvalidDatabaseFilename(ValueError):
 
 
 class DirectoryNotFoundError(FileNotFoundError):
-    """Thrown if a directory is not found
-    """
+    """Thrown if a directory is not found"""
 
     def __init__(self, dirname, reason, *args, **kwargs):
         super(DirectoryNotFoundError, self).__init__(*args, **kwargs)
@@ -42,8 +40,7 @@ class DirectoryNotFoundError(FileNotFoundError):
 
 
 class TaskError(RuntimeError):
-    """Abstract base class for any kind of TaskError.
-    """
+    """Abstract base class for any kind of TaskError."""
 
     def __init__(self, taskid=None, reason=None, *args, **kwargs):
         super(TaskError, self).__init__(*args, **kwargs)
@@ -55,8 +52,7 @@ class TaskError(RuntimeError):
 
 
 class MultipleTasksExistError(TaskError):
-    """Thrown if multiple tasks exist.
-    """
+    """Thrown if multiple tasks exist."""
 
     def __init__(self, taskid, *args, **kwargs):
         reason = "More than one task found for"
@@ -66,8 +62,7 @@ class MultipleTasksExistError(TaskError):
 
 
 class TaskNotFoundError(TaskError):
-    """Thrown if task does not exist.
-    """
+    """Thrown if task does not exist."""
 
     def __init__(self, taskid, *args, **kwargs):
         reason = "Cannot find task"
@@ -77,8 +72,7 @@ class TaskNotFoundError(TaskError):
 
 
 class NoTasksError(TaskError):
-    """Thrown if tasks are requested, but there are none
-    """
+    """Thrown if tasks are requested, but there are none"""
 
     def __init__(self, *args, **kwargs):
         reason = "There are no tasks in the database."
@@ -86,8 +80,7 @@ class NoTasksError(TaskError):
 
 
 class MissingImportError(ImportError):
-    """Thrown if a library is missing.
-    """
+    """Thrown if a library is missing."""
 
     def __init__(self, name, reason, *args, **kwargs):
         super(MissingImportError, self).__init__(*args, **kwargs)
@@ -99,8 +92,7 @@ class MissingImportError(ImportError):
 
 
 class NotSupportedError(NotImplementedError):
-    """Thrown if functionality isn't supported, and not implemented.
-    """
+    """Thrown if functionality isn't supported, and not implemented."""
 
     def __init__(self, reason, *args, **kwargs):
         super(NotSupportedError, self).__init__(*args, **kwargs)
@@ -111,8 +103,7 @@ class NotSupportedError(NotImplementedError):
 
 
 class UnrecognizedTargetError(ValueError):
-    """Thrown if an unrecognized target is given for an action
-    """
+    """Thrown if an unrecognized target is given for an action"""
 
     def __init__(self, name, reason="", *args, **kwargs):
         super(UnrecognizedTargetError, self).__init__(*args, **kwargs)
@@ -124,8 +115,7 @@ class UnrecognizedTargetError(ValueError):
 
 
 class UnrecognizedExecutorError(UnrecognizedTargetError):
-    """Thrown if an unrecognized executor is asked for
-    """
+    """Thrown if an unrecognized executor is asked for"""
 
     def __init__(self, name, reason="is not a known executor", *args, **kwargs):
         super(UnrecognizedExecutorError, self).__init__(
@@ -134,8 +124,7 @@ class UnrecognizedExecutorError(UnrecognizedTargetError):
 
 
 class OutputParsingError(ValueError):
-    """Thrown if an output cannot be correctly parsed
-    """
+    """Thrown if an output cannot be correctly parsed"""
 
     def __init__(self, reason="", *args, **kwargs):
         super(OutputParsingError, self).__init__(*args, **kwargs)
@@ -146,8 +135,7 @@ class OutputParsingError(ValueError):
 
 
 class MissingDatabaseString(RuntimeError):
-    """Thrown if a database string is required and not provided
-    """
+    """Thrown if a database string is required and not provided"""
 
     def __init__(self, reason=None, *args, **kwargs):
         super(MissingDatabaseString, self).__init__(*args, **kwargs)
@@ -161,8 +149,7 @@ class MissingDatabaseString(RuntimeError):
 
 
 class DatabaseStringFormatError(RuntimeError):
-    """Thrown if database prefix is not supported
-    """
+    """Thrown if database prefix is not supported"""
 
     def __str__(self):
         return (

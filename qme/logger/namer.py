@@ -2,7 +2,7 @@
 
 """
 
-Copyright (C) 2018-2020 Vanessa Sochat.
+Copyright (C) 2018-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -204,11 +204,11 @@ class RobotNamer:
         return delim.join([descriptor, noun, numbers])
 
     def _select(self, select_from):
-        """ select an element from a list using random.choice
-        
-            Parameters
-            ==========
-            should be a list of things to select from
+        """select an element from a list using random.choice
+
+        Parameters
+        ==========
+        should be a list of things to select from
         """
         if len(select_from) <= 0:
             return ""

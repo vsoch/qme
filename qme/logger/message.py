@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2020 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -79,8 +79,8 @@ class QueueMeMessage:
 
     def useColor(self):
         """useColor will determine if color should be added
-           to a print. Will check if being run in a terminal, and
-           if has support for asci
+        to a print. Will check if being run in a terminal, and
+        if has support for asci
         """
         COLORIZE = get_user_color_preference()
         if COLORIZE is not None:
@@ -95,7 +95,7 @@ class QueueMeMessage:
 
     def addColor(self, level, text):
         """addColor to the prompt (usually prefix) if terminal
-           supports, and specified to do so
+        supports, and specified to do so
         """
         if self.colorize:
             if level in self.colors:
@@ -104,7 +104,7 @@ class QueueMeMessage:
 
     def emitError(self, level):
         """determine if a level should print to
-           stderr, includes all levels but INFO and QUIET
+        stderr, includes all levels but INFO and QUIET
         """
         if level in [
             ABORT,
@@ -127,20 +127,19 @@ class QueueMeMessage:
         return False
 
     def isEnabledFor(self, messageLevel):
-        """check if a messageLevel is enabled to emit a level
-        """
+        """check if a messageLevel is enabled to emit a level"""
         if messageLevel <= self.level:
             return True
         return False
 
     def emit(self, level, message, prefix=None, color=None):
         """emit is the main function to print the message
-           optionally with a prefix
+        optionally with a prefix
 
-           Arguments:
-            - level (int) : the level of the message
-            - message (str) : the message to print
-            - prefix (str) : a prefix for the message
+        Arguments:
+         - level (int) : the level of the message
+         - message (str) : the message to print
+         - prefix (str) : a prefix for the message
         """
         if color is None:
             color = level
@@ -173,7 +172,7 @@ class QueueMeMessage:
 
     def write(self, stream, message):
         """write will write a message to a stream,
-           first checking the encoding
+        first checking the encoding
         """
         if isinstance(message, bytes):
             message = message.decode("utf-8")
@@ -181,7 +180,7 @@ class QueueMeMessage:
 
     def get_logs(self, join_newline=True):
         """'get_logs will return the complete history, joined by newline
-            (default) or as is.
+        (default) or as is.
         """
         if join_newline:
             return "\n".join(self.history)
@@ -199,12 +198,12 @@ class QueueMeMessage:
         symbol=None,
     ):
         """create a terminal progress bar, default bar shows for verbose+
- 
-           Parameters
-           ==========
-           iteration: current iteration (Int)
-           total: total iterations (Int)
-           length: character length of bar (Int)
+
+        Parameters
+        ==========
+        iteration: current iteration (Int)
+        total: total iterations (Int)
+        length: character length of bar (Int)
         """
         if not self.level == QUIET:
 
@@ -290,8 +289,7 @@ class QueueMeMessage:
         self.emit(DEBUG, message, "DEBUG")
 
     def is_quiet(self):
-        """is_quiet returns true if the level is under 1
-        """
+        """is_quiet returns true if the level is under 1"""
         if self.level < 1:
             return False
         return True
@@ -299,9 +297,9 @@ class QueueMeMessage:
     # Terminal ------------------------------------------
 
     def table(self, rows, col_width=2):
-        """table will print a table of entries. If the rows is 
-           a dictionary, the keys are interpreted as column names. if
-           not, a numbered list is used.
+        """table will print a table of entries. If the rows is
+        a dictionary, the keys are interpreted as column names. if
+        not, a numbered list is used.
         """
 
         labels = [str(x) for x in range(1, len(rows) + 1)]
@@ -318,9 +316,9 @@ class QueueMeMessage:
 
 def get_logging_level():
     """get_logging_level will configure a logging to standard out based on
-        selected level, which should be in an environment variable called
-        MESSAGELEVEL. if MESSAGELEVEL is not set, the maximum level
-        (5) is assumed (all messages).
+    selected level, which should be in an environment variable called
+    MESSAGELEVEL. if MESSAGELEVEL is not set, the maximum level
+    (5) is assumed (all messages).
     """
     level = os.environ.get("QME_MESSAGELEVEL", INFO)
 
