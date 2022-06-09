@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -206,6 +206,7 @@ class RelationalDatabase(Database):
         query = self.session.query(Task).filter(
             or_(Task.command.ilike(query), Task.data.ilike(query))
         )
-        # list of tuples, (taskid, command, datetime, executor]
+        # previously list of tuples, (taskid, command, datetime, executor]
+        # Now list of tasks
         results = self.session.execute(query).fetchall()
-        return [[r[0], str(r[2]), r[1]] for r in results]
+        return [r[0] for r in results]
