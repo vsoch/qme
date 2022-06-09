@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -21,4 +21,7 @@ def main(args, extra):
     if not query:
         sys.exit("Please provide a query to search for.")
     results = queue.search(query)
+    results = [
+        [r.taskid, r.command, str(r.timestamp), str(r.executor)] for r in results
+    ]
     bot.table(results)

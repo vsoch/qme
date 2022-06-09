@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -15,7 +15,7 @@ from qme.app.server import app
 
 def list_tasks(executor=None):
     """A shared function to list one or more tasks, optionally for an executor,
-       and return a json list to serialize to the api view
+    and return a json list to serialize to the api view
     """
     tasks = []
     url = flask.request.host_url
@@ -32,16 +32,14 @@ def list_tasks(executor=None):
 
 
 class apiList(Resource):
-    """display all tasks
-    """
+    """display all tasks"""
 
     def get(self):
         return list_tasks()
 
 
 class apiListExecutor(Resource):
-    """display all tasks for an executor
-    """
+    """display all tasks for an executor"""
 
     def get(self, executor):
         return list_tasks(executor)

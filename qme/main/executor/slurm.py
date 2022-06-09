@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -21,7 +21,7 @@ bot = logging.getLogger("qme.main.executor.slurm")
 
 class SlurmExecutor(ShellExecutor):
     """A slurm executor parses an srun command and exposes options for getting
-       a job status.
+    a job status.
     """
 
     name = "slurm"
@@ -38,11 +38,11 @@ class SlurmExecutor(ShellExecutor):
 
     def execute(self, cmd=None, message=None):
         """Execute a system command and return output and error. Execute
-           should take a cmd (a string or list) and execute it according to
-           the executor. Attributes should be set on the class that are
-           added to self.export. Since the functions here are likely needed
-           by most executors, we create a self._execute() class that is called
-           instead, and can be used by the other executors.
+        should take a cmd (a string or list) and execute it according to
+        the executor. Attributes should be set on the class that are
+        added to self.export. Since the functions here are likely needed
+        by most executors, we create a self._execute() class that is called
+        instead, and can be used by the other executors.
         """
         self.message = message
         self._execute(cmd)
@@ -76,15 +76,15 @@ class SlurmExecutor(ShellExecutor):
 
     def action_get_status(self, data):
         """Get the status with squeue, given a jobid. This returns information
-           for the job that is based on a format string, default looks like:
+        for the job that is based on a format string, default looks like:
 
-		{'jobid': '904366',
-		 'jobname': 'run_job.sh',
-		 'partition': 'owners',
-		 'alloccpus': '1',
-		 'elapsed': '00:00:00',
-		 'state': 'PENDING',
-		 'exitcode': '0:0'}
+             {'jobid': '904366',
+              'jobname': 'run_job.sh',
+              'partition': 'owners',
+              'alloccpus': '1',
+              'elapsed': '00:00:00',
+              'state': 'PENDING',
+              'exitcode': '0:0'}
         """
         fmt = self.get_setting(
             "sacct_format", "jobid,jobname,partition,alloccpus,elapsed,state,exitcode"
@@ -101,24 +101,21 @@ class SlurmExecutor(ShellExecutor):
             return values
 
     def action_get_output(self, data):
-        """Get error stream, if the file exists.
-        """
+        """Get error stream, if the file exists."""
         outputfile = data.get("outputfile")
         if os.path.exists(outputfile):
             return read_file(outputfile)
         return ["%s does not exist.\n" % outputfile]
 
     def action_get_error(self, data):
-        """Get just output stream, if the file exists.
-        """
+        """Get just output stream, if the file exists."""
         errorfile = data.get("outputfile")
         if os.path.exists(errorfile):
             return read_file(errorfile)
         return ["%s does not exist.\n" % errorfile]
 
     def action_cancel(self, data):
-        """Cancel a job if there is a jobid
-        """
+        """Cancel a job if there is a jobid"""
         jobid = data.get("jobid")
         if jobid:
             capture = self.capture(["scancel", jobid])
